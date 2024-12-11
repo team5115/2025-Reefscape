@@ -1,20 +1,25 @@
 package frc.team5115.subsystems.intake;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.RelativeEncoder;
 import frc.team5115.Constants;
 
 public class IntakeIOSparkMax implements IntakeIO {
-    private final CANSparkMax motor;
+    private final SparkMax motor;
     private final RelativeEncoder encoder;
 
     public IntakeIOSparkMax() {
-        motor = new CANSparkMax(Constants.INTAKE_MOTOR_ID, MotorType.kBrushless);
+        motor = new SparkMax(Constants.INTAKE_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
-        motor.setSmartCurrentLimit(60, 80);
-        motor.setIdleMode(IdleMode.kCoast);
+        SparkMaxConfig motorConfig = new SparkMaxConfig();
+        motorConfig.smartCurrentLimit(60, 80);
+        motorConfig.idleMode(IdleMode.kCoast);
+        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
