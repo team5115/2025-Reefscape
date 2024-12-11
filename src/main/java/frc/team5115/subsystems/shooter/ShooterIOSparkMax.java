@@ -1,27 +1,34 @@
 package frc.team5115.subsystems.shooter;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import frc.team5115.Constants;
 
 public class ShooterIOSparkMax implements ShooterIO {
 
-    private final CANSparkMax motor;
+    private final SparkMax motor;
     private final RelativeEncoder encoder;
 
     public ShooterIOSparkMax() {
-        motor = new CANSparkMax(Constants.SHOOTER_MOTOR_ID, MotorType.kBrushless);
+        motor = new SparkMax(Constants.SHOOTER_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
+        SparkMaxConfig config = new SparkMaxConfig();
+
 
         // Shooter motor configs
-        motor.restoreFactoryDefaults();
-        motor.setClosedLoopRampRate(0.1);
-        motor.setInverted(false);
-        motor.setIdleMode(IdleMode.kBrake);
-        motor.setSmartCurrentLimit(40);
-        motor.burnFlash();
+        config
+            .inverted(false)
+            .idleMode(IdleMode.kBrake)
+            .closedLoopRampRate(0.1)
+            .smartCurrentLimit(40);
+        
+        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
     }
 
     @Override
