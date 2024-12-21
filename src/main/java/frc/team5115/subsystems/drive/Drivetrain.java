@@ -1,13 +1,13 @@
 package frc.team5115.subsystems.drive;
 
-import static edu.wpi.first.units.measure.Units.*;
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import edu.wpi.first.math.MathUtil;
+
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,23 +17,54 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.team5115.Constants;
 import frc.team5115.Constants.SwerveConstants;
 import frc.team5115.util.LocalADStarAK;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 
 public class Drivetrain extends SubsystemBase {
     private final GyroIO gyroIO;
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
     private final Module[] modules = new Module[4]; // FL, FR, BL, BR
     private final SysIdRoutine sysId;
+
+    // TODO tune drive pids
+    private final double linear_kp = 1.9;
+    private final double linear_ki = 0.0;
+    private final double linear_kd = 0.0;
+    private final double angular_kp = 0.7;
+    private final double angular_ki = 0.0;
+    private final double angular_kd = 0.0;
+
+    private final ProfiledPIDController anglePid =
+            new ProfiledPIDController(
+                    angular_kp * SwerveConstants.MAX_ANGULAR_SPEED,
+                    angular_ki,
+                    angular_kd,
+                    new TrapezoidProfile.Constraints(
+                            SwerveConstants.MAX_ANGULAR_SPEED,
+                            SwerveConstants.MAX_ANGULAR_SPEED * 2));
+    private final ProfiledPIDController xPid =
+            new ProfiledPIDController(
+                    linear_kp,
+                    linear_ki,
+                    linear_kd,
+                    new TrapezoidProfile.Constraints(
+                            SwerveConstants.MAX_LINEAR_SPEED,
+                            SwerveConstants.MAX_LINEAR_SPEED * 2));
+    private final ProfiledPIDController yPid =
+            new ProfiledPIDController(
+                    linear_kp,
+                    linear_ki,
+                    linear_kd,
+                    new TrapezoidProfile.Constraints(
+                            SwerveConstants.MAX_LINEAR_SPEED,
+                            SwerveConstants.MAX_LINEAR_SPEED * 2));
 
     private final SwerveDriveKinematics kinematics =
             new SwerveDriveKinematics(SwerveConstants.MODULE_TRANSLATIONS);
@@ -54,13 +85,6 @@ public class Drivetrain extends SubsystemBase {
                     VecBuilder.fill(0.1, 0.1, 0.1),
                     VecBuilder.fill(0.9, 0.9, 0.9));
 
-    private final double lateralConstantP = 1.9;
-    private final double angleConstantP = 0.7;
-    private final PIDController anglePid =
-            new PIDController(angleConstantP * SwerveConstants.MAX_ANGULAR_SPEED, 0, 0);
-    private final PIDController xPid = new PIDController(lateralConstantP, 0, 0);
-    private final PIDController yPid = new PIDController(lateralConstantP, 0, 0);
-
     public Drivetrain(
             GyroIO gyroIO,
             ModuleIO flModuleIO,
@@ -75,18 +99,18 @@ public class Drivetrain extends SubsystemBase {
 
         anglePid.enableContinuousInput(-Math.PI, Math.PI);
 
-        // Configure AutoBuilder for PathPlanner
-        AutoBuilder.configureHolonomic(
-                this::getPose,
-                this::setPose,
-                () -> kinematics.toChassisSpeeds(getModuleStates()),
-                this::runVelocity,
-                new HolonomicPathFollowerConfig(
-                        SwerveConstants.MAX_LINEAR_SPEED,
-                        SwerveConstants.DRIVE_BASE_RADIUS,
-                        new ReplanningConfig()),
-                this::isRedAlliance,
-                this);
+        // TODO do we need to Configure AutoBuilder for Choreo?
+        // AutoBuilder.configureHolonomic(
+        //         this::getPose,
+        //         this::setPose,
+        //         () -> kinematics.toChassisSpeeds(getModuleStates()),
+        //         this::runVelocity,
+        //         new HolonomicPathFollowerConfig(
+        //                 SwerveConstants.MAX_LINEAR_SPEED,
+        //                 SwerveConstants.DRIVE_BASE_RADIUS,
+        //                 new ReplanningConfig()),
+        //         this::isRedAlliance,
+        //         this);
         Pathfinding.setPathfinder(new LocalADStarAK());
         PathPlannerLogging.setLogActivePathCallback(
                 (activePath) -> {
@@ -109,7 +133,7 @@ public class Drivetrain extends SubsystemBase {
                         new SysIdRoutine.Mechanism(
                                 (voltage) -> {
                                     for (int i = 0; i < 4; i++) {
-                                        modules[i].runCharacterization(voltage.in(Volts));
+                                        modules[i].runCharacterization(voltage.baseUnitMagnitude());
                                     }
                                 },
                                 null,
@@ -162,58 +186,44 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator.update(rawGyroRotation, modulePositions);
     }
 
-    public Command faceSpeaker() {
-        return setAutoAimPids()
+    public Command driveToPosition(Pose2d goalPose) {
+        return setAutoAimPids(goalPose)
                 .andThen(driveByAutoAimPids())
                 .until(() -> anglePid.atSetpoint() && xPid.atSetpoint() && yPid.atSetpoint());
+    }
+
+    private Command setAutoAimPids(Pose2d goalPose) {
+        return Commands.runOnce(
+                () -> {
+                    // ? Could do some more processing here for alliance specific stuff
+                    xPid.setGoal(goalPose.getX());
+                    yPid.setGoal(goalPose.getY());
+                    anglePid.setGoal(goalPose.getRotation().getRadians());
+                },
+                this);
     }
 
     private Command driveByAutoAimPids() {
         return Commands.runEnd(
                 () -> {
-                    final var omega = anglePid.calculate(getPose().getRotation().getRadians());
-                    final var xVelocity = xPid.calculate(getPose().getX());
-                    final var yVelocity = yPid.calculate(getPose().getY());
+                    final var pose = getPose();
+                    final var omega = anglePid.calculate(pose.getRotation().getRadians());
+                    final var xVelocity = xPid.calculate(pose.getX());
+                    final var yVelocity = yPid.calculate(pose.getY());
 
                     Logger.recordOutput("AutoAim/xVelocity", xVelocity);
                     Logger.recordOutput("AutoAim/yVelocity", yVelocity);
                     Logger.recordOutput("AutoAim/omega", omega);
                     Logger.recordOutput(
-                            "AutoAim/Setpoint", new Translation2d(xPid.getSetpoint(), yPid.getSetpoint()));
+                            "AutoAim/Goal",
+                            new Pose2d(
+                                    new Translation2d(xPid.getGoal().position, yPid.getGoal().position),
+                                    new Rotation2d(anglePid.getGoal().position)));
 
                     runVelocity(
                             ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getRotation()));
                 },
                 this::stop,
-                this);
-    }
-
-    private Command setAutoAimPids() {
-        return Commands.runOnce(
-                () -> {
-                    double blueSpeakerXMeters = 0.96;
-                    if (isRedAlliance()) {
-                        blueSpeakerXMeters = Constants.FIELD_WIDTH_METERS - blueSpeakerXMeters;
-                    }
-                    final var speakerX = Meters.of(blueSpeakerXMeters);
-                    final var speakerY = Meters.of(5.536);
-                    final var distanceForShot = Feet.of(10);
-                    final Translation2d speaker = new Translation2d(speakerX, speakerY);
-                    final Translation2d robot = getPose().getTranslation();
-                    final Translation2d robotToSpeaker = speaker.minus(robot);
-                    final double distanceToSpeaker = robot.getDistance(speaker);
-                    final double moveDelta = distanceToSpeaker - distanceForShot.in(Meter);
-                    final Rotation2d theta =
-                            Rotation2d.fromRadians(
-                                    MathUtil.angleModulus(Math.atan2(robotToSpeaker.getY(), robotToSpeaker.getX())));
-                    final double deltaX = moveDelta * theta.getCos();
-                    final double deltaY = moveDelta * theta.getSin();
-                    final double setpointX = robot.getX() + deltaX;
-                    final double setpointY = robot.getY() + deltaY;
-                    anglePid.setSetpoint(theta.plus(Rotation2d.fromDegrees(180)).getRadians());
-                    xPid.setSetpoint(setpointX);
-                    yPid.setSetpoint(setpointY);
-                },
                 this);
     }
 
@@ -243,7 +253,7 @@ public class Drivetrain extends SubsystemBase {
         // Log setpoint states
         Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
         Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedSetpointStates);
-        Logger.recordOutput("ChassisSpeedsDiscrete", discreteSpeeds);
+        Logger.recordOutput("ChassisSpeedsDiscrete", speeds);
     }
 
     /** Stops the drive. */

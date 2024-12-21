@@ -67,7 +67,7 @@ public class Module {
                 // When the error is 90°, the velocity setpoint should be 0. As the wheel turns
                 // towards the setpoint, its velocity should increase. This is achieved by
                 // taking the component of the velocity in the direction of the setpoint.
-                double adjustSpeedSetpoint = speedSetpoint * Math.cos(turnFeedback.getPositionError());
+                double adjustSpeedSetpoint = speedSetpoint * Math.cos(turnFeedback.getError());
 
                 // Run drive controller
                 double velocityRadPerSec = adjustSpeedSetpoint / SwerveConstants.WHEEL_RADIUS_METERS;
@@ -87,14 +87,12 @@ public class Module {
     /** Runs the module with the specified setpoint state. Returns the optimized state. */
     public SwerveModuleState runSetpoint(SwerveModuleState state) {
         // Optimize state based on current angle
-        // Controllers run in "periodic" when the setpoint is not null
-        var optimizedState = SwerveModuleState.optimize(state, getAngle());
+        state.optimize(getAngle());
+        // Update setpoints, controllers run in "periodic" when setpoints are not null
+        angleSetpoint = state.angle;
+        speedSetpoint = state.speedMetersPerSecond;
 
-        // Update setpoints, controllers run in "periodic"
-        angleSetpoint = optimizedState.angle;
-        speedSetpoint = optimizedState.speedMetersPerSecond;
-
-        return optimizedState;
+        return state;
     }
 
     /** Runs the module with the specified voltage while controlling to zero degrees. */
