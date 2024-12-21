@@ -50,7 +50,7 @@ public class Robot extends LoggedRobot {
                 // Running on a real robot, log to a USB stick ("/U/logs")
                 // This creates the logs folder if it doesn't exist
                 // ! IMPORTANT: Remember, when using a new flash drive, make sure to do the following:
-                // 1) flash the drive for ext4, probably using a linux compute
+                // 1) flash the drive for ext4, probably using a linux computer
                 // 2) set the permissions:
                 //      i) ssh into the rio using `ssh admin@10.51.15.2` (or whatever ip)
                 //      ii) set the permission with chmod: `chmod 777 U/logs`
