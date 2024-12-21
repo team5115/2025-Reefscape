@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.team5115.Constants.SwerveConstants;
 import frc.team5115.subsystems.amper.Amper;
 import frc.team5115.subsystems.arm.Arm;
+import frc.team5115.subsystems.arm.Arm.State;
 import frc.team5115.subsystems.drive.Drivetrain;
 import frc.team5115.subsystems.feeder.Feeder;
 import frc.team5115.subsystems.intake.Intake;
@@ -31,8 +32,8 @@ public class DriveCommands {
     public static Command automaticallyPrepareShoot(
             Drivetrain drivetrain, Arm arm, Intake intake, Feeder feeder, Shooter shooter) {
         return drivetrain
-                .faceSpeaker()
-                .alongWith(prepareShoot(arm, intake, feeder, shooter, 25))
+                .driveToPosition(new Pose2d()) // ! currently a zero pose, may need to be changed
+                .alongWith(prepareShoot(arm, intake, feeder, shooter, State.FAR_SHOT))
                 .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
 
@@ -40,7 +41,7 @@ public class DriveCommands {
         return Commands.sequence(
                         intake.intake(),
                         feeder.centerNote(),
-                        arm.setAngle(Rotation2d.fromDegrees(0)),
+                        arm.intake(),
                         feeder.waitForDetectionState(true, 20),
                         Commands.waitSeconds(0.25),
                         intake.stop(),
@@ -50,12 +51,8 @@ public class DriveCommands {
 
     public static Command prepareAmp(Arm arm, Amper amper, Intake intake, Feeder feeder) {
         return Commands.sequence(
-                        arm.goToAngle(Rotation2d.fromDegrees(98.0), 1), amper.spinToAngle(new Rotation2d(3.25))
-                        // ,intake.setSpeed(1),
-                        // feeder.setSpeeds(0.25),
-                        // Commands.waitSeconds(0.8),
-                        // feeder.stop(),
-                        // intake.setSpeed(-0.9)
+                        arm.setStateAndWait(State.AMP, 1), 
+                        amper.spinToAngle(new Rotation2d(3.25))
                         )
                 .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
@@ -75,12 +72,12 @@ public class DriveCommands {
     }
 
     public static Command prepareShoot(
-            Arm arm, Intake intake, Feeder feeder, Shooter shooter, double angle) {
+            Arm arm, Intake intake, Feeder feeder, Shooter shooter, Arm.State state) {
         return Commands.parallel(
                         intake.stop(),
                         feeder.stop(),
                         shooter.spinToSpeed(),
-                        arm.goToAngle(Rotation2d.fromDegrees(angle), 1))
+                        arm.setStateAndWait(state, 1))
                 .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
 

@@ -20,6 +20,7 @@ import frc.team5115.subsystems.arm.Arm;
 import frc.team5115.subsystems.arm.ArmIO;
 import frc.team5115.subsystems.arm.ArmIOSim;
 import frc.team5115.subsystems.arm.ArmIOSparkMax;
+import frc.team5115.subsystems.arm.Arm.State;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIOSim;
@@ -184,16 +185,16 @@ public class RobotContainer {
 
         joyManip
                 .leftBumper()
-                .onTrue(arm.goToAngle(Rotation2d.fromDegrees(0), 3).andThen(climber.deploy()));
+                .onTrue(arm.intakeAndWait(3).andThen(climber.deploy()));
 
-        joyManip
-                .rightBumper()
-                .onTrue(
-                        Commands.sequence(
-                                DriveCommands.automaticallyPrepareShoot(drivetrain, arm, intake, feeder, shooter),
-                                DriveCommands.feed(intake, feeder),
-                                shooter.stop()))
-                .onFalse(DriveCommands.stow(arm, intake, feeder, shooter));
+        // joyManip
+        //         .rightBumper()
+        //         .onTrue(
+        //                 Commands.sequence(
+        //                         DriveCommands.automaticallyPrepareShoot(drivetrain, arm, intake, feeder, shooter),
+        //                         DriveCommands.feed(intake, feeder),
+        //                         shooter.stop()))
+        //         .onFalse(DriveCommands.stow(arm, intake, feeder, shooter));
 
         joyManip
                 .back()
@@ -207,7 +208,7 @@ public class RobotContainer {
         joyManip
                 .b()
                 .onTrue(
-                        DriveCommands.prepareShoot(arm, intake, feeder, shooter, Constants.CLOSE_SHOOT_DEGREES))
+                        DriveCommands.prepareShoot(arm, intake, feeder, shooter, State.CLOSE_SHOT))
                 .onFalse(
                         DriveCommands.feed(intake, feeder)
                                 .andThen(shooter.stop())
@@ -245,7 +246,7 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "ReliableInitialShot",
                 Commands.sequence(
-                        DriveCommands.prepareShoot(arm, intake, feeder, shooter, Constants.CLOSE_SHOOT_DEGREES),
+                        DriveCommands.prepareShoot(arm, intake, feeder, shooter, State.CLOSE_SHOT),
                         DriveCommands.feed(intake, feeder, 2),
                         shooter.stop()));
 
@@ -253,7 +254,7 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "InitialShot",
                 Commands.parallel(
-                                arm.setAngle(Rotation2d.fromDegrees(Constants.CLOSE_SHOOT_DEGREES)),
+                                arm.setState(State.CLOSE_SHOT),
                                 intake.setSpeed(+1),
                                 shooter.spinToSpeed())
                         .withTimeout(1.75)
@@ -262,12 +263,12 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "StopIntakeShooter", Commands.parallel(shooter.stop(), intake.stop()));
 
-        NamedCommands.registerCommand("LowerArmForIntake", arm.setAngle(Rotation2d.fromDegrees(0)));
+        NamedCommands.registerCommand("LowerArmForIntake", arm.intake());
 
         NamedCommands.registerCommand(
                 "Intake",
                 Commands.sequence(
-                                arm.setAngle(Rotation2d.fromDegrees(0)),
+                                arm.intake(),
                                 feeder.centerNote(),
                                 feeder.waitForDetectionState(true, 1.5),
                                 Commands.waitSeconds(0.25),
@@ -281,9 +282,9 @@ public class RobotContainer {
                 Commands.sequence(feeder.setSpeeds(+1), Commands.waitSeconds(1.5), feeder.stop()));
 
         NamedCommands.registerCommand(
-                "ArmForNear", arm.goToAngle(Rotation2d.fromDegrees(Constants.CLOSE_SHOOT_DEGREES), 1));
-        NamedCommands.registerCommand("ArmForMedium", arm.goToAngle(Rotation2d.fromDegrees(15), 1));
-        NamedCommands.registerCommand("ArmForFar", arm.goToAngle(Rotation2d.fromDegrees(25), 1));
+                "ArmForNear", arm.setStateAndWait(State.CLOSE_SHOT, 1));
+        NamedCommands.registerCommand("ArmForMedium", arm.setStateAndWait(State.MEDIUM_SHOT, 1));
+        NamedCommands.registerCommand("ArmForFar", arm.setStateAndWait(State.FAR_SHOT, 1));
     }
 
     /**

@@ -31,12 +31,13 @@ public class Arm extends SubsystemBase {
     private State state = State.INITIAL;
 
     public enum State {
-        INITIAL(+91.0),
-        STOWED(+66.0),
-        INTAKE(-25.0),
-        DISPENSE(+150.0),
-        STACK(+180.0), // TODO add accurate stack position
-        VAULTINTAKE(10);
+        INITIAL(+75.0),
+        STOWED(+75.0),
+        INTAKE(+0.0),
+        CLOSE_SHOT(+12.0),
+        MEDIUM_SHOT(+15.0),
+        FAR_SHOT(+25.0),
+        AMP(+98.0);
 
         private final double position;
 
@@ -108,7 +109,7 @@ public class Arm extends SubsystemBase {
         return Commands.waitUntil(() -> pid.atGoal()).withTimeout(timeout);
     }
 
-    private Command setState(State state) {
+    public Command setState(State state) {
         return Commands.runOnce(
                 () -> {
                     this.state = state;
@@ -116,24 +117,24 @@ public class Arm extends SubsystemBase {
                 });
     }
 
+    public Command setStateAndWait(State state, double timeoutSeconds) {
+        return setState(state).andThen(waitForSetpoint(timeoutSeconds));
+    }
+
     public Command stow() {
         return setState(State.STOWED);
-    }
-
-    public Command prepareDispense() {
-        return setState(State.DISPENSE);
-    }
-
-    public Command prepareStack() {
-        return setState(State.DISPENSE);
     }
 
     public Command intake() {
         return setState(State.INTAKE);
     }
 
-    public Command vaultIntake() {
-        return setState(State.VAULTINTAKE);
+    public Command stowAndWait(double timeoutSeconds) {
+        return setStateAndWait(State.STOWED, timeoutSeconds);
+    }
+
+    public Command intakeAndWait(double timeoutSeconds) {
+        return setStateAndWait(State.INTAKE, timeoutSeconds);
     }
 
     private String getStateString() {
