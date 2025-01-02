@@ -1,18 +1,24 @@
 package frc.team5115.subsystems.drive;
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.config.AbsoluteEncoderConfig;
+import com.revrobotics.spark.config.EncoderConfig;
+
 import edu.wpi.first.math.geometry.Rotation2d;
+
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
 import frc.team5115.Constants.SwerveConstants;
 
 public class ModuleIOSparkMax implements ModuleIO {
-    private final CANSparkMax driveSparkMax;
-    private final CANSparkMax turnSparkMax;
+    private final SparkMax driveSparkMax;
+    private final SparkMax turnSparkMax;
 
     private final RelativeEncoder driveEncoder;
     private final AbsoluteEncoder turnEncoder;
@@ -48,39 +54,42 @@ public class ModuleIOSparkMax implements ModuleIO {
                 throw new RuntimeException("Invalid module index");
         }
 
-        driveSparkMax = new CANSparkMax(driveId, MotorType.kBrushless);
-        turnSparkMax = new CANSparkMax(turnId, MotorType.kBrushless);
-
-        driveSparkMax.restoreFactoryDefaults();
-        turnSparkMax.restoreFactoryDefaults();
+        driveSparkMax = new SparkMax(driveId, MotorType.kBrushless);
+        turnSparkMax = new SparkMax(turnId, MotorType.kBrushless);
 
         driveSparkMax.setCANTimeout(250);
         turnSparkMax.setCANTimeout(250);
 
-        driveEncoder = driveSparkMax.getEncoder();
-        turnEncoder = turnSparkMax.getAbsoluteEncoder(Type.kDutyCycle);
+        SparkMaxConfig turnConfig = new SparkMaxConfig();
+        SparkMaxConfig driveConfig = new SparkMaxConfig();
 
         // Invert the turning encoder, since the output shaft rotates in the opposite
         // direction of
         // the steering motor in the MAXSwerve Module.
-        turnSparkMax.setInverted(false);
+        turnConfig.inverted(false)
+            .smartCurrentLimit(SwerveConstants.TurningMotorCurrentLimit)
+            .voltageCompensation(12.0);
 
-        driveSparkMax.setSmartCurrentLimit(SwerveConstants.DrivingMotorCurrentLimit);
-        turnSparkMax.setSmartCurrentLimit(SwerveConstants.TurningMotorCurrentLimit);
-        driveSparkMax.enableVoltageCompensation(12.0);
-        turnSparkMax.enableVoltageCompensation(12.0);
+        driveConfig.smartCurrentLimit(SwerveConstants.DrivingMotorCurrentLimit)
+            .voltageCompensation(12.0);
 
+        AbsoluteEncoderConfig turnEncoderConfig;
+        EncoderConfig driveEncoderConfig;
         driveEncoder.setPosition(0.0);
-        driveEncoder.setMeasurementPeriod(10);
-        driveEncoder.setAverageDepth(2);
+        driveEncoderConfig.measurementPeriod(10);
+        driveEncoderConfig.averageDepth(2);
 
-        turnEncoder.setAverageDepth(2);
+        turnEncoderConfig.averageDepth(2);
 
-        driveSparkMax.setIdleMode(IdleMode.kBrake);
-        turnSparkMax.setIdleMode(IdleMode.kBrake);
+        driveConfig.idleMode(IdleMode.kBrake);
+        turnConfig.idleMode(IdleMode.kBrake);
+        turnConfig.absoluteEncoder = turnEncoderConfig;
 
-        driveSparkMax.burnFlash();
-        turnSparkMax.burnFlash();
+        driveSparkMax.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        turnSparkMax.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        driveEncoder = driveSparkMax.getEncoder();
+        turnEncoder = turnSparkMax.getAbsoluteEncoder(Type.kDutyCycle);
     }
 
     @Override
@@ -108,15 +117,5 @@ public class ModuleIOSparkMax implements ModuleIO {
     @Override
     public void setTurnVoltage(double volts) {
         turnSparkMax.setVoltage(volts);
-    }
-
-    @Override
-    public void setDriveBrakeMode(boolean enable) {
-        driveSparkMax.setIdleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
-    }
-
-    @Override
-    public void setTurnBrakeMode(boolean enable) {
-        turnSparkMax.setIdleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
     }
 }

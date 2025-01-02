@@ -46,7 +46,6 @@ public class Module {
         }
 
         turnFeedback.enableContinuousInput(-Math.PI, Math.PI);
-        setBrakeMode(true);
     }
 
     public void periodic() {
@@ -113,12 +112,6 @@ public class Module {
         // Disable closed loop control for turn and drive
         angleSetpoint = null;
         speedSetpoint = null;
-    }
-
-    /** Sets whether brake mode is enabled. */
-    public void setBrakeMode(boolean enabled) {
-        io.setDriveBrakeMode(enabled);
-        io.setTurnBrakeMode(enabled);
     }
 
     /** Returns the current turn angle of the module. */
