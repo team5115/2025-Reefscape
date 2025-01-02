@@ -1,10 +1,10 @@
 package frc.team5115.subsystems.drive;
 
-import com.kauailabs.navx.frc.AHRS;
+import com.studica.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class GyroIONavx implements GyroIO {
-    private final AHRS ahrs = new AHRS();
+    private final AHRS ahrs = new AHRS(AHRS.NavXComType.kMXP_SPI);
 
     public GyroIONavx() {
         checkForConnection();
