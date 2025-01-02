@@ -17,8 +17,8 @@ public class IntakeIOSparkMax implements IntakeIO {
         motor = new SparkMax(Constants.INTAKE_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
         SparkMaxConfig motorConfig = new SparkMaxConfig();
-        motorConfig.smartCurrentLimit(60, 80);
-        motorConfig.idleMode(IdleMode.kCoast);
+        motorConfig.smartCurrentLimit(60, 80)
+            .idleMode(IdleMode.kCoast);
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 

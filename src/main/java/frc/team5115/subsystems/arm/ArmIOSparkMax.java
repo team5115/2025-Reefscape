@@ -1,26 +1,35 @@
 package frc.team5115.subsystems.arm;
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkAbsoluteEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.team5115.Constants;
 
 public class ArmIOSparkMax implements ArmIO {
-    private final CANSparkMax leftMotor;
-    private final CANSparkMax rightMotor;
+    private final SparkMax leftMotor;
+    private final SparkMax rightMotor;
     private final AbsoluteEncoder absoluteEncoder;
 
     public ArmIOSparkMax() {
-        leftMotor = new CANSparkMax(Constants.ARM_LEFT_MOTOR_ID, MotorType.kBrushless);
-        rightMotor = new CANSparkMax(Constants.ARM_RIGHT_MOTOR_ID, MotorType.kBrushless);
-        absoluteEncoder = leftMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-        absoluteEncoder.setPositionConversionFactor(180);
-        leftMotor.setInverted(true);
-        rightMotor.setInverted(false);
-        // leftMotor.setSmartCurrentLimit(40);
-        // rightMotor.setSmartCurrentLimit(40);
+        leftMotor = new SparkMax(Constants.ARM_LEFT_MOTOR_ID, MotorType.kBrushless);
+        rightMotor = new SparkMax(Constants.ARM_RIGHT_MOTOR_ID, MotorType.kBrushless);
+        absoluteEncoder = leftMotor.getAbsoluteEncoder();
+
+        SparkMaxConfig leftMotorConfig = new SparkMaxConfig();
+        leftMotorConfig.smartCurrentLimit(40)
+            .idleMode(IdleMode.kBrake).inverted(true);
+        leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        
+        SparkMaxConfig rightMotorConfig = new SparkMaxConfig();
+        rightMotorConfig.smartCurrentLimit(40)
+            .idleMode(IdleMode.kBrake).inverted(false);
+        rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override

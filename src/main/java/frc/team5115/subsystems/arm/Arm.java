@@ -1,16 +1,11 @@
 package frc.team5115.subsystems.arm;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -100,7 +95,7 @@ public class Arm extends SubsystemBase {
         io.setArmVoltage(
                 MathUtil.clamp(
                         pid.calculate(inputs.armAngle.getDegrees()) + 
-                        feedforward.calculate(Angle.ofRelativeUnits(pid.getSetpoint().position, Degrees), AngularVelocity.ofRelativeUnits(pid.getSetpoint().velocity, DegreesPerSecond)).baseUnitMagnitude(),
+                        feedforward.calculate(Math.toRadians(pid.getSetpoint().position), Math.toRadians(pid.getSetpoint().velocity)),
                         -maxVolts,
                         +maxVolts));
     }
