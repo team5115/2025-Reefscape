@@ -15,11 +15,12 @@ public class AmperIOSparkMax implements AmperIO {
     private final AbsoluteEncoder encoder;
 
     public AmperIOSparkMax() {
-        SparkMaxConfig motorConfig = new SparkMaxConfig();
-        motorConfig.smartCurrentLimit(20);
-
         motor = new SparkMax(Constants.SNOWBLOWER_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getAbsoluteEncoder();
+        
+        final SparkMaxConfig motorConfig = new SparkMaxConfig();
+        motorConfig.smartCurrentLimit(20);
+
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 

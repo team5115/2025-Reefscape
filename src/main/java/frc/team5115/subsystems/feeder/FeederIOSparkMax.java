@@ -22,25 +22,24 @@ public class FeederIOSparkMax implements FeederIO {
 
     public FeederIOSparkMax() {
         sensor = new DigitalInput(Constants.SHOOTER_SENSOR_ID);
-
         leftMotor = new SparkMax(Constants.FEEDER_LEFT_MOTOR_ID, MotorType.kBrushless);
         rightMotor = new SparkMax(Constants.FEEDER_RIGHT_MOTOR_ID, MotorType.kBrushless);
-
         leftEncoder = leftMotor.getEncoder();
         rightEncoder = rightMotor.getEncoder();
 
-        SparkMaxConfig leftMotorConfig = new SparkMaxConfig();
-        leftMotorConfig.inverted(false);
-        leftMotorConfig.idleMode(IdleMode.kBrake);
-        leftMotorConfig.smartCurrentLimit(40);
-        SparkMaxConfig rightMotorConfig = new SparkMaxConfig();
-        rightMotorConfig.inverted(true);
-        rightMotorConfig.idleMode(IdleMode.kBrake);
-        rightMotorConfig.smartCurrentLimit(40);
-
+        final SparkMaxConfig leftMotorConfig = new SparkMaxConfig();
+        leftMotorConfig
+            .inverted(false)
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(40);
         leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+        final SparkMaxConfig rightMotorConfig = new SparkMaxConfig();
+        rightMotorConfig
+            .inverted(true)
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(40);
+        rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override

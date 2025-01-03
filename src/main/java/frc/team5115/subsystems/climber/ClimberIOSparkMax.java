@@ -1,6 +1,8 @@
 package frc.team5115.subsystems.climber;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -16,14 +18,23 @@ public class ClimberIOSparkMax implements ClimberIO {
 
     public ClimberIOSparkMax() {
         leftClimb = new SparkMax(Constants.CLIMBER_LEFT_MOTOR_ID, MotorType.kBrushless);
-        SparkMaxConfig leftMotorConfig = new SparkMaxConfig();
-        leftMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(45).inverted(true);
-        leftClimbEncoder = leftClimb.getEncoder();
-
         rightClimb = new SparkMax(Constants.CLIMBER_RIGHT_MOTOR_ID, MotorType.kBrushless);
-        SparkMaxConfig rightMotorConfig = new SparkMaxConfig();
-        rightMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(45).inverted(false);
+        leftClimbEncoder = leftClimb.getEncoder();
         rightClimbEncoder = rightClimb.getEncoder();
+
+        final SparkMaxConfig leftMotorConfig = new SparkMaxConfig();
+        leftMotorConfig
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(45)
+            .inverted(true);
+        leftClimb.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        final SparkMaxConfig rightMotorConfig = new SparkMaxConfig();
+        rightMotorConfig
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(45)
+            .inverted(false);
+        rightClimb.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override

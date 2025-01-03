@@ -17,18 +17,13 @@ public class ShooterIOSparkMax implements ShooterIO {
     public ShooterIOSparkMax() {
         motor = new SparkMax(Constants.SHOOTER_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
-        SparkMaxConfig config = new SparkMaxConfig();
 
-
-        // Shooter motor configs
-        config
+        final SparkMaxConfig motorConfig = new SparkMaxConfig();
+        motorConfig
             .inverted(false)
             .idleMode(IdleMode.kBrake)
-            .closedLoopRampRate(0.1)
             .smartCurrentLimit(40);
-        
-        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
+        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override

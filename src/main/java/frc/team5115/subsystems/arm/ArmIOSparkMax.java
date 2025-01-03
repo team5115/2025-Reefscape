@@ -21,14 +21,18 @@ public class ArmIOSparkMax implements ArmIO {
         rightMotor = new SparkMax(Constants.ARM_RIGHT_MOTOR_ID, MotorType.kBrushless);
         absoluteEncoder = leftMotor.getAbsoluteEncoder();
 
-        SparkMaxConfig leftMotorConfig = new SparkMaxConfig();
-        leftMotorConfig.smartCurrentLimit(40)
-            .idleMode(IdleMode.kBrake).inverted(true);
+        final SparkMaxConfig leftMotorConfig = new SparkMaxConfig();
+        leftMotorConfig
+            .smartCurrentLimit(40)
+            .idleMode(IdleMode.kBrake)
+            .inverted(true);
         leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
-        SparkMaxConfig rightMotorConfig = new SparkMaxConfig();
-        rightMotorConfig.smartCurrentLimit(40)
-            .idleMode(IdleMode.kBrake).inverted(false);
+        final SparkMaxConfig rightMotorConfig = new SparkMaxConfig();
+        rightMotorConfig
+            .smartCurrentLimit(40)
+            .idleMode(IdleMode.kBrake)
+            .inverted(false);
         rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
