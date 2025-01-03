@@ -57,39 +57,37 @@ public class ModuleIOSparkMax implements ModuleIO {
         driveSparkMax = new SparkMax(driveId, MotorType.kBrushless);
         turnSparkMax = new SparkMax(turnId, MotorType.kBrushless);
 
+        driveEncoder = driveSparkMax.getEncoder();
+        turnEncoder = turnSparkMax.getAbsoluteEncoder();
+
         driveSparkMax.setCANTimeout(250);
         turnSparkMax.setCANTimeout(250);
 
-        SparkMaxConfig turnConfig = new SparkMaxConfig();
-        SparkMaxConfig driveConfig = new SparkMaxConfig();
+        final SparkMaxConfig turnConfig = new SparkMaxConfig();
+        final SparkMaxConfig driveConfig = new SparkMaxConfig();
+        final AbsoluteEncoderConfig turnEncoderConfig = new AbsoluteEncoderConfig();
+        final EncoderConfig driveEncoderConfig = new EncoderConfig();
 
         // Invert the turning encoder, since the output shaft rotates in the opposite
-        // direction of
-        // the steering motor in the MAXSwerve Module.
-        turnConfig.inverted(false)
+        // direction of the steering motor in the MAXSwerve Module.
+        turnConfig.inverted(true)
+            .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(SwerveConstants.TurningMotorCurrentLimit)
             .voltageCompensation(12.0);
 
-        driveConfig.smartCurrentLimit(SwerveConstants.DrivingMotorCurrentLimit)
+        driveConfig.inverted(false)
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(SwerveConstants.DrivingMotorCurrentLimit)
             .voltageCompensation(12.0);
 
-        AbsoluteEncoderConfig turnEncoderConfig;
-        EncoderConfig driveEncoderConfig;
-        driveEncoder.setPosition(0.0);
-        driveEncoderConfig.measurementPeriod(10);
-        driveEncoderConfig.averageDepth(2);
-
         turnEncoderConfig.averageDepth(2);
-
-        driveConfig.idleMode(IdleMode.kBrake);
-        turnConfig.idleMode(IdleMode.kBrake);
-        turnConfig.absoluteEncoder = turnEncoderConfig;
+        turnConfig.apply(turnEncoderConfig);
+        
+        driveEncoderConfig.uvwAverageDepth(2).uvwMeasurementPeriod(10);
+        driveConfig.apply(driveEncoderConfig);
 
         driveSparkMax.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         turnSparkMax.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-        driveEncoder = driveSparkMax.getEncoder();
-        turnEncoder = turnSparkMax.getAbsoluteEncoder(Type.kDutyCycle);
     }
 
     @Override
