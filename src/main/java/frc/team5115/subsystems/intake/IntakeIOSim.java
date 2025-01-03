@@ -2,6 +2,7 @@ package frc.team5115.subsystems.intake;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.team5115.Constants;
 
@@ -10,7 +11,8 @@ public class IntakeIOSim implements IntakeIO {
     private double appliedVolts;
 
     public IntakeIOSim() {
-        sim = new DCMotorSim(DCMotor.getNEO(1), 1.0, 0.0002);
+        final DCMotor motor = DCMotor.getNEO(1);
+        sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 0.0002, 1.0), motor);
     }
 
     @Override

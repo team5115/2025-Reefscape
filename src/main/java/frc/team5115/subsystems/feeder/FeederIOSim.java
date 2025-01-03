@@ -2,6 +2,7 @@ package frc.team5115.subsystems.feeder;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.team5115.Constants;
 
@@ -14,8 +15,9 @@ public class FeederIOSim implements FeederIO {
     private double rightAppliedVolts;
 
     public FeederIOSim() {
-        leftSim = new FlywheelSim(DCMotor.getNEO(1), 1.0, 0.0002);
-        rightSim = new FlywheelSim(DCMotor.getNEO(1), 1.0, 0.0002);
+        final DCMotor motor = DCMotor.getNEO(1);
+        leftSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(motor, 0.0002, 1.0), motor);
+        rightSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(motor, 0.0002, 1.0), motor);
     }
 
     @Override

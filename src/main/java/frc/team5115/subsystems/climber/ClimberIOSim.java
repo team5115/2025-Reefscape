@@ -3,6 +3,7 @@ package frc.team5115.subsystems.climber;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.team5115.Constants;
 
@@ -13,8 +14,9 @@ public class ClimberIOSim implements ClimberIO {
     private double rightAppliedVolts;
 
     public ClimberIOSim() {
-        leftSim = new DCMotorSim(DCMotor.getNEO(1), 16.0, 0.005);
-        rightSim = new DCMotorSim(DCMotor.getNEO(1), 16.0, 0.005);
+        final DCMotor motor = DCMotor.getNEO(1);
+        leftSim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 0.005, 0.0625), motor);
+        rightSim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 0.005, 0.0625), motor);
     }
 
     @Override

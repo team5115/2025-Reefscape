@@ -3,6 +3,7 @@ package frc.team5115.subsystems.amper;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.team5115.Constants;
 
@@ -11,7 +12,8 @@ public class AmperIOSim implements AmperIO {
     private double appliedVolts;
 
     public AmperIOSim() {
-        sim = new DCMotorSim(new DCMotor(+12.0, +7.909, +24.0, +5.0, +10.472, +1), +1.0, 0.0002);
+        final DCMotor motor = new DCMotor(+12.0, +7.909, +24.0, +5.0, +10.472, +1);
+        sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 0.0002, 1.0), motor);
     }
 
     @Override
