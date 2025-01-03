@@ -11,7 +11,9 @@ public class ShooterIOSim implements ShooterIO {
     private double appliedVolts;
 
     public ShooterIOSim() {
-        sim = new FlywheelSim(LinearSystemId.identifyVelocitySystem(0.00223, 0.00030957), DCMotor.getNEO(1));
+        sim =
+                new FlywheelSim(
+                        LinearSystemId.identifyVelocitySystem(0.00223, 0.00030957), DCMotor.getNEO(1));
     }
 
     @Override

@@ -1,12 +1,12 @@
 package frc.team5115.subsystems.intake;
 
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.team5115.Constants;
 
 public class IntakeIOSparkMax implements IntakeIO {
@@ -18,9 +18,7 @@ public class IntakeIOSparkMax implements IntakeIO {
         encoder = motor.getEncoder();
 
         final SparkMaxConfig motorConfig = new SparkMaxConfig();
-        motorConfig
-            .smartCurrentLimit(60, 80)
-            .idleMode(IdleMode.kCoast);
+        motorConfig.smartCurrentLimit(60, 80).idleMode(IdleMode.kCoast);
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 

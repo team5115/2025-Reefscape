@@ -21,10 +21,15 @@ public class ModuleIOSim implements ModuleIO {
     private final Rotation2d turnAbsoluteInitPosition = new Rotation2d(Math.random() * 2.0 * Math.PI);
     private double driveAppliedVolts = 0.0;
     private double turnAppliedVolts = 0.0;
-    
+
     public ModuleIOSim() {
-        driveSim = new DCMotorSim(LinearSystemId.createDCMotorSystem(DCMotor.getNEO(1), 0.025, 6.75), DCMotor.getNEO(1));
-        turnSim = new DCMotorSim(LinearSystemId.createDCMotorSystem(DCMotor.getNeo550(1), 0.004, 150.0 / 7.0), DCMotor.getNEO(1));
+        driveSim =
+                new DCMotorSim(
+                        LinearSystemId.createDCMotorSystem(DCMotor.getNEO(1), 0.025, 6.75), DCMotor.getNEO(1));
+        turnSim =
+                new DCMotorSim(
+                        LinearSystemId.createDCMotorSystem(DCMotor.getNeo550(1), 0.004, 150.0 / 7.0),
+                        DCMotor.getNEO(1));
     }
 
     @Override

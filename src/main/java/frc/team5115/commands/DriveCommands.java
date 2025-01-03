@@ -51,9 +51,7 @@ public class DriveCommands {
 
     public static Command prepareAmp(Arm arm, Amper amper, Intake intake, Feeder feeder) {
         return Commands.sequence(
-                        arm.setStateAndWait(State.AMP, 1), 
-                        amper.spinToAngle(new Rotation2d(3.25))
-                        )
+                        arm.setStateAndWait(State.AMP, 1), amper.spinToAngle(new Rotation2d(3.25)))
                 .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
 
@@ -74,10 +72,7 @@ public class DriveCommands {
     public static Command prepareShoot(
             Arm arm, Intake intake, Feeder feeder, Shooter shooter, Arm.State state) {
         return Commands.parallel(
-                        intake.stop(),
-                        feeder.stop(),
-                        shooter.spinToSpeed(),
-                        arm.setStateAndWait(state, 1))
+                        intake.stop(), feeder.stop(), shooter.spinToSpeed(), arm.setStateAndWait(state, 1))
                 .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
 

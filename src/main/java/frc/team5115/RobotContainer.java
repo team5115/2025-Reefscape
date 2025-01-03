@@ -17,10 +17,10 @@ import frc.team5115.subsystems.amper.AmperIO;
 import frc.team5115.subsystems.amper.AmperIOSim;
 import frc.team5115.subsystems.amper.AmperIOSparkMax;
 import frc.team5115.subsystems.arm.Arm;
+import frc.team5115.subsystems.arm.Arm.State;
 import frc.team5115.subsystems.arm.ArmIO;
 import frc.team5115.subsystems.arm.ArmIOSim;
 import frc.team5115.subsystems.arm.ArmIOSparkMax;
-import frc.team5115.subsystems.arm.Arm.State;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIOSim;
@@ -63,11 +63,11 @@ public class RobotContainer {
     private final Feeder feeder;
     private final Shooter shooter;
     private final Climber climber;
-    
+
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
     private final CommandXboxController joyManip = new CommandXboxController(1);
-    
+
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -184,15 +184,14 @@ public class RobotContainer {
         // manip control
         climber.setDefaultCommand(climber.climbBy(() -> joyManip.getLeftY()));
 
-        joyManip
-                .leftBumper()
-                .onTrue(arm.intakeAndWait(3).andThen(climber.deploy()));
+        joyManip.leftBumper().onTrue(arm.intakeAndWait(3).andThen(climber.deploy()));
 
         // joyManip
         //         .rightBumper()
         //         .onTrue(
         //                 Commands.sequence(
-        //                         DriveCommands.automaticallyPrepareShoot(drivetrain, arm, intake, feeder, shooter),
+        //                         DriveCommands.automaticallyPrepareShoot(drivetrain, arm, intake,
+        // feeder, shooter),
         //                         DriveCommands.feed(intake, feeder),
         //                         shooter.stop()))
         //         .onFalse(DriveCommands.stow(arm, intake, feeder, shooter));
@@ -208,8 +207,7 @@ public class RobotContainer {
 
         joyManip
                 .b()
-                .onTrue(
-                        DriveCommands.prepareShoot(arm, intake, feeder, shooter, State.CLOSE_SHOT))
+                .onTrue(DriveCommands.prepareShoot(arm, intake, feeder, shooter, State.CLOSE_SHOT))
                 .onFalse(
                         DriveCommands.feed(intake, feeder)
                                 .andThen(shooter.stop())
@@ -255,9 +253,7 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "InitialShot",
                 Commands.parallel(
-                                arm.setState(State.CLOSE_SHOT),
-                                intake.setSpeed(+1),
-                                shooter.spinToSpeed())
+                                arm.setState(State.CLOSE_SHOT), intake.setSpeed(+1), shooter.spinToSpeed())
                         .withTimeout(1.75)
                         .andThen(feeder.setSpeeds(+1), Commands.waitSeconds(1.0)));
 
@@ -282,8 +278,7 @@ public class RobotContainer {
                 "FeedLong",
                 Commands.sequence(feeder.setSpeeds(+1), Commands.waitSeconds(1.5), feeder.stop()));
 
-        NamedCommands.registerCommand(
-                "ArmForNear", arm.setStateAndWait(State.CLOSE_SHOT, 1));
+        NamedCommands.registerCommand("ArmForNear", arm.setStateAndWait(State.CLOSE_SHOT, 1));
         NamedCommands.registerCommand("ArmForMedium", arm.setStateAndWait(State.MEDIUM_SHOT, 1));
         NamedCommands.registerCommand("ArmForFar", arm.setStateAndWait(State.FAR_SHOT, 1));
     }

@@ -7,7 +7,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.team5115.Constants;
 
@@ -22,18 +21,14 @@ public class ArmIOSparkMax implements ArmIO {
         absoluteEncoder = leftMotor.getAbsoluteEncoder();
 
         final SparkMaxConfig leftMotorConfig = new SparkMaxConfig();
-        leftMotorConfig
-            .smartCurrentLimit(40)
-            .idleMode(IdleMode.kBrake)
-            .inverted(true);
-        leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        
+        leftMotorConfig.smartCurrentLimit(40).idleMode(IdleMode.kBrake).inverted(true);
+        leftMotor.configure(
+                leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
         final SparkMaxConfig rightMotorConfig = new SparkMaxConfig();
-        rightMotorConfig
-            .smartCurrentLimit(40)
-            .idleMode(IdleMode.kBrake)
-            .inverted(false);
-        rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        rightMotorConfig.smartCurrentLimit(40).idleMode(IdleMode.kBrake).inverted(false);
+        rightMotor.configure(
+                rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override

@@ -1,12 +1,11 @@
 package frc.team5115.subsystems.amper;
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.team5115.Constants;
 
@@ -17,7 +16,7 @@ public class AmperIOSparkMax implements AmperIO {
     public AmperIOSparkMax() {
         motor = new SparkMax(Constants.SNOWBLOWER_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getAbsoluteEncoder();
-        
+
         final SparkMaxConfig motorConfig = new SparkMaxConfig();
         motorConfig.smartCurrentLimit(20);
 

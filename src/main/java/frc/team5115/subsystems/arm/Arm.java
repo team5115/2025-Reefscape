@@ -1,7 +1,5 @@
 package frc.team5115.subsystems.arm;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -11,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants;
+import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
     // TODO determine max speed, accel, and volts for arm
@@ -45,8 +44,7 @@ public class Arm extends SubsystemBase {
         this.io = io;
         final var constraints =
                 new TrapezoidProfile.Constraints(
-                        maxSpeedDegreesPerSecond,
-                        maxAccelerationDegreesPerSecondPerSecond);
+                        maxSpeedDegreesPerSecond, maxAccelerationDegreesPerSecondPerSecond);
         switch (Constants.currentMode) {
             case REAL:
             case REPLAY:
@@ -94,8 +92,10 @@ public class Arm extends SubsystemBase {
         // The feedforward uses the pid's trapezoidal setpoint to counteract gravity and kstatic
         io.setArmVoltage(
                 MathUtil.clamp(
-                        pid.calculate(inputs.armAngle.getDegrees()) + 
-                        feedforward.calculate(Math.toRadians(pid.getSetpoint().position), Math.toRadians(pid.getSetpoint().velocity)),
+                        pid.calculate(inputs.armAngle.getDegrees())
+                                + feedforward.calculate(
+                                        Math.toRadians(pid.getSetpoint().position),
+                                        Math.toRadians(pid.getSetpoint().velocity)),
                         -maxVolts,
                         +maxVolts));
     }

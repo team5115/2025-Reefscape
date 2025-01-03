@@ -1,16 +1,15 @@
 package frc.team5115.subsystems.vision;
 
-import org.littletonrobotics.junction.Logger;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team5115.Constants.VisionConstants;
 import frc.team5115.subsystems.drive.Drivetrain;
+import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class PhotonVision extends SubsystemBase {
     private final Drivetrain drivetrain;
@@ -22,7 +21,9 @@ public class PhotonVision extends SubsystemBase {
         this.drivetrain = drivetrain;
         camera = new PhotonCamera(VisionConstants.cameraName);
         fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
-        poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.LOWEST_AMBIGUITY, VisionConstants.robotToCam);
+        poseEstimator =
+                new PhotonPoseEstimator(
+                        fieldLayout, PoseStrategy.LOWEST_AMBIGUITY, VisionConstants.robotToCam);
     }
 
     @Override
@@ -34,13 +35,13 @@ public class PhotonVision extends SubsystemBase {
             final var option = poseEstimator.update(result);
             if (option.isPresent()) {
                 pose = option.get();
+                drivetrain.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
             }
         }
 
         final boolean hasMeasurement = pose != null;
         Logger.recordOutput("Vision/HasMeasurement", hasMeasurement);
         if (hasMeasurement) {
-            drivetrain.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
             Logger.recordOutput("Vision/EstimatedPose", pose.estimatedPose);
         }
     }

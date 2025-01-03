@@ -2,17 +2,15 @@ package frc.team5115.subsystems.drive;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.AbsoluteEncoderConfig;
 import com.revrobotics.spark.config.EncoderConfig;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.team5115.Constants.SwerveConstants;
 
@@ -70,24 +68,28 @@ public class ModuleIOSparkMax implements ModuleIO {
 
         // Invert the turning encoder, since the output shaft rotates in the opposite
         // direction of the steering motor in the MAXSwerve Module.
-        turnConfig.inverted(true)
-            .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(SwerveConstants.TurningMotorCurrentLimit)
-            .voltageCompensation(12.0);
+        turnConfig
+                .inverted(true)
+                .idleMode(IdleMode.kBrake)
+                .smartCurrentLimit(SwerveConstants.TurningMotorCurrentLimit)
+                .voltageCompensation(12.0);
 
-        driveConfig.inverted(false)
-            .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(SwerveConstants.DrivingMotorCurrentLimit)
-            .voltageCompensation(12.0);
+        driveConfig
+                .inverted(false)
+                .idleMode(IdleMode.kBrake)
+                .smartCurrentLimit(SwerveConstants.DrivingMotorCurrentLimit)
+                .voltageCompensation(12.0);
 
         turnEncoderConfig.averageDepth(2);
         turnConfig.apply(turnEncoderConfig);
-        
+
         driveEncoderConfig.uvwAverageDepth(2).uvwMeasurementPeriod(10);
         driveConfig.apply(driveEncoderConfig);
 
-        driveSparkMax.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        turnSparkMax.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        driveSparkMax.configure(
+                driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        turnSparkMax.configure(
+                turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override

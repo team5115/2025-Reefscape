@@ -1,12 +1,12 @@
 package frc.team5115.subsystems.shooter;
 
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.team5115.Constants;
 
 public class ShooterIOSparkMax implements ShooterIO {
@@ -19,10 +19,7 @@ public class ShooterIOSparkMax implements ShooterIO {
         encoder = motor.getEncoder();
 
         final SparkMaxConfig motorConfig = new SparkMaxConfig();
-        motorConfig
-            .inverted(false)
-            .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(40);
+        motorConfig.inverted(false).idleMode(IdleMode.kBrake).smartCurrentLimit(40);
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
