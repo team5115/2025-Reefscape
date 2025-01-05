@@ -32,6 +32,7 @@ public final class Constants {
     public static final byte SHOOTER_MOTOR_ID = 35;
     public static final byte CLIMBER_LEFT_MOTOR_ID = 30;
     public static final byte CLIMBER_RIGHT_MOTOR_ID = 31;
+    public static final byte ELEVATOR_MOTOR_ID = -1;
 
     public static final byte SHOOTER_SENSOR_ID = 0;
     public static final byte CLIMB_LEFT_SENSOR_ID = 8;
@@ -39,7 +40,7 @@ public final class Constants {
 
     public static final double LOOP_PERIOD_SECS = 0.02;
 
-    public static final double FIELD_WIDTH_METERS = 16.57;
+    public static final double FIELD_WIDTH_METERS = 16.57; // TODO confirm field width
 
     public static class SwerveConstants {
         public static final byte FRONT_LEFT_DRIVE_ID = 4;
@@ -53,7 +54,8 @@ public final class Constants {
         public static final byte BACK_RIGHT_TURN_ID = 25;
 
         public static final double MAX_LINEAR_SPEED = 4.2; // meters per second
-        public static final double TRACK_WIDTH_X = Units.inchesToMeters(23.75);
+        public static final double TRACK_WIDTH_X =
+                Units.inchesToMeters(23.75); // TODO confirm track width
         public static final double TRACK_WIDTH_Y = Units.inchesToMeters(23.75);
         public static final double DRIVE_BASE_RADIUS =
                 Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
