@@ -1,10 +1,15 @@
 package frc.team5115;
 
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Pounds;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.wpilibj.RobotBase;
 
 public final class Constants {
@@ -39,8 +44,6 @@ public final class Constants {
 
     public static final double LOOP_PERIOD_SECS = 0.02;
 
-    public static final double FIELD_WIDTH_METERS = 16.57;
-
     public static class SwerveConstants {
         public static final byte FRONT_LEFT_DRIVE_ID = 4;
         public static final byte FRONT_RIGHT_DRIVE_ID = 22;
@@ -52,6 +55,10 @@ public final class Constants {
         public static final byte BACK_LEFT_TURN_ID = 23;
         public static final byte BACK_RIGHT_TURN_ID = 25;
 
+        // ! TODO determine mass and moi of robot, and wheel cof
+        public static final Mass ROBOT_MASS = Pounds.of(70);
+        public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(6);
+        public static final double WHEEL_COF = 1.5;
         public static final double MAX_LINEAR_SPEED = 4.2; // meters per second
         public static final double TRACK_WIDTH_X = Units.inchesToMeters(23.75);
         public static final double TRACK_WIDTH_Y = Units.inchesToMeters(23.75);
