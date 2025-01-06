@@ -13,9 +13,9 @@ public class ElevatorIOSim implements ElevatorIO {
         final double minHeight = Elevator.Height.BOTTOM.position;
         final double maxHeight = Elevator.Height.TOP.position;
         // TODO determine gearing, carriage mass, and drum radius
-        final double gearing = 1.0; // numbers greater than 1 represent reductions
-        final double carriageMassKg = 8.0;
-        final double drumRadius = 1.0;
+        final double gearing = 10.0; // numbers greater than 1 represent reductions
+        final double carriageMassKg = 4.0;
+        final double drumRadius = 0.05;
         final double randomStartPosition = Math.random() * (maxHeight - minHeight) + minHeight;
         sim =
                 new ElevatorSim(

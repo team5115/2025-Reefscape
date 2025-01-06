@@ -49,8 +49,8 @@ public class Elevator extends SubsystemBase {
                 pid = new ProfiledPIDController(0.0, 0.0, 0.0, constraints);
                 break;
             case SIM:
-                feedforward = new ElevatorFeedforward(0.0, 0.0, 0.0, 0.0);
-                pid = new ProfiledPIDController(0.0, 0.0, 0.0, constraints);
+                feedforward = new ElevatorFeedforward(0.0, 0.905, 0.0, 0.0);
+                pid = new ProfiledPIDController(20.0, 0.0, 0.0, constraints);
                 break;
             default:
                 feedforward = new ElevatorFeedforward(0.0, 0.0, 0, 0.0);
