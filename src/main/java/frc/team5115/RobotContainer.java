@@ -306,12 +306,7 @@ public class RobotContainer {
     private Command resetRobotPose() {
         return Commands.runOnce(
                         () -> {
-                            drivetrain.setPose(
-                                    new Pose2d(
-                                            new Translation2d(
-                                                    drivetrain.isRedAlliance() ? Constants.FIELD_WIDTH_METERS - 1.35 : 1.35,
-                                                    5.55),
-                                            new Rotation2d()));
+                            drivetrain.setPose(new Pose2d(new Translation2d(8.5, 6.0), new Rotation2d()));
                         },
                         drivetrain)
                 .ignoringDisable(true);
