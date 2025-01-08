@@ -17,6 +17,7 @@ import frc.team5115.subsystems.drive.Drivetrain;
 import frc.team5115.subsystems.feeder.Feeder;
 import frc.team5115.subsystems.intake.Intake;
 import frc.team5115.subsystems.shooter.Shooter;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class DriveCommands {
@@ -108,10 +109,13 @@ public class DriveCommands {
     }
 
     /**
-     * Field relative drive command using two joysticks (controlling linear and angular velocities).
+     * Field or robot relative drive command using two joysticks (controlling linear and angular
+     * velocities).
      */
     public static Command joystickDrive(
             Drivetrain drivetrain,
+            BooleanSupplier robotRelative,
+            BooleanSupplier slowMode,
             DoubleSupplier xSupplier,
             DoubleSupplier ySupplier,
             DoubleSupplier omegaSupplier) {
@@ -135,13 +139,16 @@ public class DriveCommands {
                                     .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
                                     .getTranslation();
 
-                    // Convert to field relative speeds & send command
+                    // Convert to ChassisSpeeds & send command
+                    final double multiplier = slowMode.getAsBoolean() ? 0.5 : 1.0;
+                    final double vx = linearVelocity.getX() * SwerveConstants.MAX_LINEAR_SPEED * multiplier;
+                    final double vy = linearVelocity.getY() * SwerveConstants.MAX_LINEAR_SPEED * multiplier;
+                    omega *= SwerveConstants.MAX_ANGULAR_SPEED * multiplier;
                     drivetrain.runVelocity(
-                            ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    linearVelocity.getX() * SwerveConstants.MAX_LINEAR_SPEED,
-                                    linearVelocity.getY() * SwerveConstants.MAX_LINEAR_SPEED,
-                                    omega * SwerveConstants.MAX_ANGULAR_SPEED,
-                                    drivetrain.getGyroRotation()));
+                            robotRelative.getAsBoolean()
+                                    ? new ChassisSpeeds(vx, vy, omega)
+                                    : ChassisSpeeds.fromFieldRelativeSpeeds(
+                                            vx, vy, omega, drivetrain.getGyroRotation()));
                 },
                 drivetrain);
     }

@@ -74,6 +74,9 @@ public class RobotContainer {
     // Shuffleboard
     private final GenericEntry noteDetectedEntry;
 
+    private boolean robotRelative = false;
+    private boolean slowMode = false;
+
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         switch (Constants.currentMode) {
@@ -173,11 +176,15 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
                 DriveCommands.joystickDrive(
                         drivetrain,
+                        () -> robotRelative,
+                        () -> slowMode,
                         () -> -joyDrive.getLeftY(),
                         () -> -joyDrive.getLeftX(),
                         () -> -joyDrive.getRightX()));
 
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
+        joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
+        joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
 
         joyDrive.start().onTrue(resetFieldOrientation());
 
@@ -217,6 +224,14 @@ public class RobotContainer {
                 .x()
                 .onTrue(DriveCommands.prepareAmp(arm, amper, intake, feeder))
                 .onFalse(DriveCommands.triggerAmp(arm, amper, intake, feeder));
+    }
+
+    private Command setRobotRelative(boolean state) {
+        return Commands.runOnce(() -> robotRelative = state);
+    }
+
+    private Command setSlowMode(boolean state) {
+        return Commands.runOnce(() -> slowMode = state);
     }
 
     public void robotPeriodic() {
