@@ -1,9 +1,7 @@
 package frc.team5115.subsystems.elevator;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,15 +10,16 @@ import frc.team5115.Constants;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
-    // TODO determine max speed, accel, and volts for elevator
-    private final double maxSpeedMetersPerSecond = 4.0;
-    private final double maxAccelerationMetersPerSecondPerSecond = 12.0;
+    // TODO determine max speed, max volts, kG for elevator
+    private final double maxSpeed = 4.0; // m/s
     private final double maxVolts = 10.0;
+    private final double kgVolts = 0.0;
+    private final double ksVolts = 0.0;
 
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-    private final ElevatorFeedforward feedforward; // meters
-    private final ProfiledPIDController pid; // meters
+    private final PIDController velocityPID; // control m/s, output volts
+    private final PIDController positionPID; // control meters, output m/s
     private final SysIdRoutine sysId;
     private Height height = Height.BOTTOM;
 
@@ -38,23 +37,20 @@ public class Elevator extends SubsystemBase {
 
     public Elevator(ElevatorIO io) {
         this.io = io;
-        final var constraints =
-                new TrapezoidProfile.Constraints(
-                        maxSpeedMetersPerSecond, maxAccelerationMetersPerSecondPerSecond);
         switch (Constants.currentMode) {
             case REAL:
             case REPLAY:
                 // TODO tune elevator feedforward and pid
-                feedforward = new ElevatorFeedforward(0.0, 0.0, 0.0, 0.0);
-                pid = new ProfiledPIDController(0.0, 0.0, 0.0, constraints);
+                velocityPID = new PIDController(0.0, 0.0, 0.0);
+                positionPID = new PIDController(0.0, 0.0, 0.0);
                 break;
             case SIM:
-                feedforward = new ElevatorFeedforward(0.0, 0.905, 0.0, 0.0);
-                pid = new ProfiledPIDController(20.0, 0.0, 0.0, constraints);
+                velocityPID = new PIDController(0.0, 0.0, 0.0);
+                positionPID = new PIDController(0.0, 0.0, 0.0);
                 break;
             default:
-                feedforward = new ElevatorFeedforward(0.0, 0.0, 0, 0.0);
-                pid = new ProfiledPIDController(0.0, 0.0, 0.0, constraints);
+                velocityPID = new PIDController(0.0, 0.0, 0.0);
+                positionPID = new PIDController(0.0, 0.0, 0.0);
                 break;
         }
 
@@ -68,9 +64,11 @@ public class Elevator extends SubsystemBase {
                         new SysIdRoutine.Mechanism(
                                 (voltage) -> io.setElevatorVoltage(voltage.magnitude()), null, this));
 
-        pid.setTolerance(0.05);
         height = Height.BOTTOM;
-        pid.setGoal(height.position);
+        velocityPID.setTolerance(0.1); // m/s
+        positionPID.setTolerance(0.05); // meters
+        velocityPID.setSetpoint(0);
+        positionPID.setSetpoint(height.position);
     }
 
     @Override
@@ -78,37 +76,37 @@ public class Elevator extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs(getName(), inputs);
         recordOutputs();
+        final double velocitySetpoint =
+                MathUtil.clamp(positionPID.calculate(inputs.positionMeters), -maxSpeed, +maxSpeed);
+        final double voltage =
+                velocityPID.calculate(inputs.velocityMetersPerSecond, velocitySetpoint) + kgVolts;
         io.setElevatorVoltage(
-                MathUtil.clamp(
-                        pid.calculate(inputs.positionMeters)
-                                + feedforward.calculate(pid.getSetpoint().velocity),
-                        -maxVolts,
-                        maxVolts));
+                MathUtil.clamp(voltage + ksVolts * Math.signum(voltage), -maxVolts, +maxVolts));
     }
 
     private void recordOutputs() {
-        Logger.recordOutput("Elevator/Goal Height", pid.getGoal().position);
-        Logger.recordOutput("Elevator/Setpoint Height", pid.getSetpoint().position);
-        Logger.recordOutput("Elevator/Actual Height", inputs.positionMeters);
+        Logger.recordOutput("Elevator/Goal Height", height.position);
 
-        Logger.recordOutput("Elevator/Goal Velocity", pid.getGoal().velocity);
-        Logger.recordOutput("Elevator/Setpoint Velocity", pid.getSetpoint().velocity);
+        Logger.recordOutput("Elevator/Setpoint Height", positionPID.getSetpoint());
+        Logger.recordOutput("Elevator/Setpoint Velocity", velocityPID.getSetpoint());
+
+        Logger.recordOutput("Elevator/Actual Height", inputs.positionMeters);
         Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
 
-        Logger.recordOutput("Elevator/At Goal?", pid.atGoal());
+        Logger.recordOutput("Elevator/At Goal?", atGoal());
         Logger.recordOutput("Elevator/State", getStateString());
-        Logger.recordOutput("Elevator/Offset Delta", pid.getGoal().position - inputs.positionMeters);
+        Logger.recordOutput("Elevator/Offset Delta", positionPID.getSetpoint() - inputs.positionMeters);
     }
 
     public Command waitForSetpoint(double timeout) {
-        return Commands.waitUntil(() -> pid.atGoal()).withTimeout(timeout);
+        return Commands.waitUntil(() -> atGoal()).withTimeout(timeout);
     }
 
     public Command setHeight(Height height) {
         return Commands.runOnce(
                 () -> {
                     this.height = height;
-                    pid.setGoal(height.position);
+                    positionPID.setSetpoint(height.position);
                 });
     }
 
@@ -117,11 +115,15 @@ public class Elevator extends SubsystemBase {
     }
 
     private String getStateString() {
-        if (pid.atGoal()) {
+        if (atGoal()) {
             return height.toString();
         } else {
             return "MOVING_TO_" + height.toString();
         }
+    }
+
+    public boolean atGoal() {
+        return velocityPID.atSetpoint() && positionPID.atSetpoint();
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
