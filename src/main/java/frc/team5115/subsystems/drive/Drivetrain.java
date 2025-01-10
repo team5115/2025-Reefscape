@@ -1,10 +1,5 @@
 package frc.team5115.subsystems.drive;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.ModuleConfig;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.VecBuilder;
@@ -18,7 +13,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -99,28 +93,28 @@ public class Drivetrain extends SubsystemBase {
 
         anglePid.enableContinuousInput(-Math.PI, Math.PI);
 
-        AutoBuilder.configure(
-                this::getPose,
-                this::setPose,
-                () -> kinematics.toChassisSpeeds(getModuleStates()),
-                (var speeds, var feedforwards) -> runVelocity(speeds),
-                new PPHolonomicDriveController(
-                        new PIDConstants(linear_kp, linear_ki, linear_kd),
-                        new PIDConstants(angular_kp, angular_ki, angular_kd)),
-                new RobotConfig(
-                        SwerveConstants.ROBOT_MASS,
-                        SwerveConstants.ROBOT_MOI,
-                        new ModuleConfig(
-                                SwerveConstants.WHEEL_RADIUS_METERS,
-                                SwerveConstants.MAX_LINEAR_SPEED,
-                                SwerveConstants.WHEEL_COF,
-                                DCMotor.getNEO(1),
-                                SwerveConstants.DrivingMotorReduction,
-                                25, // less than the real current limit
-                                1),
-                        SwerveConstants.MODULE_TRANSLATIONS),
-                () -> false,
-                this);
+        // AutoBuilder.configure(
+        //         this::getPose,
+        //         this::setPose,
+        //         () -> kinematics.toChassisSpeeds(getModuleStates()),
+        //         (var speeds, var feedforwards) -> runVelocity(speeds),
+        //         new PPHolonomicDriveController(
+        //                 new PIDConstants(linear_kp, linear_ki, linear_kd),
+        //                 new PIDConstants(angular_kp, angular_ki, angular_kd)),
+        //         new RobotConfig(
+        //                 SwerveConstants.ROBOT_MASS,
+        //                 SwerveConstants.ROBOT_MOI,
+        //                 new ModuleConfig(
+        //                         SwerveConstants.WHEEL_RADIUS_METERS,
+        //                         SwerveConstants.MAX_LINEAR_SPEED,
+        //                         SwerveConstants.WHEEL_COF,
+        //                         DCMotor.getNEO(1),
+        //                         SwerveConstants.DrivingMotorReduction,
+        //                         25, // less than the real current limit
+        //                         1),
+        //                 SwerveConstants.MODULE_TRANSLATIONS),
+        //         () -> false,
+        //         this);
         Pathfinding.setPathfinder(new LocalADStarAK());
         PathPlannerLogging.setLogActivePathCallback(
                 (activePath) -> {
