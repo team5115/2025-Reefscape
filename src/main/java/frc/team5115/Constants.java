@@ -95,6 +95,17 @@ public final class Constants {
         public static final int TurningMotorCurrentLimit = 20; // amps
     }
 
+    // TODO determine elevator constants
+    public static class ElevatorConstants {
+        // Heights and radius in meters
+        public static final double MAX_HEIGHT = 1.5;
+        public static final double MIN_HEIGHT = 0;
+        public static final double DRUM_RADIUS = 0.05;
+        public static final double CARRIAGE_MASS_KG = 4.0;
+        public static final double GEARING = 10.0; // numbers greater than 1 represent reductions
+        public static final double METERS_PER_ROTATION = 1.0; // conversion factor
+    }
+
     public static class VisionConstants {
         public static final String cameraName = "FOV_120_Degrees";
         public static final double camYaw = Math.toRadians(+180.0);

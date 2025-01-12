@@ -4,27 +4,24 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.team5115.Constants;
+import frc.team5115.Constants.ElevatorConstants;
 
 public class ElevatorIOSim implements ElevatorIO {
     private final ElevatorSim sim;
     private double voltage;
 
     public ElevatorIOSim() {
-        final double minHeight = Elevator.Height.BOTTOM.position;
-        final double maxHeight = Elevator.Height.TOP.position;
-        // TODO determine gearing, carriage mass, and drum radius
-        final double gearing = 10.0; // numbers greater than 1 represent reductions
-        final double carriageMassKg = 4.0;
-        final double drumRadius = 0.05;
-        final double randomStartPosition = Math.random() * (maxHeight - minHeight) + minHeight;
+        final double randomStartPosition =
+                Math.random() * (ElevatorConstants.MAX_HEIGHT - ElevatorConstants.MIN_HEIGHT)
+                        + ElevatorConstants.MIN_HEIGHT;
         sim =
                 new ElevatorSim(
                         DCMotor.getNEO(1),
-                        gearing,
-                        carriageMassKg,
-                        drumRadius,
-                        minHeight,
-                        maxHeight,
+                        ElevatorConstants.GEARING,
+                        ElevatorConstants.CARRIAGE_MASS_KG,
+                        ElevatorConstants.DRUM_RADIUS,
+                        ElevatorConstants.MIN_HEIGHT,
+                        ElevatorConstants.MAX_HEIGHT,
                         true,
                         randomStartPosition);
     }
