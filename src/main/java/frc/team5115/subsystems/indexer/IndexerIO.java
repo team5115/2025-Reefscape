@@ -1,22 +1,23 @@
-package frc.team5115.subsystems.amper;
+package frc.team5115.subsystems.indexer;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface AmperIO {
+public interface IndexerIO {
     @AutoLog
-    public static class AmperIOInputs {
-        public Rotation2d position = new Rotation2d();
+    public static class IndexerIOInputs {
+        public double velocityRPM = 0.0;
         public double appliedVolts = 0.0;
         public double currentAmps = 0.0;
+
+        public boolean coralDetected = false;
     }
 
     /** Updates the set of loggable inputs. */
-    public default void updateInputs(AmperIOInputs inputs) {}
+    public default void updateInputs(IndexerIOInputs inputs) {}
 
     /** Run the intake motor at the specified voltage. */
     public default void setVoltage(double volts) {}
 
-    /** Run the amper motor at the specified percentage. */
+    /** Run the intake motor at the specified percentage. */
     public default void setPercent(double percent) {}
 }
