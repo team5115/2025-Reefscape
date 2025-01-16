@@ -42,6 +42,7 @@ public final class Constants {
     public static final byte SHOOTER_SENSOR_ID = 0;
     public static final byte CLIMB_LEFT_SENSOR_ID = 8;
     public static final byte CLIMB_RIGHT_SENSOR_ID = 9;
+    public static final byte INDEXER_SENSOR_ID = -1;
 
     public static final double LOOP_PERIOD_SECS = 0.02;
 
