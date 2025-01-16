@@ -1,24 +1,25 @@
-package frc.team5115.subsystems.dispenser;
+package frc.team5115.subsystems.amper;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.team5115.Constants;
 
-public class DispenserIOSim implements DispenserIO {
+public class AmperIOSim implements AmperIO {
     private final DCMotorSim sim;
     private double appliedVolts;
 
-    public DispenserIOSim() {
-        final DCMotor motor = DCMotor.getNEO(1);
+    public AmperIOSim() {
+        final DCMotor motor = new DCMotor(+12.0, +7.909, +24.0, +5.0, +10.472, +1);
         sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 0.0002, 1.0), motor);
     }
 
     @Override
-    public void updateInputs(DispenserIOInputs inputs) {
+    public void updateInputs(AmperIOInputs inputs) {
         sim.update(Constants.LOOP_PERIOD_SECS);
-        inputs.velocityRPM = sim.getAngularVelocityRPM();
+        inputs.position = Rotation2d.fromRadians(sim.getAngularPositionRad());
         inputs.appliedVolts = appliedVolts;
         inputs.currentAmps = Math.abs(sim.getCurrentDrawAmps());
     }
