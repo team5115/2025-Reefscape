@@ -18,6 +18,7 @@ import frc.team5115.subsystems.drive.GyroIONavx;
 import frc.team5115.subsystems.drive.ModuleIO;
 import frc.team5115.subsystems.drive.ModuleIOSim;
 import frc.team5115.subsystems.drive.ModuleIOSparkMax;
+<<<<<<< HEAD
 import frc.team5115.subsystems.elevator.Elevator;
 import frc.team5115.subsystems.elevator.Elevator.Height;
 import frc.team5115.subsystems.elevator.ElevatorIO;
@@ -27,6 +28,8 @@ import frc.team5115.subsystems.intake.Intake;
 import frc.team5115.subsystems.intake.IntakeIO;
 import frc.team5115.subsystems.intake.IntakeIOSim;
 import frc.team5115.subsystems.intake.IntakeIOSparkMax;
+=======
+>>>>>>> main
 import frc.team5115.subsystems.vision.PhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -41,7 +44,10 @@ public class RobotContainer {
     private final GyroIO gyro;
     private final Drivetrain drivetrain;
     private final PhotonVision vision;
+<<<<<<< HEAD
     private final Intake intake;
+=======
+>>>>>>> main
     private final Climber climber;
     private final Elevator elevator;
 
@@ -61,8 +67,12 @@ public class RobotContainer {
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
+<<<<<<< HEAD
                 gyro = new GyroIONavx();
                 intake = new Intake(new IntakeIOSparkMax());
+=======
+                gyro = new GyroIONavx();;
+>>>>>>> main
                 climber = new Climber(new ClimberIOSparkMax());
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 drivetrain =
@@ -78,7 +88,10 @@ public class RobotContainer {
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
                 gyro = new GyroIO() {};
+<<<<<<< HEAD
                 intake = new Intake(new IntakeIOSim());
+=======
+>>>>>>> main
                 climber = new Climber(new ClimberIOSim());
                 elevator = new Elevator(new ElevatorIOSim());
                 drivetrain =
@@ -90,7 +103,10 @@ public class RobotContainer {
             default:
                 // Replayed robot, disable IO implementations
                 gyro = new GyroIO() {};
+<<<<<<< HEAD
                 intake = new Intake(new IntakeIO() {});
+=======
+>>>>>>> main
                 climber = new Climber(new ClimberIO() {});
                 elevator = new Elevator(new ElevatorIO() {});
                 drivetrain =
@@ -102,7 +118,11 @@ public class RobotContainer {
 
         // Register auto commands for pathplanner
         // PhotonVision is passed in here to prevent warnings, i.e. "unused variable: vision"
+<<<<<<< HEAD
         registerCommands(drivetrain, vision, intake);
+=======
+        registerCommands(drivetrain, vision);
+>>>>>>> main
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -189,7 +209,11 @@ public class RobotContainer {
      * @param drivetrain the drivetrain subsytem (not currently used)
      * @param photonVision the photonvision subsystem (not currently used)
      */
+<<<<<<< HEAD
     public static void registerCommands(Drivetrain drivetrain, PhotonVision vision, Intake intake) {}
+=======
+    public static void registerCommands(Drivetrain drivetrain, PhotonVision vision) {}
+>>>>>>> main
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
