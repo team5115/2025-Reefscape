@@ -1,5 +1,3 @@
 package frc.team5115.subsystems.indexer;
 
-public class Indexer {
-    
-}
+public class Indexer {}
