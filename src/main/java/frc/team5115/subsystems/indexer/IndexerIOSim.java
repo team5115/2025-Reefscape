@@ -5,7 +5,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.team5115.Constants;
-import frc.team5115.subsystems.indexer.IndexerIO.IndexerIOInputs;
 
 public class IndexerIOSim implements IndexerIO {
     private final DCMotorSim sim;
