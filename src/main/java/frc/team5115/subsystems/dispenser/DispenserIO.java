@@ -9,7 +9,7 @@ public interface DispenserIO {
         public double appliedVolts = 0.0;
         public double currentAmps = 0.0;
 
-        public boolean coralDetected = false;
+        public boolean frontCoralDetected = false;
     }
 
     /** Updates the set of loggable inputs. */

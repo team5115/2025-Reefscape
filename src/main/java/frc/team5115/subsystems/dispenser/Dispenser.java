@@ -20,7 +20,7 @@ public class Dispenser extends SubsystemBase {
     }
 
     public Command waitForDetectionState(boolean state, double timeout) {
-        return Commands.waitUntil(() -> inputs.coralDetected == state).withTimeout(timeout);
+        return Commands.waitUntil(() -> inputs.frontCoralDetected == state).withTimeout(timeout);
     }
 
     public Command setSpeed(double percent) {
@@ -36,6 +36,6 @@ public class Dispenser extends SubsystemBase {
     }
 
     public boolean coralDetected() {
-        return inputs.coralDetected;
+        return inputs.frontCoralDetected;
     }
 }

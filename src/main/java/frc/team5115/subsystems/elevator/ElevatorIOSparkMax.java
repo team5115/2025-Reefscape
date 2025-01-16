@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.team5115.Constants;
 import frc.team5115.Constants.ElevatorConstants;
 
@@ -14,8 +15,11 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     private final SparkMax motor;
     private final RelativeEncoder encoder;
 
+    private final DigitalInput backSensor;
+
     public ElevatorIOSparkMax() {
         motor = new SparkMax(Constants.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
+        backSensor = new DigitalInput(Constants.BACK_SENSOR_ID);
         encoder = motor.getEncoder();
 
         final SparkMaxConfig config = new SparkMaxConfig();
@@ -30,6 +34,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
                 encoder.getVelocity() * ElevatorConstants.METERS_PER_ROTATION / 60.0;
         inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
         inputs.currentAmps = motor.getOutputCurrent();
+        inputs.backCoralDetected = !backSensor.get();
     }
 
     @Override

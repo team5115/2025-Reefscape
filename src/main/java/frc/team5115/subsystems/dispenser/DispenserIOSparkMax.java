@@ -14,10 +14,10 @@ public class DispenserIOSparkMax implements DispenserIO {
     private final SparkMax motor;
     private final RelativeEncoder encoder;
 
-    private final DigitalInput sensor;
+    private final DigitalInput frontSensor;
 
     public DispenserIOSparkMax() {
-        sensor = new DigitalInput(Constants.DISPENSER_SENSOR_ID);
+        frontSensor = new DigitalInput(Constants.FRONT_SENSOR_ID);
         motor = new SparkMax(Constants.DISPENSER_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
 
@@ -32,7 +32,7 @@ public class DispenserIOSparkMax implements DispenserIO {
         inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
         inputs.currentAmps = motor.getOutputCurrent();
 
-        inputs.coralDetected = !sensor.get();
+        inputs.frontCoralDetected = !frontSensor.get();
     }
 
     @Override

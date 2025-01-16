@@ -9,6 +9,8 @@ public interface ElevatorIO {
         public double velocityMetersPerSecond = 0;
         public double currentAmps = 0;
         public double appliedVolts = 0;
+
+        public boolean backCoralDetected = false;
     }
 
     public default void updateInputs(ElevatorIOInputs inputs) {}
