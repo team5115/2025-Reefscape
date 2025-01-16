@@ -37,6 +37,8 @@ public final class Constants {
     public static final byte SHOOTER_MOTOR_ID = 35;
     public static final byte CLIMBER_LEFT_MOTOR_ID = 30;
     public static final byte CLIMBER_RIGHT_MOTOR_ID = 31;
+    public static final byte DISPENSER_MOTOR_ID = -1;
+    public static final byte DISPENSER_SENSOR_ID = 0;
 
     public static final byte SHOOTER_SENSOR_ID = 0;
     public static final byte CLIMB_LEFT_SENSOR_ID = 8;
