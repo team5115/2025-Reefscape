@@ -37,14 +37,14 @@ public final class Constants {
     public static final byte SHOOTER_MOTOR_ID = 35;
     public static final byte CLIMBER_LEFT_MOTOR_ID = 30;
     public static final byte CLIMBER_RIGHT_MOTOR_ID = 31;
-    public static final byte INDEXER_MOTOR_ID = -1;
     public static final byte DISPENSER_MOTOR_ID = -1;
+    public static final byte ELEVATOR_MOTOR_ID = -1;
 
-    public static final byte SHOOTER_SENSOR_ID = 0;
+    public static final byte SHOOTER_SENSOR_ID = -1;
     public static final byte CLIMB_LEFT_SENSOR_ID = 8;
     public static final byte CLIMB_RIGHT_SENSOR_ID = 9;
-    public static final byte INDEXER_SENSOR_ID = -1;
-    public static final byte DISPENSER_SENSOR_ID = 0;
+    public static final byte ELEVATOR_SENSOR_ID = -1;
+    public static final byte DISPENSER_SENSOR_ID = -1;
 
     public static final double LOOP_PERIOD_SECS = 0.02;
 
@@ -64,7 +64,8 @@ public final class Constants {
         public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(6);
         public static final double WHEEL_COF = 1.5;
         public static final double MAX_LINEAR_SPEED = 4.2; // meters per second
-        public static final double TRACK_WIDTH_X = Units.inchesToMeters(23.75);
+        public static final double TRACK_WIDTH_X =
+                Units.inchesToMeters(23.75); // TODO confirm track width
         public static final double TRACK_WIDTH_Y = Units.inchesToMeters(23.75);
         public static final double DRIVE_BASE_RADIUS =
                 Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
@@ -93,8 +94,19 @@ public final class Constants {
         // 15 teeth on the bevel pinion, 13 teeth on the driving motor
         public static final double DrivingMotorReduction = (45.0 * 22.0) / (13.0 * 15.0);
 
-        public static final int DrivingMotorCurrentLimit = 40; // amps
+        public static final int DrivingMotorCurrentLimit = 40; // amp
         public static final int TurningMotorCurrentLimit = 20; // amps
+    }
+
+    // TODO determine elevator constants
+    public static class ElevatorConstants {
+        // Heights and radius in meters
+        public static final double MAX_HEIGHT = 1.5;
+        public static final double MIN_HEIGHT = 0;
+        public static final double DRUM_RADIUS = 0.05;
+        public static final double CARRIAGE_MASS_KG = 4.0;
+        public static final double GEARING = 10.0; // numbers greater than 1 represent reductions
+        public static final double METERS_PER_ROTATION = 1.0; // conversion factor
     }
 
     public static class VisionConstants {
