@@ -146,16 +146,6 @@ public class RobotContainer {
 
         // manip control
         climber.setDefaultCommand(climber.climbBy(() -> joyManip.getLeftY()));
-
-        // joyManip
-        //         .rightBumper()
-        //         .onTrue(
-        //                 Commands.sequence(
-        //                         DriveCommands.automaticallyPrepareShoot(drivetrain, arm, intake,
-        // feeder, shooter),
-        //                         DriveCommands.feed(intake, feeder),
-        //                         shooter.stop()))
-        //         .onFalse(DriveCommands.stow(arm, intake, feeder, shooter));
     }
 
     private Command setRobotRelative(boolean state) {
