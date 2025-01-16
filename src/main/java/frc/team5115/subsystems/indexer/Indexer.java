@@ -30,6 +30,7 @@ public class Indexer extends SubsystemBase {
     public Command stop() {
         return setSpeed(+0);
     }
+
     public Command waitForDetectionState(boolean state, double timeout) {
         return Commands.waitUntil(() -> inputs.coralDetected == state).withTimeout(timeout);
     }
