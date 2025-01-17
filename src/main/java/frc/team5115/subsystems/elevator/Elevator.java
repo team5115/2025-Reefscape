@@ -82,8 +82,11 @@ public class Elevator extends SubsystemBase {
                 MathUtil.clamp(positionPID.calculate(inputs.positionMeters), -maxSpeed, +maxSpeed);
         // final double voltage =
         // velocityPID.calculate(inputs.velocityMetersPerSecond, velocitySetpoint) + kgVolts;
+        // velocityPID.calculate(inputs.velocityMetersPerSecond, velocitySetpoint) + kgVolts;
         // io.setElevatorVoltage(
         //         MathUtil.clamp(voltage + ksVolts * Math.signum(voltage), -maxVolts, +maxVolts));
+
+        if (inputs.backCoralDetected) velocitySetpoint = 0;
 
         io.setElevatorVelocity(velocitySetpoint, kgVolts);
     }
@@ -131,7 +134,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atGoal() {
-        return Math.abs(velocitySetpoint - io.getMotorVelocity()) <= 0.1;
+        return Math.abs(velocitySetpoint - inputs.velocityMetersPerSecond) <= 0.1;
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {

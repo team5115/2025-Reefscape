@@ -2,10 +2,12 @@ package frc.team5115.subsystems.elevator;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -30,7 +32,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         final SparkMaxConfig config = new SparkMaxConfig();
         config.inverted(false).idleMode(IdleMode.kBrake).smartCurrentLimit(40);
         // TODO: edit values
-        config.closedLoop.p(0).i(0).d(0).velocityFF(1 / 473);
+        config.closedLoop.p(0).i(0).d(0).velocityFF(1 / 473); // For neo
 
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -60,10 +62,5 @@ public class ElevatorIOSparkMax implements ElevatorIO {
                         ClosedLoopSlot.kSlot0,
                         ffVolts,
                         SparkClosedLoopController.ArbFFUnits.kVoltage);
-    }
-
-    @Override
-    public double getMotorVelocity() {
-        return encoder.getVelocity();
     }
 }
