@@ -12,6 +12,10 @@ import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIOSim;
 import frc.team5115.subsystems.climber.ClimberIOSparkMax;
+import frc.team5115.subsystems.dispenser.Dispenser;
+import frc.team5115.subsystems.dispenser.DispenserIO;
+import frc.team5115.subsystems.dispenser.DispenserIOSim;
+import frc.team5115.subsystems.dispenser.DispenserIOSparkMax;
 import frc.team5115.subsystems.drive.Drivetrain;
 import frc.team5115.subsystems.drive.GyroIO;
 import frc.team5115.subsystems.drive.GyroIONavx;
@@ -39,6 +43,7 @@ public class RobotContainer {
     private final PhotonVision vision;
     private final Climber climber;
     private final Elevator elevator;
+    private final Dispenser dispenser;
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
@@ -57,9 +62,9 @@ public class RobotContainer {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
                 gyro = new GyroIONavx();
-                ;
                 climber = new Climber(new ClimberIOSparkMax());
                 elevator = new Elevator(new ElevatorIOSparkMax());
+                dispenser = new Dispenser(new DispenserIOSparkMax());
                 drivetrain =
                         new Drivetrain(
                                 gyro,
@@ -75,6 +80,7 @@ public class RobotContainer {
                 gyro = new GyroIO() {};
                 climber = new Climber(new ClimberIOSim());
                 elevator = new Elevator(new ElevatorIOSim());
+                dispenser = new Dispenser(new DispenserIOSim());
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
@@ -86,6 +92,7 @@ public class RobotContainer {
                 gyro = new GyroIO() {};
                 climber = new Climber(new ClimberIO() {});
                 elevator = new Elevator(new ElevatorIO() {});
+                dispenser = new Dispenser(new DispenserIO() {});
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
@@ -146,9 +153,9 @@ public class RobotContainer {
 
         joyDrive.start().onTrue(resetFieldOrientation());
 
-        joyDrive.a().onTrue(elevator.setHeight(Height.BOTTOM));
-        joyDrive.b().onTrue(elevator.setHeight(Height.MIDDLE));
-        joyDrive.y().onTrue(elevator.setHeight(Height.TOP));
+        joyDrive.a().onTrue(DriveCommands.intakeUntilCoral(dispenser, elevator));
+        joyDrive.b().onTrue(DriveCommands.dispense(dispenser, elevator, Height.L2));
+        joyDrive.y().onTrue(DriveCommands.dispense(dispenser, elevator, Height.L3));
 
         // manip control
         climber.setDefaultCommand(climber.climbBy(() -> joyManip.getLeftY()));

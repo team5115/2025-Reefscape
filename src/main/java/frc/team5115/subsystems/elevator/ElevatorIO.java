@@ -20,5 +20,7 @@ public interface ElevatorIO {
     // velocity in RPM
     public default void setElevatorVelocity(double velocity, double ffVolts) {}
 
-    public default double getMotorVelocity() {return 0;}
+    public default double getMotorVelocity() {
+        return 0;
+    }
 }

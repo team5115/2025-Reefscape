@@ -21,14 +21,14 @@ public class Elevator extends SubsystemBase {
     // private final PIDController velocityPID; // control m/s, output volts
     private final PIDController positionPID; // control meters, output m/s
     private final SysIdRoutine sysId;
-    private Height height = Height.BOTTOM;
+    private Height height = Height.L2;
     private double velocitySetpoint;
 
     public enum Height {
-        INTAKE(0.3),
-        BOTTOM(0),
-        MIDDLE(0.6),
-        TOP(1.5);
+        L2(0),
+        INTAKE(0.3), // TODO: find actual heights
+        L3(0.6),
+        L4(1.5);
 
         public final double position;
 
@@ -66,7 +66,7 @@ public class Elevator extends SubsystemBase {
                         new SysIdRoutine.Mechanism(
                                 (voltage) -> io.setElevatorVoltage(voltage.magnitude()), null, this));
 
-        height = Height.BOTTOM;
+        height = Height.L2;
         // velocityPID.setTolerance(0.1); // m/s
         positionPID.setTolerance(0.05); // meters
         // velocityPID.setSetpoint(0);
@@ -81,11 +81,11 @@ public class Elevator extends SubsystemBase {
         velocitySetpoint =
                 MathUtil.clamp(positionPID.calculate(inputs.positionMeters), -maxSpeed, +maxSpeed);
         // final double voltage =
-                // velocityPID.calculate(inputs.velocityMetersPerSecond, velocitySetpoint) + kgVolts;
+        // velocityPID.calculate(inputs.velocityMetersPerSecond, velocitySetpoint) + kgVolts;
         // io.setElevatorVoltage(
         //         MathUtil.clamp(voltage + ksVolts * Math.signum(voltage), -maxVolts, +maxVolts));
 
-        io.setElevatorVelocity(velocitySetpoint, kgVolts); 
+        io.setElevatorVelocity(velocitySetpoint, kgVolts);
     }
 
     private void recordOutputs() {
@@ -104,6 +104,10 @@ public class Elevator extends SubsystemBase {
 
     public Command waitForSetpoint(double timeout) {
         return Commands.waitUntil(() -> atGoal()).withTimeout(timeout);
+    }
+
+    public Command waitForDetectionState(boolean state, double timeout) {
+        return Commands.waitUntil(() -> inputs.backCoralDetected == state).withTimeout(timeout);
     }
 
     public Command setHeight(Height height) {

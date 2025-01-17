@@ -28,17 +28,19 @@ public class DriveCommands {
         return Commands.sequence(
                 dispenser.dispense(),
                 elevator.setHeight(Elevator.Height.INTAKE),
-                dispenser.waitForDetectionState(true, 5.0),
+                dispenser
+                        .waitForDetectionState(true, 5.0)
+                        .alongWith(elevator.waitForDetectionState(false, 10.0)),
                 dispenser.stop());
     }
 
-    public static Command dispense(
-            Dispenser dispenser, Elevator elevator, Elevator.Height state, double timeout) {
+    public static Command dispense(Dispenser dispenser, Elevator elevator, Elevator.Height state) {
         return Commands.sequence(
-                elevator.setHeightAndWait(state, timeout),
+                elevator.setHeightAndWait(state, 3.0),
                 dispenser.dispense(),
                 dispenser.waitForDetectionState(false, 5.0),
-                dispenser.stop());
+                dispenser.stop(),
+                elevator.setHeight(Elevator.Height.INTAKE));
     }
 
     public static Command joystickDrive(
