@@ -12,6 +12,12 @@ import frc.team5115.Constants.SwerveConstants;
 import frc.team5115.subsystems.drive.Drivetrain;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import frc.team5115.subsystems.dispenser.Dispenser;
+import frc.team5115.subsystems.elevator.Elevator;
+import frc.team5115.subsystems.drive.Drivetrain;
+import frc.team5115.subsystems.indexer.Indexer;
+import frc.team5115.subsystems.climber.Climber;
+
 
 public class DriveCommands {
     private static final double DEADBAND = 0.1;
@@ -22,6 +28,25 @@ public class DriveCommands {
      * Field or robot relative drive command using two joysticks (controlling linear and angular
      * velocities).
      */
+    public static Command intakeUntilCoral(Dispenser dispenser, Elevator elevator) {
+        return Commands.sequence(
+            dispenser.dispense(),
+            elevator.setHeight(Elevator.Height.INTAKE),
+            dispenser.waitForDetectionState(true, 5.0),
+            dispenser.stop());        
+    }
+
+    public static Command Dispense (Dispenser dispenser, Elevator elevator) {
+        return Commands.sequence(
+            elevator.setHeight(Elevator.Height.MIDDLE),
+            dispenser.dispense(),
+            dispenser.waitForDetectionState(false, 5.0),
+            dispenser.stop());        
+        }
+    
+    
+
+
     public static Command joystickDrive(
             Drivetrain drivetrain,
             BooleanSupplier robotRelative,
@@ -63,3 +88,6 @@ public class DriveCommands {
                 drivetrain);
     }
 }
+
+
+

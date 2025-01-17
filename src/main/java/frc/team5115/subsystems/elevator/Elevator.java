@@ -24,6 +24,7 @@ public class Elevator extends SubsystemBase {
     private Height height = Height.BOTTOM;
 
     public enum Height {
+        INTAKE(0.3), 
         BOTTOM(0),
         MIDDLE(0.6),
         TOP(1.5);
