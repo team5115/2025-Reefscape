@@ -18,10 +18,11 @@ public class Elevator extends SubsystemBase {
 
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-    private final PIDController velocityPID; // control m/s, output volts
+    // private final PIDController velocityPID; // control m/s, output volts
     private final PIDController positionPID; // control meters, output m/s
     private final SysIdRoutine sysId;
     private Height height = Height.BOTTOM;
+    private double velocitySetpoint;
 
     public enum Height {
         INTAKE(0.3),
@@ -42,15 +43,15 @@ public class Elevator extends SubsystemBase {
             case REAL:
             case REPLAY:
                 // TODO tune elevator feedforward and pid
-                velocityPID = new PIDController(0.0, 0.0, 0.0);
+                // velocityPID = new PIDController(0.0, 0.0, 0.0);
                 positionPID = new PIDController(0.0, 0.0, 0.0);
                 break;
             case SIM:
-                velocityPID = new PIDController(0.0, 0.0, 0.0);
+                // velocityPID = new PIDController(0.0, 0.0, 0.0);
                 positionPID = new PIDController(0.0, 0.0, 0.0);
                 break;
             default:
-                velocityPID = new PIDController(0.0, 0.0, 0.0);
+                // velocityPID = new PIDController(0.0, 0.0, 0.0);
                 positionPID = new PIDController(0.0, 0.0, 0.0);
                 break;
         }
@@ -66,9 +67,9 @@ public class Elevator extends SubsystemBase {
                                 (voltage) -> io.setElevatorVoltage(voltage.magnitude()), null, this));
 
         height = Height.BOTTOM;
-        velocityPID.setTolerance(0.1); // m/s
+        // velocityPID.setTolerance(0.1); // m/s
         positionPID.setTolerance(0.05); // meters
-        velocityPID.setSetpoint(0);
+        // velocityPID.setSetpoint(0);
         positionPID.setSetpoint(height.position);
     }
 
@@ -77,19 +78,21 @@ public class Elevator extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs(getName(), inputs);
         recordOutputs();
-        final double velocitySetpoint =
+        velocitySetpoint =
                 MathUtil.clamp(positionPID.calculate(inputs.positionMeters), -maxSpeed, +maxSpeed);
-        final double voltage =
-                velocityPID.calculate(inputs.velocityMetersPerSecond, velocitySetpoint) + kgVolts;
-        io.setElevatorVoltage(
-                MathUtil.clamp(voltage + ksVolts * Math.signum(voltage), -maxVolts, +maxVolts));
+        // final double voltage =
+                // velocityPID.calculate(inputs.velocityMetersPerSecond, velocitySetpoint) + kgVolts;
+        // io.setElevatorVoltage(
+        //         MathUtil.clamp(voltage + ksVolts * Math.signum(voltage), -maxVolts, +maxVolts));
+
+        io.setElevatorVelocity(velocitySetpoint, kgVolts); 
     }
 
     private void recordOutputs() {
         Logger.recordOutput("Elevator/Goal Height", height.position);
 
         Logger.recordOutput("Elevator/Setpoint Height", positionPID.getSetpoint());
-        Logger.recordOutput("Elevator/Setpoint Velocity", velocityPID.getSetpoint());
+        // Logger.recordOutput("Elevator/Setpoint Velocity", velocityPID.getSetpoint());
 
         Logger.recordOutput("Elevator/Actual Height", inputs.positionMeters);
         Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
@@ -124,7 +127,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atGoal() {
-        return velocityPID.atSetpoint() && positionPID.atSetpoint();
+        return Math.abs(velocitySetpoint - io.getMotorVelocity()) <= 0.1;
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
