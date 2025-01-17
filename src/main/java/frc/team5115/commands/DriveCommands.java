@@ -36,13 +36,15 @@ public class DriveCommands {
             dispenser.stop());        
     }
 
-    public static Command Dispense (Dispenser dispenser, Elevator elevator) {
+    public static Command Dispense (Dispenser dispenser, Elevator elevator, Elevator.Height state, double timeout) {
         return Commands.sequence(
-            elevator.setHeight(Elevator.Height.MIDDLE),
+            elevator.setHeightAndWait(state, timeout),
             dispenser.dispense(),
             dispenser.waitForDetectionState(false, 5.0),
             dispenser.stop());        
         }
+
+
     
     
 
