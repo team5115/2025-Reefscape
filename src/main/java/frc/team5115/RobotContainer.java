@@ -12,12 +12,21 @@ import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIOSim;
 import frc.team5115.subsystems.climber.ClimberIOSparkMax;
+import frc.team5115.subsystems.dispenser.Dispenser;
+import frc.team5115.subsystems.dispenser.DispenserIO;
+import frc.team5115.subsystems.dispenser.DispenserIOSim;
+import frc.team5115.subsystems.dispenser.DispenserIOSparkMax;
 import frc.team5115.subsystems.drive.Drivetrain;
 import frc.team5115.subsystems.drive.GyroIO;
 import frc.team5115.subsystems.drive.GyroIONavx;
 import frc.team5115.subsystems.drive.ModuleIO;
 import frc.team5115.subsystems.drive.ModuleIOSim;
 import frc.team5115.subsystems.drive.ModuleIOSparkMax;
+import frc.team5115.subsystems.elevator.Elevator;
+import frc.team5115.subsystems.elevator.Elevator.Height;
+import frc.team5115.subsystems.elevator.ElevatorIO;
+import frc.team5115.subsystems.elevator.ElevatorIOSim;
+import frc.team5115.subsystems.elevator.ElevatorIOSparkMax;
 import frc.team5115.subsystems.vision.PhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -33,6 +42,8 @@ public class RobotContainer {
     private final Drivetrain drivetrain;
     private final PhotonVision vision;
     private final Climber climber;
+    private final Elevator elevator;
+    private final Dispenser dispenser;
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
@@ -50,8 +61,10 @@ public class RobotContainer {
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
-                gyro = new GyroIONavx();;
+                gyro = new GyroIONavx();
                 climber = new Climber(new ClimberIOSparkMax());
+                elevator = new Elevator(new ElevatorIOSparkMax());
+                dispenser = new Dispenser(new DispenserIOSparkMax());
                 drivetrain =
                         new Drivetrain(
                                 gyro,
@@ -66,6 +79,8 @@ public class RobotContainer {
                 // Sim robot, instantiate physics sim IO implementations
                 gyro = new GyroIO() {};
                 climber = new Climber(new ClimberIOSim());
+                elevator = new Elevator(new ElevatorIOSim());
+                dispenser = new Dispenser(new DispenserIOSim());
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
@@ -76,6 +91,8 @@ public class RobotContainer {
                 // Replayed robot, disable IO implementations
                 gyro = new GyroIO() {};
                 climber = new Climber(new ClimberIO() {});
+                elevator = new Elevator(new ElevatorIO() {});
+                dispenser = new Dispenser(new DispenserIO() {});
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
@@ -135,6 +152,10 @@ public class RobotContainer {
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
 
         joyDrive.start().onTrue(resetFieldOrientation());
+
+        joyDrive.a().onTrue(DriveCommands.intakeUntilCoral(dispenser, elevator));
+        joyDrive.b().onTrue(DriveCommands.dispense(dispenser, elevator, Height.L2));
+        joyDrive.y().onTrue(DriveCommands.dispense(dispenser, elevator, Height.L3));
 
         // manip control
         climber.setDefaultCommand(climber.climbBy(() -> joyManip.getLeftY()));
