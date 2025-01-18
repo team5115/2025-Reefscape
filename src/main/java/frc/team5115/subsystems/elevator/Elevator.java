@@ -11,29 +11,29 @@ import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
     // TODO determine max speed, max volts, kG for elevator
-    private final double maxSpeed = 4.0; // m/s
-    private final double maxVolts = 10.0;
-    private final double kgVolts = 0.0;
-    private final double ksVolts = 0.0;
+    private static final double maxSpeed = 4.0; // m/s
+    private static final double maxVolts = 10.0;
+    private static final double kgVolts = 0.0;
+    private static final double minHeightInches = 30; // TODO: find minimum height
 
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-    // private final PIDController velocityPID; // control m/s, output volts
     private final PIDController positionPID; // control meters, output m/s
     private final SysIdRoutine sysId;
     private Height height = Height.L2;
     private double velocitySetpoint;
 
     public enum Height {
-        L2(0),
-        INTAKE(0.3), // TODO: find actual heights
-        L3(0.6),
-        L4(1.5);
+        MINIMUM(minHeightInches),
+        L2(30),
+        INTAKE(30), // TODO: find intake height
+        L3(45),
+        L4(71);
 
-        public final double position;
+        public final double position; // meters
 
-        Height(double meters) {
-            position = meters;
+        Height(double inches) {
+            position = (inches - minHeightInches) * 0.0254;
         }
     }
 
@@ -43,15 +43,12 @@ public class Elevator extends SubsystemBase {
             case REAL:
             case REPLAY:
                 // TODO tune elevator feedforward and pid
-                // velocityPID = new PIDController(0.0, 0.0, 0.0);
                 positionPID = new PIDController(0.0, 0.0, 0.0);
                 break;
             case SIM:
-                // velocityPID = new PIDController(0.0, 0.0, 0.0);
                 positionPID = new PIDController(0.0, 0.0, 0.0);
                 break;
             default:
-                // velocityPID = new PIDController(0.0, 0.0, 0.0);
                 positionPID = new PIDController(0.0, 0.0, 0.0);
                 break;
         }
@@ -67,9 +64,7 @@ public class Elevator extends SubsystemBase {
                                 (voltage) -> io.setElevatorVoltage(voltage.magnitude()), null, this));
 
         height = Height.L2;
-        // velocityPID.setTolerance(0.1); // m/s
         positionPID.setTolerance(0.05); // meters
-        // velocityPID.setSetpoint(0);
         positionPID.setSetpoint(height.position);
     }
 
@@ -78,28 +73,20 @@ public class Elevator extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs(getName(), inputs);
         recordOutputs();
+        if (inputs.backCoralDetected) {
+            // Force the elvator to stay at the intake position when there is a coral in the intake
+            height = Height.INTAKE;
+        }
         velocitySetpoint =
-                MathUtil.clamp(positionPID.calculate(inputs.positionMeters), -maxSpeed, +maxSpeed);
-        // final double voltage =
-        // velocityPID.calculate(inputs.velocityMetersPerSecond, velocitySetpoint) + kgVolts;
-        // velocityPID.calculate(inputs.velocityMetersPerSecond, velocitySetpoint) + kgVolts;
-        // io.setElevatorVoltage(
-        //         MathUtil.clamp(voltage + ksVolts * Math.signum(voltage), -maxVolts, +maxVolts));
-
-        if (inputs.backCoralDetected) velocitySetpoint = 0;
-
+                MathUtil.clamp(positionPID.calculate(inputs.positionMeters, height.position), -maxSpeed, +maxSpeed);
         io.setElevatorVelocity(velocitySetpoint, kgVolts);
     }
 
     private void recordOutputs() {
         Logger.recordOutput("Elevator/Goal Height", height.position);
-
-        Logger.recordOutput("Elevator/Setpoint Height", positionPID.getSetpoint());
         Logger.recordOutput("Elevator/Setpoint Velocity", velocitySetpoint);
-
         Logger.recordOutput("Elevator/Actual Height", inputs.positionMeters);
         Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
-
         Logger.recordOutput("Elevator/At Goal?", atGoal());
         Logger.recordOutput("Elevator/State", getStateString());
         Logger.recordOutput("Elevator/Offset Delta", positionPID.getSetpoint() - inputs.positionMeters);
