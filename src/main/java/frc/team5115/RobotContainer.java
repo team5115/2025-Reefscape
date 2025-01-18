@@ -11,7 +11,7 @@ import frc.team5115.commands.DriveCommands;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIOSim;
-import frc.team5115.subsystems.climber.ClimberIOSparkMax;
+import frc.team5115.subsystems.climber.ClimberIORev;
 import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.dispenser.DispenserIO;
 import frc.team5115.subsystems.dispenser.DispenserIOSim;
@@ -62,7 +62,7 @@ public class RobotContainer {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
                 gyro = new GyroIONavx();
-                climber = new Climber(new ClimberIOSparkMax());
+                climber = new Climber(new ClimberIORev());
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser = new Dispenser(new DispenserIOSparkMax());
                 drivetrain =
@@ -156,10 +156,10 @@ public class RobotContainer {
         joyDrive.a().onTrue(DriveCommands.intakeUntilCoral(dispenser, elevator));
         joyDrive.b().onTrue(DriveCommands.dispense(dispenser, elevator, Height.L2));
         joyDrive.y().onTrue(DriveCommands.dispense(dispenser, elevator, Height.L3));
+    
 
-        // manip control
-        climber.setDefaultCommand(climber.climbBy(() -> joyManip.getLeftY()));
-
+        joyManip.rightStick().onTrue(climber.deploy());
+        
         // joyManip
         //         .rightBumper()
         //         .onTrue(
