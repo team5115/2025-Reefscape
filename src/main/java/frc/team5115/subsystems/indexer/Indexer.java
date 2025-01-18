@@ -4,19 +4,31 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
+import frc.team5115.subsystems.elevator.Elevator;
 
 public class Indexer extends SubsystemBase {
     private final IndexerIO io;
+    private final Elevator elevator;
     private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
 
-    public Indexer(IndexerIO io) {
+    public Indexer(IndexerIO io, Elevator elevator) {
         this.io = io;
+        this.elevator = elevator;
     }
 
+    public void indexAtIntake(Elevator elevator) { 
+        if (elevator.checkElevator()) { 
+            io.setPercent(+1);
+        }
+        else  {
+            io.setPercent(+0);
+        }
+    }
     @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Intake", inputs);
+        indexAtIntake(elevator);
     }
 
     public Command setSpeed(double percent) {
