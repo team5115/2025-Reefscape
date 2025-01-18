@@ -6,17 +6,14 @@ import org.littletonrobotics.junction.Logger;
 public class ClimberIOSim implements ClimberIO {
     private Value pistonState;
 
-    public ClimberIOSim() {
-    
-    }
-    
+    public ClimberIOSim() {}
+
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
         inputs.cageIntake = true;
-        Logger.recordOutput("PISTON STATE", pistonState);   
-        
+        Logger.recordOutput("PISTON STATE", pistonState);
     }
-    
+
     @Override
     public void extendSolenoid() {
         pistonState = Value.kForward;
@@ -31,10 +28,4 @@ public class ClimberIOSim implements ClimberIO {
     public void stopSolenoid() {
         pistonState = Value.kOff;
     }
-
-   
-
-    
-     
-    }
-
+}

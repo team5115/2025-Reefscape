@@ -10,11 +10,9 @@ public interface ClimberIO {
 
     public default void updateInputs(ClimberIOInputs inputs) {}
 
-    public default void extendSolenoid(){}
+    public default void extendSolenoid() {}
 
-    public default void retractSolenoid(){}
+    public default void retractSolenoid() {}
 
-    public default void stopSolenoid(){}
-    
- 
+    public default void stopSolenoid() {}
 }

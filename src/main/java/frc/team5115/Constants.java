@@ -31,11 +31,11 @@ public final class Constants {
     public static final byte PNEUMATIC_HUB_ID = -1;
     public static final byte CLIMB_FORWARD_CHANNEL = -1;
     public static final byte CLIMB_REVERSE_CHANNEL = -1;
-    
+
     public static final byte ELEVATOR_MOTOR_ID = -1;
     public static final byte INDEXER_MOTOR_ID = -1;
     public static final byte DISPENSER_MOTOR_ID = -1;
-    
+
     public static final byte CLIMBER_SENSOR_ID = -1;
     public static final byte BACK_SENSOR_ID = -1;
     public static final byte FRONT_SENSOR_ID = -1;

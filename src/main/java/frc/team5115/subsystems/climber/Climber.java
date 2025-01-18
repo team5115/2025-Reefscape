@@ -9,7 +9,6 @@ public class Climber extends SubsystemBase {
     private final ClimberIO io;
     private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
 
-  
     public Climber(ClimberIO io) {
         this.io = io;
     }
@@ -21,21 +20,20 @@ public class Climber extends SubsystemBase {
     }
 
     public Command deploy() {
-        return Commands.runOnce(() -> {
-            if (isCageIntakeDetected()) {
-                io.extendSolenoid();
-            }
-        }, this);
+        return Commands.runOnce(
+                () -> {
+                    if (isCageIntakeDetected()) {
+                        io.extendSolenoid();
+                    }
+                },
+                this);
     }
 
     public void stop() {
         io.stopSolenoid();
     }
-    
-    public boolean isCageIntakeDetected(){
+
+    public boolean isCageIntakeDetected() {
         return inputs.cageIntake;
     }
-
-
-  
 }
