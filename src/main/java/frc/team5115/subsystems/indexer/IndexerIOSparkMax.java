@@ -7,17 +7,13 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.team5115.Constants;
 
 public class IndexerIOSparkMax implements IndexerIO {
     private final SparkMax motor;
     private final RelativeEncoder encoder;
 
-    private final DigitalInput sensor;
-
     public IndexerIOSparkMax() {
-        sensor = new DigitalInput(Constants.INDEXER_SENSOR_ID);
         motor = new SparkMax(Constants.INDEXER_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
 
@@ -31,8 +27,6 @@ public class IndexerIOSparkMax implements IndexerIO {
         inputs.velocityRPM = encoder.getVelocity();
         inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
         inputs.currentAmps = motor.getOutputCurrent();
-
-        inputs.coralDetected = !sensor.get();
     }
 
     @Override

@@ -31,7 +31,7 @@ public final class Constants {
     public static final byte CLIMBER_LEFT_MOTOR_ID = 30;
     public static final byte CLIMBER_RIGHT_MOTOR_ID = 31;
     public static final byte ELEVATOR_MOTOR_ID = -1;
-    public static final byte INDEXER_MOTOR_ID = -1; // TODO: remove
+    public static final byte INDEXER_MOTOR_ID = -1;
     public static final byte DISPENSER_MOTOR_ID = -1;
 
     public static final byte SHOOTER_SENSOR_ID = -1;
@@ -39,7 +39,6 @@ public final class Constants {
     public static final byte CLIMB_RIGHT_SENSOR_ID = 9;
     public static final byte BACK_SENSOR_ID = -1;
     public static final byte FRONT_SENSOR_ID = -1;
-    public static final byte INDEXER_SENSOR_ID = -1; // TODO: remove
 
     public static final double LOOP_PERIOD_SECS = 0.02;
 

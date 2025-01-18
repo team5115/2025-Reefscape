@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants;
 import org.littletonrobotics.junction.Logger;
 
-
-
 public class Elevator extends SubsystemBase {
     // TODO determine max speed, max volts, kG for elevator
     private static final double maxSpeed = 4.0; // m/s
@@ -24,7 +22,6 @@ public class Elevator extends SubsystemBase {
     private final SysIdRoutine sysId;
     private Height height = Height.L2;
     private double velocitySetpoint;
-
 
     public enum Height {
         MINIMUM(minHeightInches),
@@ -81,7 +78,8 @@ public class Elevator extends SubsystemBase {
             height = Height.INTAKE;
         }
         velocitySetpoint =
-                MathUtil.clamp(positionPID.calculate(inputs.positionMeters, height.position), -maxSpeed, +maxSpeed);
+                MathUtil.clamp(
+                        positionPID.calculate(inputs.positionMeters, height.position), -maxSpeed, +maxSpeed);
         io.setElevatorVelocity(velocitySetpoint, kgVolts);
     }
 
@@ -101,7 +99,7 @@ public class Elevator extends SubsystemBase {
 
     public Command waitForDetectionState(boolean state, double timeout) {
         return Commands.waitUntil(() -> inputs.backCoralDetected == state).withTimeout(timeout);
-    }  
+    }
 
     public boolean checkElevator() {
         return atGoal() && positionPID.getSetpoint() == Height.INTAKE.position;
