@@ -28,15 +28,15 @@ public final class Constants {
         REPLAY
     }
 
-    public static final byte CLIMBER_LEFT_MOTOR_ID = 30;
-    public static final byte CLIMBER_RIGHT_MOTOR_ID = 31;
+    public static final byte PNEUMATIC_HUB_ID = -1;
+    public static final byte CLIMB_FORWARD_CHANNEL = -1;
+    public static final byte CLIMB_REVERSE_CHANNEL = -1;
+    
     public static final byte ELEVATOR_MOTOR_ID = -1;
     public static final byte INDEXER_MOTOR_ID = -1;
     public static final byte DISPENSER_MOTOR_ID = -1;
-
-    public static final byte SHOOTER_SENSOR_ID = -1;
-    public static final byte CLIMB_LEFT_SENSOR_ID = 8;
-    public static final byte CLIMB_RIGHT_SENSOR_ID = 9;
+    
+    public static final byte CLIMBER_SENSOR_ID = -1;
     public static final byte BACK_SENSOR_ID = -1;
     public static final byte FRONT_SENSOR_ID = -1;
 

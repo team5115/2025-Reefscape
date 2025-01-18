@@ -13,7 +13,7 @@ import frc.team5115.commands.DriveCommands;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIOSim;
-import frc.team5115.subsystems.climber.ClimberIOSparkMax;
+import frc.team5115.subsystems.climber.ClimberIORev;
 import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.dispenser.DispenserIO;
 import frc.team5115.subsystems.dispenser.DispenserIOSim;
@@ -67,7 +67,7 @@ public class RobotContainer {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
                 gyro = new GyroIONavx();
-                climber = new Climber(new ClimberIOSparkMax());
+                climber = new Climber(new ClimberIORev());
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser = new Dispenser(new DispenserIOSparkMax());
                 indexer = new Indexer(new IndexerIOSparkMax(), elevator);
@@ -153,6 +153,7 @@ public class RobotContainer {
         joyManip.y().onTrue(elevator.setHeight(Height.L3));
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
+        joyManip.rightStick().onTrue(climber.deploy());
     }
 
     private Command setRobotRelative(boolean state) {
