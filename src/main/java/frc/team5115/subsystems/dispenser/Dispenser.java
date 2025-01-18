@@ -31,6 +31,10 @@ public class Dispenser extends SubsystemBase {
         return setSpeed(+1);
     }
 
+    public Command reverse() {
+        return setSpeed(-1);
+    }
+
     public Command stop() {
         return setSpeed(0);
     }

@@ -9,9 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.team5115.Constants.SwerveConstants;
-import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.drive.Drivetrain;
-import frc.team5115.subsystems.elevator.Elevator;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -24,25 +22,6 @@ public class DriveCommands {
      * Field or robot relative drive command using two joysticks (controlling linear and angular
      * velocities).
      */
-    public static Command intakeUntilCoral(Dispenser dispenser, Elevator elevator) {
-        return Commands.sequence(
-                dispenser.dispense(),
-                elevator.setHeight(Elevator.Height.INTAKE),
-                dispenser
-                        .waitForDetectionState(true, 5.0)
-                        .alongWith(elevator.waitForDetectionState(false, 10.0)),
-                dispenser.stop());
-    }
-
-    public static Command dispense(Dispenser dispenser, Elevator elevator, Elevator.Height state) {
-        return Commands.sequence(
-                elevator.setHeightAndWait(state, 3.0),
-                dispenser.dispense(),
-                dispenser.waitForDetectionState(false, 5.0),
-                dispenser.stop(),
-                elevator.setHeight(Elevator.Height.INTAKE));
-    }
-
     public static Command joystickDrive(
             Drivetrain drivetrain,
             BooleanSupplier robotRelative,

@@ -1,12 +1,14 @@
 package frc.team5115;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.DriveCommands;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
@@ -27,6 +29,8 @@ import frc.team5115.subsystems.elevator.Elevator.Height;
 import frc.team5115.subsystems.elevator.ElevatorIO;
 import frc.team5115.subsystems.elevator.ElevatorIOSim;
 import frc.team5115.subsystems.elevator.ElevatorIOSparkMax;
+import frc.team5115.subsystems.indexer.Indexer;
+import frc.team5115.subsystems.indexer.IndexerIOSparkMax;
 import frc.team5115.subsystems.vision.PhotonVision;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -44,6 +48,7 @@ public class RobotContainer {
     private final Climber climber;
     private final Elevator elevator;
     private final Dispenser dispenser;
+    private final Indexer indexer;
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
@@ -65,6 +70,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIOSparkMax());
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser = new Dispenser(new DispenserIOSparkMax());
+                indexer = new Indexer(new IndexerIOSparkMax(), elevator);
                 drivetrain =
                         new Drivetrain(
                                 gyro,
@@ -81,6 +87,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIOSim());
                 elevator = new Elevator(new ElevatorIOSim());
                 dispenser = new Dispenser(new DispenserIOSim());
+                indexer = new Indexer(new IndexerIOSparkMax(), elevator);
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
@@ -93,6 +100,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIO() {});
                 elevator = new Elevator(new ElevatorIO() {});
                 dispenser = new Dispenser(new DispenserIO() {});
+                indexer = new Indexer(new IndexerIOSparkMax(), elevator);
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
@@ -102,7 +110,7 @@ public class RobotContainer {
 
         // Register auto commands for pathplanner
         // PhotonVision is passed in here to prevent warnings, i.e. "unused variable: vision"
-        registerCommands(drivetrain, vision);
+        registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -120,18 +128,6 @@ public class RobotContainer {
         // autoChooser.addOption(
         //         "Drive SysId (Dynamic Reverse)",
         //         drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-        // autoChooser.addOption(
-        //         "Shooter SysId (Quasistatic Forward)",
-        //         shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        // autoChooser.addOption(
-        //         "Shooter SysId (Quasistatic Reverse)",
-        //         shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        // autoChooser.addOption(
-        //         "Shooter SysId (Dynamic Forward)",
-        //         shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        // autoChooser.addOption(
-        //         "Shooter SysId (Dynamic Reverse)",
-        //         shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         configureButtonBindings();
     }
@@ -150,25 +146,13 @@ public class RobotContainer {
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
-
         joyDrive.start().onTrue(resetFieldOrientation());
 
-        joyDrive.a().onTrue(DriveCommands.intakeUntilCoral(dispenser, elevator));
-        joyDrive.b().onTrue(DriveCommands.dispense(dispenser, elevator, Height.L2));
-        joyDrive.y().onTrue(DriveCommands.dispense(dispenser, elevator, Height.L3));
-
-        // manip control
-        climber.setDefaultCommand(climber.climbBy(() -> joyManip.getLeftY()));
-
-        // joyManip
-        //         .rightBumper()
-        //         .onTrue(
-        //                 Commands.sequence(
-        //                         DriveCommands.automaticallyPrepareShoot(drivetrain, arm, intake,
-        // feeder, shooter),
-        //                         DriveCommands.feed(intake, feeder),
-        //                         shooter.stop()))
-        //         .onFalse(DriveCommands.stow(arm, intake, feeder, shooter));
+        joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
+        joyManip.b().onTrue(elevator.setHeight(Height.L2));
+        joyManip.y().onTrue(elevator.setHeight(Height.L3));
+        joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
+        joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
     }
 
     private Command setRobotRelative(boolean state) {
@@ -182,14 +166,27 @@ public class RobotContainer {
     public void robotPeriodic() {}
 
     /**
-     * Registers commands for pathplanner to use in autos
+     * Register commands for pathplanner to use in autos
      *
-     * @param shooter the shooter subsystem
-     * @param arm the arm subsystem
-     * @param drivetrain the drivetrain subsytem (not currently used)
-     * @param photonVision the photonvision subsystem (not currently used)
+     * @param drivetrain (not used)
+     * @param vision (not used)
+     * @param elevator
+     * @param dispenser
+     * @param indexer (not used)
+     * @param climber (not used)
      */
-    public static void registerCommands(Drivetrain drivetrain, PhotonVision vision) {}
+    public static void registerCommands(
+            Drivetrain drivetrain,
+            PhotonVision vision,
+            Elevator elevator,
+            Dispenser dispenser,
+            Indexer indexer,
+            Climber climber) {
+        NamedCommands.registerCommand("L2", AutoCommands.dispense(dispenser, elevator, Height.L2));
+        NamedCommands.registerCommand("L3", AutoCommands.dispense(dispenser, elevator, Height.L3));
+        NamedCommands.registerCommand("L4", AutoCommands.dispense(dispenser, elevator, Height.L4));
+        NamedCommands.registerCommand("Intake", AutoCommands.intakeUntilCoral(dispenser, elevator));
+    }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.

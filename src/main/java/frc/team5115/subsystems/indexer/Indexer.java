@@ -14,18 +14,15 @@ public class Indexer extends SubsystemBase {
         this.elevator = elevator;
     }
 
-    public void indexAtIntake() {
+    @Override
+    public void periodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs("Intake", inputs);
+
         if (elevator.checkElevator()) {
             io.setPercent(+1);
         } else {
             io.setPercent(+0);
         }
-    }
-
-    @Override
-    public void periodic() {
-        io.updateInputs(inputs);
-        Logger.processInputs("Intake", inputs);
-        indexAtIntake();
     }
 }
