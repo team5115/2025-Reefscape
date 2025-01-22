@@ -43,15 +43,15 @@ public final class Constants {
     public static final double LOOP_PERIOD_SECS = 0.02;
 
     public static class SwerveConstants {
+        public static final byte BACK_LEFT_DRIVE_ID = 2;
         public static final byte FRONT_LEFT_DRIVE_ID = 4;
-        public static final byte FRONT_RIGHT_DRIVE_ID = 22;
-        public static final byte BACK_LEFT_DRIVE_ID = 24;
-        public static final byte BACK_RIGHT_DRIVE_ID = 26;
+        public static final byte BACK_RIGHT_DRIVE_ID = 6;
+        public static final byte FRONT_RIGHT_DRIVE_ID = 8;
 
-        public static final byte FRONT_LEFT_TURN_ID = 29;
-        public static final byte FRONT_RIGHT_TURN_ID = 28;
-        public static final byte BACK_LEFT_TURN_ID = 23;
-        public static final byte BACK_RIGHT_TURN_ID = 25;
+        public static final byte BACK_LEFT_TURN_ID = 1;
+        public static final byte FRONT_LEFT_TURN_ID = 3;
+        public static final byte BACK_RIGHT_TURN_ID = 5;
+        public static final byte FRONT_RIGHT_TURN_ID = 7;
 
         // ! TODO determine mass and moi of robot, and wheel cof
         public static final Mass ROBOT_MASS = Pounds.of(83.6);
