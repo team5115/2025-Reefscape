@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.DriveCommands;
@@ -101,6 +102,11 @@ public class RobotContainer {
         // Register auto commands for pathplanner
         // PhotonVision is passed in here to prevent warnings, i.e. "unused variable: vision"
         // registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
+
+        NamedCommands.registerCommand("L2", new InstantCommand());
+        NamedCommands.registerCommand("L3", new InstantCommand());
+        NamedCommands.registerCommand("L4", new InstantCommand());
+        NamedCommands.registerCommand("Intake", new InstantCommand());
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
