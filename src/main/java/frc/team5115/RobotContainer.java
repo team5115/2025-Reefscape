@@ -44,11 +44,11 @@ public class RobotContainer {
     // Subsystems
     private final GyroIO gyro;
     private final Drivetrain drivetrain;
-    private final PhotonVision vision;
-    private final Climber climber;
-    private final Elevator elevator;
-    private final Dispenser dispenser;
-    private final Indexer indexer;
+    // private final PhotonVision vision;
+    // private final Climber climber;
+    // private final Elevator elevator;
+    // private final Dispenser dispenser;
+    // private final Indexer indexer;
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
@@ -67,10 +67,10 @@ public class RobotContainer {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
                 gyro = new GyroIONavx();
-                climber = new Climber(new ClimberIORev());
-                elevator = new Elevator(new ElevatorIOSparkMax());
-                dispenser = new Dispenser(new DispenserIOSparkMax());
-                indexer = new Indexer(new IndexerIOSparkMax(), elevator);
+                // climber = new Climber(new ClimberIORev());
+                // elevator = new Elevator(new ElevatorIOSparkMax());
+                // dispenser = new Dispenser(new DispenserIOSparkMax());
+                // indexer = new Indexer(new IndexerIOSparkMax(), elevator);
                 drivetrain =
                         new Drivetrain(
                                 gyro,
@@ -78,39 +78,39 @@ public class RobotContainer {
                                 new ModuleIOSparkMax(1),
                                 new ModuleIOSparkMax(2),
                                 new ModuleIOSparkMax(3));
-                vision = new PhotonVision(drivetrain);
+                // vision = new PhotonVision(drivetrain);
                 // vision = null;
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
                 gyro = new GyroIO() {};
-                climber = new Climber(new ClimberIOSim());
-                elevator = new Elevator(new ElevatorIOSim());
-                dispenser = new Dispenser(new DispenserIOSim());
-                indexer = new Indexer(new IndexerIOSparkMax(), elevator);
+                // climber = new Climber(new ClimberIOSim());
+                // elevator = new Elevator(new ElevatorIOSim());
+                // dispenser = new Dispenser(new DispenserIOSim());
+                // indexer = new Indexer(new IndexerIOSparkMax(), elevator);
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
-                vision = null;
+                // vision = null;
                 break;
 
             default:
                 // Replayed robot, disable IO implementations
                 gyro = new GyroIO() {};
-                climber = new Climber(new ClimberIO() {});
-                elevator = new Elevator(new ElevatorIO() {});
-                dispenser = new Dispenser(new DispenserIO() {});
-                indexer = new Indexer(new IndexerIOSparkMax(), elevator);
+                // climber = new Climber(new ClimberIO() {});
+                // elevator = new Elevator(new ElevatorIO() {});
+                // dispenser = new Dispenser(new DispenserIO() {});
+                // indexer = new Indexer(new IndexerIOSparkMax(), elevator);
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
-                vision = null;
+                // vision = null;
                 break;
         }
 
         // Register auto commands for pathplanner
         // PhotonVision is passed in here to prevent warnings, i.e. "unused variable: vision"
-        registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
+        // registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -148,12 +148,12 @@ public class RobotContainer {
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
         joyDrive.start().onTrue(resetFieldOrientation());
 
-        joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
-        joyManip.b().onTrue(elevator.setHeight(Height.L2));
-        joyManip.y().onTrue(elevator.setHeight(Height.L3));
-        joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
-        joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        joyManip.rightStick().onTrue(climber.deploy());
+        // joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
+        // joyManip.b().onTrue(elevator.setHeight(Height.L2));
+        // joyManip.y().onTrue(elevator.setHeight(Height.L3));
+        // joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
+        // joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
+        // joyManip.rightStick().onTrue(climber.deploy());
     }
 
     private Command setRobotRelative(boolean state) {

@@ -54,8 +54,8 @@ public final class Constants {
         public static final byte BACK_RIGHT_TURN_ID = 25;
 
         // ! TODO determine mass and moi of robot, and wheel cof
-        public static final Mass ROBOT_MASS = Pounds.of(70);
-        public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(6);
+        public static final Mass ROBOT_MASS = Pounds.of(83.6);
+        public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(4);
         public static final double WHEEL_COF = 1.55;
         public static final double MAX_LINEAR_SPEED = 4.8; // meters per second
         public static final double TRACK_WIDTH_X =
