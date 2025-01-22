@@ -62,7 +62,7 @@
           }
         },
         {
-          "type": "race",
+          "type": "sequential",
           "data": {
             "commands": [
               {
@@ -100,15 +100,9 @@
           }
         },
         {
-          "type": "race",
+          "type": "sequential",
           "data": {
             "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": []
-                }
-              },
               {
                 "type": "path",
                 "data": {
