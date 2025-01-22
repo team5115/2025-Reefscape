@@ -116,7 +116,7 @@ public class Drivetrain extends SubsystemBase {
                                 SwerveConstants.WHEEL_COF,
                                 DCMotor.getNEO(1),
                                 SwerveConstants.DrivingMotorReduction,
-                                25, // less than the real current limit
+                                SwerveConstants.DrivingMotorCurrentLimit, // less than the real current limit
                                 1),
                         SwerveConstants.MODULE_TRANSLATIONS),
                 () -> false,
