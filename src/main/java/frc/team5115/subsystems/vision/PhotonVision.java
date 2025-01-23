@@ -58,8 +58,8 @@ public class PhotonVision extends SubsystemBase {
             if (result.hasTargets()) {
                 // At least one AprilTag was seen by the camera
                 for (var target : result.getTargets()) {
-                    if ((target.getFiducialId() > 6 && target.getFiducialId() < 11)
-                            || (target.getFiducialId() > 17 && target.getFiducialId() < 22)) {
+                    if ((target.getFiducialId() >= 6 && target.getFiducialId() <= 11)
+                            || (target.getFiducialId() >= 17 && target.getFiducialId() <= 22)) {
                         Transform3d transform =
                                 target.getBestCameraToTarget().plus(VisionConstants.robotToCam.inverse());
                         pose =
