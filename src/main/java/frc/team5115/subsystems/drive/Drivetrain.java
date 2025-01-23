@@ -214,10 +214,19 @@ public class Drivetrain extends SubsystemBase {
                 this);
     }
 
+    private Pose2d lastGoodPose;
+
     private Command driveByAutoAimPids(Supplier<Pose2d> poseSupplier) {
         return Commands.runEnd(
                 () -> {
-                    final var pose = poseSupplier.get();
+                    final var newPose = poseSupplier.get();
+                    if (newPose != null) {
+                        lastGoodPose = newPose;
+                    }
+                    if (lastGoodPose == null) {
+                        return;
+                    }
+                    final var pose = lastGoodPose;
                     final var omega = anglePid.calculate(pose.getRotation().getRadians());
                     final var xVelocity = xPid.calculate(pose.getX());
                     final var yVelocity = yPid.calculate(pose.getY());
