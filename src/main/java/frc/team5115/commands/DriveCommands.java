@@ -17,6 +17,7 @@ import frc.team5115.subsystems.drive.Drivetrain;
 import frc.team5115.subsystems.feeder.Feeder;
 import frc.team5115.subsystems.intake.Intake;
 import frc.team5115.subsystems.shooter.Shooter;
+import frc.team5115.subsystems.vision.PhotonVision;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -31,9 +32,16 @@ public class DriveCommands {
     }
 
     public static Command automaticallyPrepareShoot(
-            Drivetrain drivetrain, Arm arm, Intake intake, Feeder feeder, Shooter shooter) {
+            Drivetrain drivetrain,
+            Arm arm,
+            Intake intake,
+            Feeder feeder,
+            Shooter shooter,
+            PhotonVision vision) {
         return drivetrain
-                .driveToPosition(new Pose2d()) // ! currently a zero pose, may need to be changed
+                .driveToPosition(
+                        new Pose2d(),
+                        vision::getPoseRelative) // ! currently a zero pose, may need to be changed
                 .alongWith(prepareShoot(arm, intake, feeder, shooter, State.FAR_SHOT))
                 .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }

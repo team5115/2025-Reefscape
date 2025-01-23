@@ -60,7 +60,8 @@ public class PhotonVision extends SubsystemBase {
                 for (var target : result.getTargets()) {
                     if ((target.getFiducialId() > 6 && target.getFiducialId() < 11)
                             || (target.getFiducialId() > 17 && target.getFiducialId() < 22)) {
-                        Transform3d transform = target.getBestCameraToTarget();
+                        Transform3d transform =
+                                target.getBestCameraToTarget().plus(VisionConstants.robotToCam.inverse());
                         pose =
                                 new Pose2d(
                                         transform.getX(), transform.getY(), transform.getRotation().toRotation2d());
