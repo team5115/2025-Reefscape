@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants.SwerveConstants;
 import frc.team5115.util.LocalADStarAK;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -196,9 +197,9 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator.update(rawGyroRotation, modulePositions);
     }
 
-    public Command driveToPosition(Pose2d goalPose) {
+    public Command driveToPosition(Pose2d goalPose, Supplier<Pose2d> poseSupplier) {
         return setAutoAimPids(goalPose)
-                .andThen(driveByAutoAimPids())
+                .andThen(driveByAutoAimPids(poseSupplier))
                 .until(() -> anglePid.atSetpoint() && xPid.atSetpoint() && yPid.atSetpoint());
     }
 
@@ -213,10 +214,10 @@ public class Drivetrain extends SubsystemBase {
                 this);
     }
 
-    private Command driveByAutoAimPids() {
+    private Command driveByAutoAimPids(Supplier<Pose2d> poseSupplier) {
         return Commands.runEnd(
                 () -> {
-                    final var pose = getPose();
+                    final var pose = poseSupplier.get();
                     final var omega = anglePid.calculate(pose.getRotation().getRadians());
                     final var xVelocity = xPid.calculate(pose.getX());
                     final var yVelocity = yPid.calculate(pose.getY());
@@ -236,6 +237,8 @@ public class Drivetrain extends SubsystemBase {
                 this::stop,
                 this);
     }
+
+    // public Command dirve
 
     /**
      * Runs the drive at the desired velocity.

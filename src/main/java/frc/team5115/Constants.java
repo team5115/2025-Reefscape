@@ -104,12 +104,12 @@ public final class Constants {
 
     public static class VisionConstants {
         public static final String cameraName = "FOV_120_Degrees";
-        public static final double camYaw = Math.toRadians(+180.0);
-        public static final double camPitch = Math.toRadians(-37.0);
+        public static final double camYaw = Math.toRadians(0);
+        public static final double camPitch = Math.toRadians(-53);
         public static final double camRoll = Math.toRadians(0);
-        public static final double camZ = +0.57;
-        public static final double camX = -0.35;
-        public static final double camY = -0.06;
+        public static final double camZ = +0.30;
+        public static final double camX = -0.25;
+        public static final double camY = -0.02;
         public static final Transform3d robotToCam =
                 new Transform3d(camX, camY, camZ, new Rotation3d(camRoll, camPitch, camYaw));
     }
