@@ -35,7 +35,7 @@ public class RobotContainer {
     // Subsystems
     private final GyroIO gyro;
     private final Drivetrain drivetrain;
-    // private final PhotonVision vision;
+    private final PhotonVision vision;
     // private final Climber climber;
     // private final Elevator elevator;
     // private final Dispenser dispenser;
@@ -69,7 +69,7 @@ public class RobotContainer {
                                 new ModuleIOSparkMax(1),
                                 new ModuleIOSparkMax(2),
                                 new ModuleIOSparkMax(3));
-                // vision = new PhotonVision(drivetrain);
+                vision = new PhotonVision(drivetrain);
                 // vision = null;
                 break;
             case SIM:
@@ -82,7 +82,7 @@ public class RobotContainer {
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
-                // vision = null;
+                vision = null;
                 break;
 
             default:
@@ -95,7 +95,7 @@ public class RobotContainer {
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
-                // vision = null;
+                vision = null;
                 break;
         }
 
@@ -143,6 +143,9 @@ public class RobotContainer {
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
         joyDrive.start().onTrue(resetFieldOrientation());
+        joyDrive
+                .rightTrigger()
+                .onTrue(drivetrain.driveToPosition(new Pose2d(), vision::getPoseRelative));
 
         // joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         // joyManip.b().onTrue(elevator.setHeight(Height.L2));
