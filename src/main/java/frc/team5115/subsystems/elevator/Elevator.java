@@ -15,6 +15,9 @@ public class Elevator extends SubsystemBase {
     private static final double maxVolts = 10.0;
     private static final double kgVolts = 0.0;
     private static final double minHeightInches = 30; // TODO: find minimum height
+    private static final double firstHeight = 0;
+    private static final double secondHeight = 0;
+    private static final double thirdHeight = 0;
 
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
@@ -22,6 +25,7 @@ public class Elevator extends SubsystemBase {
     private final SysIdRoutine sysId;
     private Height height = Height.L2;
     private double velocitySetpoint;
+    public double offset;
 
     public enum Height {
         MINIMUM(minHeightInches),
@@ -68,10 +72,23 @@ public class Elevator extends SubsystemBase {
         positionPID.setSetpoint(height.position);
     }
 
+    public double getActualHeight() {
+        return inputs.positionMeters - offset;
+    }
+
     @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs(getName(), inputs);
+        if (inputs.firstMagnetDetected == true) {
+            offset = firstHeight - inputs.positionMeters;
+        }
+        if (inputs.secondMagnetDetected == true) {
+            offset = secondHeight - inputs.positionMeters;
+        }
+        if (inputs.thirdMagnetDetected == true) {
+            offset = thirdHeight - inputs.positionMeters;
+        }
         recordOutputs();
         if (inputs.backCoralDetected) {
             // Force the elvator to stay at the intake position when there is a coral in the intake
@@ -79,18 +96,18 @@ public class Elevator extends SubsystemBase {
         }
         velocitySetpoint =
                 MathUtil.clamp(
-                        positionPID.calculate(inputs.positionMeters, height.position), -maxSpeed, +maxSpeed);
+                        positionPID.calculate(getActualHeight(), height.position), -maxSpeed, +maxSpeed);
         io.setElevatorVelocity(velocitySetpoint, kgVolts);
     }
 
     private void recordOutputs() {
         Logger.recordOutput("Elevator/Goal Height", height.position);
         Logger.recordOutput("Elevator/Setpoint Velocity", velocitySetpoint);
-        Logger.recordOutput("Elevator/Actual Height", inputs.positionMeters);
+        Logger.recordOutput("Elevator/Actual Height", getActualHeight());
         Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
         Logger.recordOutput("Elevator/At Goal?", atGoal());
         Logger.recordOutput("Elevator/State", getStateString());
-        Logger.recordOutput("Elevator/Offset Delta", positionPID.getSetpoint() - inputs.positionMeters);
+        Logger.recordOutput("Elevator/Offset Delta", positionPID.getSetpoint() - getActualHeight());
     }
 
     public Command waitForSetpoint(double timeout) {
