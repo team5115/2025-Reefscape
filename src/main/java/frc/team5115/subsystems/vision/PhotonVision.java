@@ -3,6 +3,7 @@ package frc.team5115.subsystems.vision;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team5115.Constants.VisionConstants;
@@ -59,11 +60,14 @@ public class PhotonVision extends SubsystemBase {
                 for (var target : result.getTargets()) {
                     if ((target.getFiducialId() >= 6 && target.getFiducialId() <= 11)
                             || (target.getFiducialId() >= 17 && target.getFiducialId() <= 22)) {
+                        // ? What is going on here? Which way is forward?
                         Transform3d transform =
                                 target.getBestCameraToTarget().plus(VisionConstants.robotToCam.inverse());
                         pose =
                                 new Pose2d(
-                                        transform.getX(), transform.getY(), transform.getRotation().toRotation2d());
+                                        transform.getX(),
+                                        transform.getY(),
+                                        transform.getRotation().toRotation2d().plus(Rotation2d.fromDegrees(180)));
                     }
                 }
             }

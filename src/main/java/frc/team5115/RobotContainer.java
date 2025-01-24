@@ -145,7 +145,9 @@ public class RobotContainer {
         joyDrive.start().onTrue(resetFieldOrientation());
         joyDrive
                 .rightTrigger()
-                .onTrue(drivetrain.driveToPosition(new Pose2d(), vision::getPoseRelative));
+                .onTrue(drivetrain.setAutoAimPids(new Pose2d(), vision::getPoseRelative))
+                .whileTrue(drivetrain.driveByAutoAimPids(vision::getPoseRelative))
+                .onFalse(Commands.runOnce(drivetrain::stop, drivetrain));
 
         // joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         // joyManip.b().onTrue(elevator.setHeight(Height.L2));
