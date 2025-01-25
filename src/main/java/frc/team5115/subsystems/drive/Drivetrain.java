@@ -36,8 +36,8 @@ public class Drivetrain extends SubsystemBase {
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
     private final Module[] modules = new Module[4]; // FL, FR, BL, BR
     private final SysIdRoutine sysId;
-    
-    private Pose2d lastGoodPose; // from vision, can be null 
+
+    private Pose2d lastGoodPose; // from vision, can be null
 
     // TODO tune drive pids
     private final double linear_kp = 1.9;
@@ -199,48 +199,21 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator.update(rawGyroRotation, modulePositions);
     }
 
-    public Command driveToPosition(Pose2d goalPose, Supplier<Pose2d> poseSupplier) {
-        return setAutoAimPids(goalPose, poseSupplier).andThen(driveByAutoAimPids(poseSupplier));
-    }
-
-    public Command setAutoAimPids(Pose2d goalPose, Supplier<Pose2d> poseSupplier) {
-        return Commands.runOnce(
-                () -> {
-                    // ! This is scuffed but we need to make sure the pids know they are not at goal
-                    final var newPose = poseSupplier.get();
-                    if (newPose != null) {
-                        lastGoodPose = newPose;
-                    }
-                    if (lastGoodPose == null) {
-                        return;
-                    }
-                    anglePid.calculate(lastGoodPose.getRotation().getRadians());
-                    xPid.calculate(lastGoodPose.getX());
-                    yPid.calculate(lastGoodPose.getY());
-                    // ! END OF SCUFFED COPY PASTED SECTION
-                    xPid.setGoal(goalPose.getX());
-                    yPid.setGoal(goalPose.getY());
-                    anglePid.setGoal(goalPose.getRotation().getRadians());
-                    System.out.print("Setting auto aim pids! at goal? ");
-                    System.out.println(anglePid.atGoal() && xPid.atGoal() && yPid.atGoal());
-                },
-                this);
-    }
-
-    public Command driveByAutoAimPids(Supplier<Pose2d> poseSupplier) {
+    public Command driveByAutoAimPids(Pose2d goalPose, Supplier<Pose2d> poseSupplier) {
         return Commands.runEnd(
                         () -> {
                             final var newPose = poseSupplier.get();
                             if (newPose != null) {
                                 lastGoodPose = newPose;
                             }
-                            if (lastGoodPose == null) {
-                                return;
-                            }
+                            if (lastGoodPose == null) return;
+
                             Logger.recordOutput("Vision/LastGoodPose", lastGoodPose);
-                            final var omega = anglePid.calculate(lastGoodPose.getRotation().getRadians());
-                            final var xVelocity = xPid.calculate(lastGoodPose.getX());
-                            final var yVelocity = yPid.calculate(lastGoodPose.getY());
+                            final var omega =
+                                    anglePid.calculate(
+                                            lastGoodPose.getRotation().getRadians(), goalPose.getRotation().getRadians());
+                            final var xVelocity = xPid.calculate(lastGoodPose.getX(), goalPose.getX());
+                            final var yVelocity = yPid.calculate(lastGoodPose.getY(), goalPose.getX());
 
                             Logger.recordOutput("AutoAim/xVelocity", xVelocity);
                             Logger.recordOutput("AutoAim/yVelocity", yVelocity);
@@ -257,7 +230,11 @@ public class Drivetrain extends SubsystemBase {
                         },
                         this::stop,
                         this)
-                .until(() -> anglePid.atGoal() && xPid.atGoal() && yPid.atGoal());
+                .until(this::autoAimPidsAtGoal);
+    }
+
+    public boolean autoAimPidsAtGoal() {
+        return anglePid.atGoal() && xPid.atGoal() && yPid.atGoal();
     }
 
     /**
