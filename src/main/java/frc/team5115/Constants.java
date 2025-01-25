@@ -108,7 +108,7 @@ public final class Constants {
         public static final double camPitch = Math.toRadians(0);
         public static final double camRoll = Math.toRadians(0);
         public static final double camZ = +0.30;
-        public static final double camX = -0.25;
+        public static final double camX = +0.16;
         public static final double camY = 0;
         public static final Transform3d robotToCam =
                 new Transform3d(camX, camY, camZ, new Rotation3d(camRoll, camPitch, camYaw));

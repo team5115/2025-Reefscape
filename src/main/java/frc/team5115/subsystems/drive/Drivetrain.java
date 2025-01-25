@@ -12,6 +12,8 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -25,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants.SwerveConstants;
+import frc.team5115.subsystems.vision.PhotonVision;
 import frc.team5115.util.LocalADStarAK;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -196,45 +199,45 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator.update(rawGyroRotation, modulePositions);
     }
 
-    public Command driveByAutoAimPids(
-            Supplier<Pose2d> goalPoseSupplier, Supplier<Pose2d> visionPoseSupplier) {
-        return Commands.sequence(
-                turnByAutoAim(visionPoseSupplier),
-                driveByAutoAim(goalPoseSupplier, visionPoseSupplier),
-                turnByAutoAim(visionPoseSupplier),
-                Commands.runOnce(this::stop, this));
+    public Command driveToNearestScoringSpot(double alignmentOffset) {
+        return driveByAutoAimPids(
+                () -> {
+                    final double tagDistance = 0.6;
+                    final var tagPose = PhotonVision.getNearestReefTagPose(getPose());
+                    final var offset =
+                            tagPose.transformBy(
+                                    new Transform2d(
+                                            new Translation2d(tagDistance, alignmentOffset), Rotation2d.k180deg));
+                    Logger.recordOutput("AutoAim/Tag Pose", tagPose);
+                    return offset;
+                });
     }
 
-    private Command turnByAutoAim(Supplier<Pose2d> visionPoseSupplier) {
+    private Command driveByAutoAimPids(Supplier<Pose2d> goalSupplier) {
         return Commands.runEnd(
-                        () -> {
-                            final double delta =
-                                    -visionPoseSupplier.get().getRotation().minus(Rotation2d.k180deg).getRadians();
-                            final var omega = anglePid.calculate(delta, 0);
-                            Logger.recordOutput("AutoAim/Omega", omega);
-                            Logger.recordOutput("AutoAim/Delta", delta);
-                            runVelocity(new ChassisSpeeds(0, 0, omega));
-                        },
-                        this::stop,
-                        this)
-                .until(() -> anglePid.atGoal());
-    }
+                () -> {
+                    final var goalPose = goalSupplier.get();
+                    final var pose = getPose();
+                    final var omega =
+                            anglePid.calculate(
+                                    pose.getRotation().getRadians(), goalPose.getRotation().getRadians());
+                    final var xVelocity = xPid.calculate(pose.getX(), goalPose.getX());
+                    final var yVelocity = yPid.calculate(pose.getY(), goalPose.getY());
 
-    private Command driveByAutoAim(Supplier<Pose2d> goalSupplier, Supplier<Pose2d> actualSupplier) {
-        return Commands.runEnd(
-                        () -> {
-                            final var goalPose = goalSupplier.get();
-                            final var actualPose = actualSupplier.get();
-                            final var xVelocity = -xPid.calculate(actualPose.getX(), goalPose.getX());
-                            final var yVelocity = -yPid.calculate(actualPose.getY(), goalPose.getX());
-                            Logger.recordOutput("AutoAim/Goal Pose", goalPose);
-                            Logger.recordOutput("AutoAim/xVelocity", xVelocity);
-                            Logger.recordOutput("AutoAim/yVelocity", yVelocity);
-                            runVelocity(new ChassisSpeeds(xVelocity, yVelocity, 0));
-                        },
-                        this::stop,
-                        this)
-                .until(() -> xPid.atGoal() && yPid.atGoal());
+                    Logger.recordOutput("AutoAim/xVelocity", xVelocity);
+                    Logger.recordOutput("AutoAim/yVelocity", yVelocity);
+                    Logger.recordOutput("AutoAim/omega", omega);
+                    Logger.recordOutput(
+                            "AutoAim/Goal",
+                            new Pose2d(
+                                    new Translation2d(xPid.getGoal().position, yPid.getGoal().position),
+                                    new Rotation2d(anglePid.getGoal().position)));
+
+                    runVelocity(
+                            ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getRotation()));
+                },
+                this::stop,
+                this);
     }
 
     /**
