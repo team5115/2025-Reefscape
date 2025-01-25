@@ -43,15 +43,15 @@ public final class Constants {
     public static final double LOOP_PERIOD_SECS = 0.02;
 
     public static class SwerveConstants {
-        public static final byte BACK_LEFT_DRIVE_ID = 2;
-        public static final byte FRONT_LEFT_DRIVE_ID = 4;
-        public static final byte BACK_RIGHT_DRIVE_ID = 6;
-        public static final byte FRONT_RIGHT_DRIVE_ID = 8;
+        public static final byte BACK_LEFT_DRIVE_ID = 8;
+        public static final byte FRONT_LEFT_DRIVE_ID = 6;
+        public static final byte BACK_RIGHT_DRIVE_ID = 4;
+        public static final byte FRONT_RIGHT_DRIVE_ID = 2;
 
-        public static final byte BACK_LEFT_TURN_ID = 1;
-        public static final byte FRONT_LEFT_TURN_ID = 3;
-        public static final byte BACK_RIGHT_TURN_ID = 5;
-        public static final byte FRONT_RIGHT_TURN_ID = 7;
+        public static final byte BACK_LEFT_TURN_ID = 7;
+        public static final byte FRONT_LEFT_TURN_ID = 5;
+        public static final byte BACK_RIGHT_TURN_ID = 3;
+        public static final byte FRONT_RIGHT_TURN_ID = 1;
 
         // ! TODO determine mass and moi of robot, and wheel cof
         public static final Mass ROBOT_MASS = Pounds.of(83.6);
@@ -109,7 +109,7 @@ public final class Constants {
         public static final double camRoll = Math.toRadians(0);
         public static final double camZ = +0.30;
         public static final double camX = -0.25;
-        public static final double camY = -0.02;
+        public static final double camY = 0;
         public static final Transform3d robotToCam =
                 new Transform3d(camX, camY, camZ, new Rotation3d(camRoll, camPitch, camYaw));
     }
