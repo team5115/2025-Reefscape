@@ -143,8 +143,8 @@ public class RobotContainer {
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
         joyDrive.start().onTrue(resetFieldOrientation());
-        joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(-0.15));
-        joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(+0.15));
+        joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(+0.15, +0.38));
+        joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(-0.15, +0.38));
 
         // joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         // joyManip.b().onTrue(elevator.setHeight(Height.L2));

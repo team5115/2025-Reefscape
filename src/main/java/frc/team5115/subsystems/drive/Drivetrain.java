@@ -199,15 +199,14 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator.update(rawGyroRotation, modulePositions);
     }
 
-    public Command driveToNearestScoringSpot(double alignmentOffset) {
+    public Command driveToNearestScoringSpot(double sidewaysOffset, double distanceOffset) {
         return driveByAutoAimPids(
                 () -> {
-                    final double tagDistance = 0.6;
                     final var tagPose = PhotonVision.getNearestReefTagPose(getPose());
                     final var offset =
                             tagPose.transformBy(
                                     new Transform2d(
-                                            new Translation2d(tagDistance, alignmentOffset), Rotation2d.k180deg));
+                                            new Translation2d(distanceOffset, sidewaysOffset), Rotation2d.k180deg));
                     Logger.recordOutput("AutoAim/Tag Pose", tagPose);
                     return offset;
                 });
