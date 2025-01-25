@@ -12,7 +12,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -36,8 +35,6 @@ public class Drivetrain extends SubsystemBase {
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
     private final Module[] modules = new Module[4]; // FL, FR, BL, BR
     private final SysIdRoutine sysId;
-
-    private Pose2d lastGoodPose; // from vision, can be null
 
     // TODO tune drive pids
     private final double linear_kp = 1.9;
@@ -199,38 +196,43 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator.update(rawGyroRotation, modulePositions);
     }
 
-    public Command driveByAutoAimPids(Pose2d goalPose, Supplier<Pose2d> poseSupplier) {
+    public Command driveByAutoAimPids(
+            Supplier<Pose2d> goalPoseSupplier, Supplier<Pose2d> visionPoseSupplier) {
+        return Commands.sequence(
+                turnByAutoAim(visionPoseSupplier),
+                driveByAutoAim(goalPoseSupplier, visionPoseSupplier),
+                turnByAutoAim(visionPoseSupplier));
+    }
+
+    private Command turnByAutoAim(Supplier<Pose2d> visionPoseSupplier) {
         return Commands.runEnd(
                         () -> {
-                            final var newPose = poseSupplier.get();
-                            if (newPose != null) {
-                                lastGoodPose = newPose;
-                            }
-                            if (lastGoodPose == null) return;
-
-                            Logger.recordOutput("Vision/LastGoodPose", lastGoodPose);
-                            final var omega =
-                                    anglePid.calculate(
-                                            lastGoodPose.getRotation().getRadians(), goalPose.getRotation().getRadians());
-                            final var xVelocity = xPid.calculate(lastGoodPose.getX(), goalPose.getX());
-                            final var yVelocity = yPid.calculate(lastGoodPose.getY(), goalPose.getX());
-
-                            Logger.recordOutput("AutoAim/xVelocity", xVelocity);
-                            Logger.recordOutput("AutoAim/yVelocity", yVelocity);
-                            Logger.recordOutput("AutoAim/omega", omega);
-                            Logger.recordOutput(
-                                    "AutoAim/Goal",
-                                    new Pose2d(
-                                            new Translation2d(xPid.getGoal().position, yPid.getGoal().position),
-                                            new Rotation2d(anglePid.getGoal().position)));
-
-                            runVelocity(
-                                    ChassisSpeeds.fromFieldRelativeSpeeds(
-                                            xVelocity, yVelocity, omega, getRotation()));
+                            final double delta =
+                                    -visionPoseSupplier.get().getRotation().minus(Rotation2d.k180deg).getRadians();
+                            final var omega = anglePid.calculate(delta, 0);
+                            Logger.recordOutput("AutoAim/Omega", omega);
+                            Logger.recordOutput("AutoAim/Delta", delta);
+                            runVelocity(new ChassisSpeeds(0, 0, omega));
                         },
                         this::stop,
                         this)
-                .until(this::autoAimPidsAtGoal);
+                .until(() -> anglePid.atGoal());
+    }
+
+    private Command driveByAutoAim(Supplier<Pose2d> goalSupplier, Supplier<Pose2d> actualSupplier) {
+        return Commands.runEnd(
+                () -> {
+                    final var goalPose = goalSupplier.get();
+                    final var actualPose = actualSupplier.get();
+                    final var xVelocity = -xPid.calculate(actualPose.getX(), goalPose.getX());
+                    final var yVelocity = -yPid.calculate(actualPose.getY(), goalPose.getX());
+                    Logger.recordOutput("AutoAim/Goal Pose", goalPose);
+                    Logger.recordOutput("AutoAim/xVelocity", xVelocity);
+                    Logger.recordOutput("AutoAim/yVelocity", yVelocity);
+                    runVelocity(new ChassisSpeeds(xVelocity, yVelocity, 0));
+                },
+                this::stop,
+                this);
     }
 
     public boolean autoAimPidsAtGoal() {

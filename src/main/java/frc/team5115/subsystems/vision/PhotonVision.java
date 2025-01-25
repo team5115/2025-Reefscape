@@ -3,11 +3,11 @@ package frc.team5115.subsystems.vision;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team5115.Constants.VisionConstants;
 import frc.team5115.subsystems.drive.Drivetrain;
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -17,6 +17,7 @@ public class PhotonVision extends SubsystemBase {
     private final PhotonCamera camera;
     private final AprilTagFieldLayout fieldLayout;
     private final PhotonPoseEstimator poseEstimator;
+    private Pose2d relativePose;
 
     public PhotonVision(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
@@ -46,11 +47,7 @@ public class PhotonVision extends SubsystemBase {
         // if (hasMeasurement) {
         //     Logger.recordOutput("Vision/EstimatedPose", pose.estimatedPose);
         // }
-    }
-
-    public Pose2d getPoseRelative() {
         var results = camera.getAllUnreadResults();
-        Pose2d pose = null;
         if (!results.isEmpty()) {
             // Camera processed a new frame since last
             // Get the last one in the list.
@@ -63,15 +60,17 @@ public class PhotonVision extends SubsystemBase {
                         // ? What is going on here? Which way is forward?
                         Transform3d transform =
                                 target.getBestCameraToTarget().plus(VisionConstants.robotToCam.inverse());
-                        pose =
+                        relativePose =
                                 new Pose2d(
-                                        transform.getX(),
-                                        transform.getY(),
-                                        transform.getRotation().toRotation2d().plus(Rotation2d.fromDegrees(180)));
+                                        transform.getX(), transform.getY(), transform.getRotation().toRotation2d());
                     }
                 }
             }
         }
-        return pose;
+        Logger.recordOutput("Vision/getPoseRelative", relativePose);
+    }
+
+    public Pose2d getPoseRelative() {
+        return relativePose;
     }
 }
