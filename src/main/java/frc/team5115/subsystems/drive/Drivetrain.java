@@ -201,7 +201,8 @@ public class Drivetrain extends SubsystemBase {
         return Commands.sequence(
                 turnByAutoAim(visionPoseSupplier),
                 driveByAutoAim(goalPoseSupplier, visionPoseSupplier),
-                turnByAutoAim(visionPoseSupplier));
+                turnByAutoAim(visionPoseSupplier),
+                Commands.runOnce(this::stop, this));
     }
 
     private Command turnByAutoAim(Supplier<Pose2d> visionPoseSupplier) {
@@ -221,22 +222,19 @@ public class Drivetrain extends SubsystemBase {
 
     private Command driveByAutoAim(Supplier<Pose2d> goalSupplier, Supplier<Pose2d> actualSupplier) {
         return Commands.runEnd(
-                () -> {
-                    final var goalPose = goalSupplier.get();
-                    final var actualPose = actualSupplier.get();
-                    final var xVelocity = -xPid.calculate(actualPose.getX(), goalPose.getX());
-                    final var yVelocity = -yPid.calculate(actualPose.getY(), goalPose.getX());
-                    Logger.recordOutput("AutoAim/Goal Pose", goalPose);
-                    Logger.recordOutput("AutoAim/xVelocity", xVelocity);
-                    Logger.recordOutput("AutoAim/yVelocity", yVelocity);
-                    runVelocity(new ChassisSpeeds(xVelocity, yVelocity, 0));
-                },
-                this::stop,
-                this);
-    }
-
-    public boolean autoAimPidsAtGoal() {
-        return anglePid.atGoal() && xPid.atGoal() && yPid.atGoal();
+                        () -> {
+                            final var goalPose = goalSupplier.get();
+                            final var actualPose = actualSupplier.get();
+                            final var xVelocity = -xPid.calculate(actualPose.getX(), goalPose.getX());
+                            final var yVelocity = -yPid.calculate(actualPose.getY(), goalPose.getX());
+                            Logger.recordOutput("AutoAim/Goal Pose", goalPose);
+                            Logger.recordOutput("AutoAim/xVelocity", xVelocity);
+                            Logger.recordOutput("AutoAim/yVelocity", yVelocity);
+                            runVelocity(new ChassisSpeeds(xVelocity, yVelocity, 0));
+                        },
+                        this::stop,
+                        this)
+                .until(() -> xPid.atGoal() && yPid.atGoal());
     }
 
     /**
