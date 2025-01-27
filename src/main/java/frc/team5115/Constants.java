@@ -58,9 +58,10 @@ public final class Constants {
         public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(4);
         public static final double WHEEL_COF = 1.55;
         public static final double MAX_LINEAR_SPEED = 4.8; // meters per second
-        public static final double TRACK_WIDTH_X =
-                Units.inchesToMeters(23.75); // TODO confirm track width
-        public static final double TRACK_WIDTH_Y = Units.inchesToMeters(23.75);
+        
+        private static final double TRACK_WIDTH = Units.inchesToMeters(26.25);
+        public static final double TRACK_WIDTH_X = TRACK_WIDTH;
+        public static final double TRACK_WIDTH_Y = TRACK_WIDTH;
         public static final double DRIVE_BASE_RADIUS =
                 Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
         public static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
