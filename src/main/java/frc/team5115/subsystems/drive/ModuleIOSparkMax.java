@@ -66,10 +66,13 @@ public class ModuleIOSparkMax implements ModuleIO {
         final AbsoluteEncoderConfig turnEncoderConfig = new AbsoluteEncoderConfig();
         final EncoderConfig driveEncoderConfig = new EncoderConfig();
 
+        // Old comment:
         // Invert the turning encoder, since the output shaft rotates in the opposite
         // direction of the steering motor in the MAXSwerve Module.
+        // ! New comment:
+        // well it only works when it's NOT inverted so that's what we will do
         turnConfig
-                .inverted(true)
+                .inverted(false)
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(SwerveConstants.TurningMotorCurrentLimit)
                 .voltageCompensation(12.0);
@@ -80,7 +83,7 @@ public class ModuleIOSparkMax implements ModuleIO {
                 .smartCurrentLimit(SwerveConstants.DrivingMotorCurrentLimit)
                 .voltageCompensation(12.0);
 
-        turnEncoderConfig.averageDepth(2);
+        turnEncoderConfig.averageDepth(2).inverted(false);
         turnConfig.apply(turnEncoderConfig);
 
         driveEncoderConfig.uvwAverageDepth(2).uvwMeasurementPeriod(10);

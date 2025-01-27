@@ -147,6 +147,8 @@ public class RobotContainer {
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
         joyDrive.start().onTrue(resetFieldOrientation());
+        joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(+0.15, +0.38));
+        joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(-0.15, +0.38));
 
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         joyManip.b().onTrue(elevator.setHeight(Height.L2));
@@ -187,6 +189,12 @@ public class RobotContainer {
         NamedCommands.registerCommand("L3", AutoCommands.dispense(dispenser, elevator, Height.L3));
         NamedCommands.registerCommand("L4", AutoCommands.dispense(dispenser, elevator, Height.L4));
         NamedCommands.registerCommand("Intake", AutoCommands.intakeUntilCoral(dispenser, elevator));
+
+        // Blank registration
+        // NamedCommands.registerCommand("L2", new InstantCommand());
+        // NamedCommands.registerCommand("L3", new InstantCommand());
+        // NamedCommands.registerCommand("L4", new InstantCommand());
+        // NamedCommands.registerCommand("Intake", new InstantCommand());
     }
 
     /**

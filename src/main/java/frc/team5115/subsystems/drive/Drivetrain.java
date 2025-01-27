@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -26,7 +27,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants.SwerveConstants;
+import frc.team5115.subsystems.vision.PhotonVision;
 import frc.team5115.util.LocalADStarAK;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -116,7 +119,7 @@ public class Drivetrain extends SubsystemBase {
                                 SwerveConstants.WHEEL_COF,
                                 DCMotor.getNEO(1),
                                 SwerveConstants.DrivingMotorReduction,
-                                25, // less than the real current limit
+                                SwerveConstants.DrivingMotorCurrentLimit, // less than the real current limit
                                 1),
                         SwerveConstants.MODULE_TRANSLATIONS),
                 () -> false,
@@ -196,30 +199,29 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator.update(rawGyroRotation, modulePositions);
     }
 
-    public Command driveToPosition(Pose2d goalPose) {
-        return setAutoAimPids(goalPose)
-                .andThen(driveByAutoAimPids())
-                .until(() -> anglePid.atSetpoint() && xPid.atSetpoint() && yPid.atSetpoint());
-    }
-
-    private Command setAutoAimPids(Pose2d goalPose) {
-        return Commands.runOnce(
+    public Command driveToNearestScoringSpot(double sidewaysOffset, double distanceOffset) {
+        return driveByAutoAimPids(
                 () -> {
-                    // ? Could do some more processing here for alliance specific stuff
-                    xPid.setGoal(goalPose.getX());
-                    yPid.setGoal(goalPose.getY());
-                    anglePid.setGoal(goalPose.getRotation().getRadians());
-                },
-                this);
+                    final var tagPose = PhotonVision.getNearestReefTagPose(getPose());
+                    final var offset =
+                            tagPose.transformBy(
+                                    new Transform2d(
+                                            new Translation2d(distanceOffset, sidewaysOffset), Rotation2d.k180deg));
+                    Logger.recordOutput("AutoAim/Tag Pose", tagPose);
+                    return offset;
+                });
     }
 
-    private Command driveByAutoAimPids() {
+    private Command driveByAutoAimPids(Supplier<Pose2d> goalSupplier) {
         return Commands.runEnd(
                 () -> {
+                    final var goalPose = goalSupplier.get();
                     final var pose = getPose();
-                    final var omega = anglePid.calculate(pose.getRotation().getRadians());
-                    final var xVelocity = xPid.calculate(pose.getX());
-                    final var yVelocity = yPid.calculate(pose.getY());
+                    final var omega =
+                            anglePid.calculate(
+                                    pose.getRotation().getRadians(), goalPose.getRotation().getRadians());
+                    final var xVelocity = xPid.calculate(pose.getX(), goalPose.getX());
+                    final var yVelocity = yPid.calculate(pose.getY(), goalPose.getY());
 
                     Logger.recordOutput("AutoAim/xVelocity", xVelocity);
                     Logger.recordOutput("AutoAim/yVelocity", yVelocity);
