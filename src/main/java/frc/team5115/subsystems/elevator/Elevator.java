@@ -1,19 +1,24 @@
 package frc.team5115.subsystems.elevator;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants;
+import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
+import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
+import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 public class Elevator extends SubsystemBase {
     // TODO determine max speed, max volts, kG for elevator
     private static final double maxSpeed = 4.0; // m/s
     private static final double maxVolts = 10.0;
-    private static final double kgVolts = 0.0;
+    private static final double kgVolts = 0.9;
     private static final double minHeightInches = 30; // TODO: find minimum height
 
     private final ElevatorIO io;
@@ -22,6 +27,16 @@ public class Elevator extends SubsystemBase {
     private final SysIdRoutine sysId;
     private Height height = Height.L2;
     private double velocitySetpoint;
+
+    @AutoLogOutput
+    private final LoggedMechanism2d elevatorMechanism2d =
+            new LoggedMechanism2d(10, Height.L4.position);
+
+    private final LoggedMechanismRoot2d elevatorMechanismRoot2d =
+            elevatorMechanism2d.getRoot(getName() + " Root", 0, 0);
+    private final LoggedMechanismLigament2d elevatorMechanismLigament2d =
+            elevatorMechanismRoot2d.append(
+                    new LoggedMechanismLigament2d(getName(), inputs.positionMeters, 90));
 
     public enum Height {
         MINIMUM(minHeightInches),
@@ -39,6 +54,7 @@ public class Elevator extends SubsystemBase {
 
     public Elevator(ElevatorIO io) {
         this.io = io;
+        SmartDashboard.putData("Elevator Mechanism", elevatorMechanism2d);
         switch (Constants.currentMode) {
             case REAL:
             case REPLAY:
@@ -46,7 +62,7 @@ public class Elevator extends SubsystemBase {
                 positionPID = new PIDController(0.0, 0.0, 0.0);
                 break;
             case SIM:
-                positionPID = new PIDController(0.0, 0.0, 0.0);
+                positionPID = new PIDController(1.0, 0.0, 0.0);
                 break;
             default:
                 positionPID = new PIDController(0.0, 0.0, 0.0);
@@ -77,9 +93,10 @@ public class Elevator extends SubsystemBase {
             // Force the elvator to stay at the intake position when there is a coral in the intake
             height = Height.INTAKE;
         }
-        velocitySetpoint =
-                MathUtil.clamp(
-                        positionPID.calculate(inputs.positionMeters, height.position), -maxSpeed, +maxSpeed);
+        // velocitySetpoint =
+        //         MathUtil.clamp(
+        //                 positionPID.calculate(inputs.positionMeters, height.position), -maxSpeed,
+        // +maxSpeed);
         io.setElevatorVelocity(velocitySetpoint, kgVolts);
     }
 
@@ -126,7 +143,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atGoal() {
-        return Math.abs(velocitySetpoint - inputs.velocityMetersPerSecond) <= 0.1;
+        return Math.abs(velocitySetpoint - inputs.velocityMetersPerSecond) <= 0.1
+                && positionPID.atSetpoint();
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -137,10 +155,10 @@ public class Elevator extends SubsystemBase {
         return sysId.dynamic(direction);
     }
 
-    // Manipulate elevator by percent of max volts
-    // Comment out the call to `io.setElevatorVoltage()` in `periodic()` in order for this to work
+    // Manipulate elevator by m/s
+    // Comment out the assignment to `velocitySetpoint` in `periodic()` in order for this to work
     @Deprecated
-    public void manualControl(double percent) {
-        io.setElevatorVoltage(percent * maxVolts);
+    public Command velocityControl(DoubleSupplier speedMetersPerSecond) {
+        return Commands.runOnce(() -> velocitySetpoint = speedMetersPerSecond.getAsDouble(), this);
     }
 }

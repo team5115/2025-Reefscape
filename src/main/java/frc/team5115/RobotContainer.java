@@ -148,6 +148,14 @@ public class RobotContainer {
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
         joyDrive.start().onTrue(resetFieldOrientation());
 
+        // ! Temp control for elevator
+        // joyDrive.a().whileTrue(elevator.velocityControl(-1)).onFalse(elevator.velocityControl(+0));
+        // joyDrive.b().whileTrue(elevator.velocityControl(+1)).onFalse(elevator.velocityControl(+0));
+        // joyDrive.y().whileTrue(elevator.velocityControl(+2)).onFalse(elevator.velocityControl(+0));
+        // END temp block
+
+        elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY()));
+
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         joyManip.b().onTrue(elevator.setHeight(Height.L2));
         joyManip.y().onTrue(elevator.setHeight(Height.L3));

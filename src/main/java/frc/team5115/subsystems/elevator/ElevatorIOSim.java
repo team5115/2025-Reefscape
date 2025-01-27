@@ -14,7 +14,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
     public ElevatorIOSim() {
 
-        velocityPID = new PIDController(0, 0, 0);
+        velocityPID = new PIDController(9.0, 20, 0);
 
         final double randomStartPosition =
                 Math.random() * (ElevatorConstants.MAX_HEIGHT - ElevatorConstants.MIN_HEIGHT)
@@ -49,6 +49,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
     @Override
     public void setElevatorVelocity(double velocity, double ffVolts) {
-        voltage = velocityPID.calculate(velocity) + ffVolts;
+        double volts = velocityPID.calculate(sim.getVelocityMetersPerSecond(), velocity) + ffVolts;
+        setElevatorVoltage(volts);
     }
 }
