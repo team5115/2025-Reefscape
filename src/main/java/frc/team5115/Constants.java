@@ -48,24 +48,25 @@ public final class Constants {
     
 
     public static class SwerveConstants {
-        public static final byte FRONT_LEFT_DRIVE_ID = 4;
-        public static final byte FRONT_RIGHT_DRIVE_ID = 22;
-        public static final byte BACK_LEFT_DRIVE_ID = 24;
-        public static final byte BACK_RIGHT_DRIVE_ID = 26;
+        public static final byte BACK_LEFT_DRIVE_ID = 8;
+        public static final byte FRONT_LEFT_DRIVE_ID = 6;
+        public static final byte BACK_RIGHT_DRIVE_ID = 4;
+        public static final byte FRONT_RIGHT_DRIVE_ID = 2;
 
-        public static final byte FRONT_LEFT_TURN_ID = 29;
-        public static final byte FRONT_RIGHT_TURN_ID = 28;
-        public static final byte BACK_LEFT_TURN_ID = 23;
-        public static final byte BACK_RIGHT_TURN_ID = 25;
+        public static final byte BACK_LEFT_TURN_ID = 7;
+        public static final byte FRONT_LEFT_TURN_ID = 5;
+        public static final byte BACK_RIGHT_TURN_ID = 3;
+        public static final byte FRONT_RIGHT_TURN_ID = 1;
 
         // ! TODO determine mass and moi of robot, and wheel cof
-        public static final Mass ROBOT_MASS = Pounds.of(70);
-        public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(6);
-        public static final double WHEEL_COF = 1.5;
-        public static final double MAX_LINEAR_SPEED = 4.2; // meters per second
-        public static final double TRACK_WIDTH_X =
-                Units.inchesToMeters(23.75); // TODO confirm track width
-        public static final double TRACK_WIDTH_Y = Units.inchesToMeters(23.75);
+        public static final Mass ROBOT_MASS = Pounds.of(83.6);
+        public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(4);
+        public static final double WHEEL_COF = 1.55;
+        public static final double MAX_LINEAR_SPEED = 4.8; // meters per second
+
+        private static final double TRACK_WIDTH = Units.inchesToMeters(26.25);
+        public static final double TRACK_WIDTH_X = TRACK_WIDTH;
+        public static final double TRACK_WIDTH_Y = TRACK_WIDTH;
         public static final double DRIVE_BASE_RADIUS =
                 Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
         public static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
@@ -83,8 +84,7 @@ public final class Constants {
                     new Translation2d(TRACK_WIDTH_X / -2.0, TRACK_WIDTH_Y / -2.0)
                 };
 
-        // front left should be 270 but we zeroed wrong
-        public static final Rotation2d FRONT_LEFT_ANGULAR_OFFSET = Rotation2d.fromDegrees(90);
+        public static final Rotation2d FRONT_LEFT_ANGULAR_OFFSET = Rotation2d.fromDegrees(270);
         public static final Rotation2d FRONT_RIGHT_ANGULAR_OFFSET = Rotation2d.fromDegrees(0);
         public static final Rotation2d BACK_LEFT_ANGULAR_OFFSET = Rotation2d.fromDegrees(180);
         public static final Rotation2d BACK_RIGHT_ANGULAR_OFFSET = Rotation2d.fromDegrees(90);
@@ -100,22 +100,34 @@ public final class Constants {
     // TODO determine elevator constants
     public static class ElevatorConstants {
         // Heights and radius in meters
-        public static final double MAX_HEIGHT = 1.5;
+        public static final double MAX_HEIGHT = 0.3746;
         public static final double MIN_HEIGHT = 0;
         public static final double DRUM_RADIUS = 0.05;
-        public static final double CARRIAGE_MASS_KG = 4.0;
-        public static final double GEARING = 10.0; // numbers greater than 1 represent reductions
-        public static final double METERS_PER_ROTATION = 1.0; // conversion factor
+        public static final double CARRIAGE_MASS_KG = 9.072; // 20 lbs
+        public static final double GEARING = 36.0; // numbers greater than 1 represent reductions
+        // Below conversion factor found empirically
+        public static final double METERS_PER_ROTATION = 0.0035181942;
+        // ! These amp limits are for a neo 550
+        public static final int STALL_CURRENT_AMPS = 20;
+        public static final int FREE_CURRENT_AMPS = 40;
+        // Kv values for neo and neo 550
+        // Kf for closed loop velocity control is 1 / kv
+        public static final double KV_NEO = 473;
+        public static final double KV_NEO_550 = 917;
+        // TODO tune the Elevator spark velocity pid
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
     }
 
     public static class VisionConstants {
-        public static final String cameraName = "FOV_120_Degrees";
-        public static final double camYaw = Math.toRadians(+180.0);
-        public static final double camPitch = Math.toRadians(-37.0);
+        public static final String cameraName = "USB_GS_Camera";
+        public static final double camYaw = Math.toRadians(0);
+        public static final double camPitch = Math.toRadians(0);
         public static final double camRoll = Math.toRadians(0);
-        public static final double camZ = +0.57;
-        public static final double camX = -0.35;
-        public static final double camY = -0.06;
+        public static final double camZ = +0.30;
+        public static final double camX = +0.16;
+        public static final double camY = 0;
         public static final Transform3d robotToCam =
                 new Transform3d(camX, camY, camZ, new Rotation3d(camRoll, camPitch, camYaw));
     }

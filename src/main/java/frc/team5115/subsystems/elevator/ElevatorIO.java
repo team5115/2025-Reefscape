@@ -20,6 +20,6 @@ public interface ElevatorIO {
 
     public default void setElevatorVoltage(double volts) {}
 
-    // velocity in meters per second
+    // velocity in m/s
     public default void setElevatorVelocity(double velocity, double ffVolts) {}
 }
