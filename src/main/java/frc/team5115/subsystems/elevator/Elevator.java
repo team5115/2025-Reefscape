@@ -1,5 +1,6 @@
 package frc.team5115.subsystems.elevator;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -93,10 +94,6 @@ public class Elevator extends SubsystemBase {
             // Force the elvator to stay at the intake position when there is a coral in the intake
             height = Height.INTAKE;
         }
-        // velocitySetpoint =
-        //         MathUtil.clamp(
-        //                 positionPID.calculate(inputs.positionMeters, height.position), -maxSpeed,
-        // +maxSpeed);
         io.setElevatorVelocity(velocitySetpoint, kgVolts);
     }
 
@@ -155,10 +152,16 @@ public class Elevator extends SubsystemBase {
         return sysId.dynamic(direction);
     }
 
-    // Manipulate elevator by m/s
-    // Comment out the assignment to `velocitySetpoint` in `periodic()` in order for this to work
-    @Deprecated
     public Command velocityControl(DoubleSupplier speedMetersPerSecond) {
         return Commands.runOnce(() -> velocitySetpoint = speedMetersPerSecond.getAsDouble(), this);
+    }
+
+    public Command positionControl() {
+        return Commands.run(() -> {
+            velocitySetpoint =
+                MathUtil.clamp(
+                        positionPID.calculate(inputs.positionMeters, height.position), -maxSpeed,
+        +maxSpeed);
+        }, this);
     }
 }
