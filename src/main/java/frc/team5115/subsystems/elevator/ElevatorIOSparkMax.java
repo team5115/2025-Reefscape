@@ -28,9 +28,17 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         velocityCLC.setReference(0, ControlType.kVelocity);
 
         final SparkMaxConfig config = new SparkMaxConfig();
-        config.inverted(false).idleMode(IdleMode.kBrake).smartCurrentLimit(40);
-        // TODO: edit values
-        config.closedLoop.p(0).i(0).d(0).velocityFF(1 / 473); // For neo
+        config
+                .inverted(false)
+                .idleMode(IdleMode.kBrake)
+                .smartCurrentLimit(
+                        ElevatorConstants.STALL_CURRENT_AMPS, ElevatorConstants.FREE_CURRENT_AMPS);
+        config
+                .closedLoop
+                .p(ElevatorConstants.kP)
+                .i(ElevatorConstants.kI)
+                .d(ElevatorConstants.kD)
+                .velocityFF(1 / ElevatorConstants.KV_NEO_550);
 
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
@@ -52,9 +60,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
     @Override
     public void setElevatorVelocity(double velocity, double ffVolts) {
-        motor
-                .getClosedLoopController()
-                .setReference(
+        velocityCLC.setReference(
                         velocity / ElevatorConstants.METERS_PER_ROTATION * 60,
                         ControlType.kVelocity,
                         ClosedLoopSlot.kSlot0,

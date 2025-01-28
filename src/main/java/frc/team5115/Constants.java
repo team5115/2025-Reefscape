@@ -58,7 +58,7 @@ public final class Constants {
         public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(4);
         public static final double WHEEL_COF = 1.55;
         public static final double MAX_LINEAR_SPEED = 4.8; // meters per second
-        
+
         private static final double TRACK_WIDTH = Units.inchesToMeters(26.25);
         public static final double TRACK_WIDTH_X = TRACK_WIDTH;
         public static final double TRACK_WIDTH_Y = TRACK_WIDTH;
@@ -101,6 +101,17 @@ public final class Constants {
         public static final double CARRIAGE_MASS_KG = 4.0;
         public static final double GEARING = 10.0; // numbers greater than 1 represent reductions
         public static final double METERS_PER_ROTATION = 1.0; // conversion factor
+        // ! These amp limits are for a neo 550
+        public static final int STALL_CURRENT_AMPS = 20;
+        public static final int FREE_CURRENT_AMPS = 40;
+        // Kv values for neo and neo 550
+        // Kf for closed loop velocity control is 1 / kv
+        public static final double KV_NEO = 473;
+        public static final double KV_NEO_550 = 917;
+        // TODO tune the Elevator spark velocity pid
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
     }
 
     public static class VisionConstants {
