@@ -95,12 +95,13 @@ public final class Constants {
     // TODO determine elevator constants
     public static class ElevatorConstants {
         // Heights and radius in meters
-        public static final double MAX_HEIGHT = 1.5;
+        public static final double MAX_HEIGHT = 0.3746;
         public static final double MIN_HEIGHT = 0;
         public static final double DRUM_RADIUS = 0.05;
-        public static final double CARRIAGE_MASS_KG = 4.0;
-        public static final double GEARING = 10.0; // numbers greater than 1 represent reductions
-        public static final double METERS_PER_ROTATION = 1.0; // conversion factor
+        public static final double CARRIAGE_MASS_KG = 9.072; // 20 lbs
+        public static final double GEARING = 36.0; // numbers greater than 1 represent reductions
+        // Below conversion factor found empirically
+        public static final double METERS_PER_ROTATION = 0.0035181942;
         // ! These amp limits are for a neo 550
         public static final int STALL_CURRENT_AMPS = 20;
         public static final int FREE_CURRENT_AMPS = 40;

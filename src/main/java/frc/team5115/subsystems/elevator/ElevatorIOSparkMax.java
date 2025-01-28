@@ -61,10 +61,10 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     @Override
     public void setElevatorVelocity(double velocity, double ffVolts) {
         velocityCLC.setReference(
-                        velocity / ElevatorConstants.METERS_PER_ROTATION * 60,
-                        ControlType.kVelocity,
-                        ClosedLoopSlot.kSlot0,
-                        ffVolts,
-                        SparkClosedLoopController.ArbFFUnits.kVoltage);
+                velocity / ElevatorConstants.METERS_PER_ROTATION * 60,
+                ControlType.kVelocity,
+                ClosedLoopSlot.kSlot0,
+                ffVolts,
+                SparkClosedLoopController.ArbFFUnits.kVoltage);
     }
 }
