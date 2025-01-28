@@ -40,6 +40,10 @@ public final class Constants {
     public static final byte BACK_SENSOR_ID = -1;
     public static final byte FRONT_SENSOR_ID = -1;
 
+    public static final int FIRST_SENSOR_ID = -1;
+    public static final int SECOND_SENSOR_ID = -1;
+    public static final int THIRD_SENSOR_ID = -1;
+
     public static final double LOOP_PERIOD_SECS = 0.02;
 
     public static class SwerveConstants {

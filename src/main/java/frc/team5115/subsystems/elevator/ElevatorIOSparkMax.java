@@ -19,9 +19,15 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     private final RelativeEncoder encoder;
     private final SparkClosedLoopController velocityCLC;
     private final DigitalInput backSensor;
+    private final DigitalInput firstSensor;
+    private final DigitalInput secondSensor;
+    private final DigitalInput thirdSensor;
 
     public ElevatorIOSparkMax() {
         backSensor = new DigitalInput(Constants.BACK_SENSOR_ID);
+        firstSensor = new DigitalInput(Constants.FIRST_SENSOR_ID);
+        secondSensor = new DigitalInput(Constants.SECOND_SENSOR_ID);
+        thirdSensor = new DigitalInput(Constants.THIRD_SENSOR_ID);
         motor = new SparkMax(Constants.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
         velocityCLC = motor.getClosedLoopController();
@@ -51,6 +57,9 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
         inputs.currentAmps = motor.getOutputCurrent();
         inputs.backCoralDetected = !backSensor.get();
+        inputs.firstMagnetDetected = !firstSensor.get();
+        inputs.secondMagnetDetected = !secondSensor.get();
+        inputs.thirdMagnetDetected = !thirdSensor.get();
     }
 
     @Override

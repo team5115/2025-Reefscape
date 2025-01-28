@@ -11,6 +11,9 @@ public interface ElevatorIO {
         public double appliedVolts = 0;
 
         public boolean backCoralDetected = false;
+        public boolean firstMagnetDetected = false;
+        public boolean secondMagnetDetected = false;
+        public boolean thirdMagnetDetected = false;
     }
 
     public default void updateInputs(ElevatorIOInputs inputs) {}

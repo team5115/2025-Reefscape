@@ -21,6 +21,10 @@ public class Elevator extends SubsystemBase {
     private static final double maxVolts = 10.0;
     private static final double kgVolts = 0.9;
     private static final double minHeightInches = 30; // TODO: find minimum height
+     // TODO find sensor heights
+    private static final double firstHeight = 0;
+    private static final double secondHeight = 0;
+    private static final double thirdHeight = 0;
 
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
@@ -28,6 +32,7 @@ public class Elevator extends SubsystemBase {
     private final SysIdRoutine sysId;
     private Height height = Height.L2;
     private double velocitySetpoint;
+    public double offset;
 
     @AutoLogOutput
     private final LoggedMechanism2d elevatorMechanism2d =
@@ -37,7 +42,7 @@ public class Elevator extends SubsystemBase {
             elevatorMechanism2d.getRoot(getName() + " Root", 0, 0);
     private final LoggedMechanismLigament2d elevatorMechanismLigament2d =
             elevatorMechanismRoot2d.append(
-                    new LoggedMechanismLigament2d(getName(), inputs.positionMeters * 6, 90));
+                    new LoggedMechanismLigament2d(getName(), 0, 90));
     private final LoggedMechanismLigament2d elevatorMechanismLigament2d2 =
             elevatorMechanismLigament2d.append(new LoggedMechanismLigament2d(getName() + "2", 10, -90));
 
@@ -87,27 +92,40 @@ public class Elevator extends SubsystemBase {
         positionPID.setSetpoint(height.position);
     }
 
+    public double getActualHeight() {
+        return inputs.positionMeters - offset;
+    }
+
     @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs(getName(), inputs);
         recordOutputs();
+        if (inputs.firstMagnetDetected == true) {
+            offset = firstHeight - inputs.positionMeters;
+        }
+        if (inputs.secondMagnetDetected == true) {
+            offset = secondHeight - inputs.positionMeters;
+        }
+        if (inputs.thirdMagnetDetected == true) {
+            offset = thirdHeight - inputs.positionMeters;
+        }
         if (inputs.backCoralDetected) {
             // Force the elvator to stay at the intake position when there is a coral in the intake
             height = Height.INTAKE;
         }
         io.setElevatorVelocity(velocitySetpoint, kgVolts);
-        elevatorMechanismLigament2d.setLength(inputs.positionMeters * 8);
+        elevatorMechanismLigament2d.setLength(getActualHeight() * 8);
     }
 
     private void recordOutputs() {
         Logger.recordOutput("Elevator/Goal Height", height.position);
         Logger.recordOutput("Elevator/Setpoint Velocity", velocitySetpoint);
-        Logger.recordOutput("Elevator/Actual Height", inputs.positionMeters);
+        Logger.recordOutput("Elevator/Actual Height", getActualHeight());
         Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
         Logger.recordOutput("Elevator/At Goal?", atGoal());
         Logger.recordOutput("Elevator/State", getStateString());
-        Logger.recordOutput("Elevator/Offset Delta", positionPID.getSetpoint() - inputs.positionMeters);
+        Logger.recordOutput("Elevator/Offset Delta", positionPID.getSetpoint() - getActualHeight());
     }
 
     public Command waitForSetpoint(double timeout) {
@@ -164,7 +182,7 @@ public class Elevator extends SubsystemBase {
                 () -> {
                     velocitySetpoint =
                             MathUtil.clamp(
-                                    positionPID.calculate(inputs.positionMeters, height.position),
+                                    positionPID.calculate(getActualHeight(), height.position),
                                     -maxSpeed,
                                     +maxSpeed);
                 },
