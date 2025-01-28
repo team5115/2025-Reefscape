@@ -21,6 +21,7 @@ public class Elevator extends SubsystemBase {
     private static final double maxVolts = 10.0;
     private static final double kgVolts = 0.9;
     private static final double minHeightInches = 30; // TODO: find minimum height
+     // TODO find sensor heights
     private static final double firstHeight = 0;
     private static final double secondHeight = 0;
     private static final double thirdHeight = 0;
@@ -41,7 +42,7 @@ public class Elevator extends SubsystemBase {
             elevatorMechanism2d.getRoot(getName() + " Root", 0, 0);
     private final LoggedMechanismLigament2d elevatorMechanismLigament2d =
             elevatorMechanismRoot2d.append(
-                    new LoggedMechanismLigament2d(getName(), inputs.positionMeters * 6, 90));
+                    new LoggedMechanismLigament2d(getName(), 0, 90));
     private final LoggedMechanismLigament2d elevatorMechanismLigament2d2 =
             elevatorMechanismLigament2d.append(new LoggedMechanismLigament2d(getName() + "2", 10, -90));
 
@@ -114,7 +115,7 @@ public class Elevator extends SubsystemBase {
             height = Height.INTAKE;
         }
         io.setElevatorVelocity(velocitySetpoint, kgVolts);
-        elevatorMechanismLigament2d.setLength(inputs.positionMeters * 8);
+        elevatorMechanismLigament2d.setLength(getActualHeight() * 8);
     }
 
     private void recordOutputs() {
@@ -181,7 +182,7 @@ public class Elevator extends SubsystemBase {
                 () -> {
                     velocitySetpoint =
                             MathUtil.clamp(
-                                    positionPID.calculate(inputs.positionMeters, height.position),
+                                    positionPID.calculate(getActualHeight(), height.position),
                                     -maxSpeed,
                                     +maxSpeed);
                 },
