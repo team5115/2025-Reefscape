@@ -31,13 +31,15 @@ public class Elevator extends SubsystemBase {
 
     @AutoLogOutput
     private final LoggedMechanism2d elevatorMechanism2d =
-            new LoggedMechanism2d(10, Height.L4.position);
+            new LoggedMechanism2d(10, Height.L4.position * 10);
 
     private final LoggedMechanismRoot2d elevatorMechanismRoot2d =
             elevatorMechanism2d.getRoot(getName() + " Root", 0, 0);
     private final LoggedMechanismLigament2d elevatorMechanismLigament2d =
             elevatorMechanismRoot2d.append(
-                    new LoggedMechanismLigament2d(getName(), inputs.positionMeters, 90));
+                    new LoggedMechanismLigament2d(getName(), inputs.positionMeters * 6, 90));
+    private final LoggedMechanismLigament2d elevatorMechanismLigament2d2 =
+            elevatorMechanismLigament2d.append(new LoggedMechanismLigament2d(getName() + "2", 10, -90));
 
     public enum Height {
         MINIMUM(minHeightInches),
@@ -95,6 +97,7 @@ public class Elevator extends SubsystemBase {
             height = Height.INTAKE;
         }
         io.setElevatorVelocity(velocitySetpoint, kgVolts);
+        elevatorMechanismLigament2d.setLength(inputs.positionMeters * 8);
     }
 
     private void recordOutputs() {
@@ -157,11 +160,14 @@ public class Elevator extends SubsystemBase {
     }
 
     public Command positionControl() {
-        return Commands.run(() -> {
-            velocitySetpoint =
-                MathUtil.clamp(
-                        positionPID.calculate(inputs.positionMeters, height.position), -maxSpeed,
-        +maxSpeed);
-        }, this);
+        return Commands.run(
+                () -> {
+                    velocitySetpoint =
+                            MathUtil.clamp(
+                                    positionPID.calculate(inputs.positionMeters, height.position),
+                                    -maxSpeed,
+                                    +maxSpeed);
+                },
+                this);
     }
 }
