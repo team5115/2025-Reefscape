@@ -45,7 +45,6 @@ public final class Constants {
     public static final int THIRD_SENSOR_ID = -1;
 
     public static final double LOOP_PERIOD_SECS = 0.02;
-    
 
     public static class SwerveConstants {
         public static final byte BACK_LEFT_DRIVE_ID = 8;
