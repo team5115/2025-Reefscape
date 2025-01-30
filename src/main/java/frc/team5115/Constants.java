@@ -40,6 +40,10 @@ public final class Constants {
     public static final byte BACK_SENSOR_ID = -1;
     public static final byte FRONT_SENSOR_ID = -1;
 
+    public static final int FIRST_SENSOR_ID = -1;
+    public static final int SECOND_SENSOR_ID = -1;
+    public static final int THIRD_SENSOR_ID = -1;
+
     public static final double LOOP_PERIOD_SECS = 0.02;
 
     public static class SwerveConstants {
@@ -58,9 +62,10 @@ public final class Constants {
         public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(4);
         public static final double WHEEL_COF = 1.55;
         public static final double MAX_LINEAR_SPEED = 4.8; // meters per second
-        public static final double TRACK_WIDTH_X =
-                Units.inchesToMeters(23.75); // TODO confirm track width
-        public static final double TRACK_WIDTH_Y = Units.inchesToMeters(23.75);
+
+        private static final double TRACK_WIDTH = Units.inchesToMeters(26.25);
+        public static final double TRACK_WIDTH_X = TRACK_WIDTH;
+        public static final double TRACK_WIDTH_Y = TRACK_WIDTH;
         public static final double DRIVE_BASE_RADIUS =
                 Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
         public static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
@@ -94,12 +99,29 @@ public final class Constants {
     // TODO determine elevator constants
     public static class ElevatorConstants {
         // Heights and radius in meters
-        public static final double MAX_HEIGHT = 1.5;
+        public static final double MAX_HEIGHT = 0.3746;
         public static final double MIN_HEIGHT = 0;
         public static final double DRUM_RADIUS = 0.05;
-        public static final double CARRIAGE_MASS_KG = 4.0;
-        public static final double GEARING = 10.0; // numbers greater than 1 represent reductions
-        public static final double METERS_PER_ROTATION = 1.0; // conversion factor
+        public static final double CARRIAGE_MASS_KG = 9.072; // 20 lbs
+        public static final double GEARING = 36.0; // numbers greater than 1 represent reductions
+        // Below conversion factor found empirically
+        public static final double METERS_PER_ROTATION = 0.0035181942;
+        // ! These amp limits are for a neo 550
+        public static final int STALL_CURRENT_AMPS = 20;
+        public static final int FREE_CURRENT_AMPS = 40;
+        // Kv values for neo and neo 550
+        // Kf for closed loop velocity control is 1 / kv
+        public static final double KV_NEO = 473;
+        public static final double KV_NEO_550 = 917;
+        // TODO tune the Elevator spark velocity pid
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
+    }
+
+    public static class AutoConstants {
+        public static final double sideOffset = 0.15;
+        public static final double forwardOffset = 0.38; 
     }
 
     public static class VisionConstants {

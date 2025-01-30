@@ -11,12 +11,15 @@ public interface ElevatorIO {
         public double appliedVolts = 0;
 
         public boolean backCoralDetected = false;
+        public boolean firstMagnetDetected = false;
+        public boolean secondMagnetDetected = false;
+        public boolean thirdMagnetDetected = false;
     }
 
     public default void updateInputs(ElevatorIOInputs inputs) {}
 
     public default void setElevatorVoltage(double volts) {}
 
-    // velocity in RPM
+    // velocity in m/s
     public default void setElevatorVelocity(double velocity, double ffVolts) {}
 }

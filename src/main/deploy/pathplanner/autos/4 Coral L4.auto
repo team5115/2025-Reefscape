@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4"
+                  "name": "L4-Left "
                 }
               }
             ]
@@ -55,7 +55,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4"
+                  "name": "L4-Right"
                 }
               }
             ]
@@ -87,13 +87,51 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score L2"
+                  "pathName": "Score L4 - Alt"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4"
+                  "name": "L4-Right"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "IntakeAlt"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Score L4 - Alt"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4-Left "
                 }
               }
             ]

@@ -102,7 +102,7 @@ public class RobotContainer {
         // Register auto commands for pathplanner
         // PhotonVision is passed in here to prevent warnings, i.e. "unused variable: vision"
         // registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
-
+        registerCommands(drivetrain, vision, null, null, null, null);
         NamedCommands.registerCommand("L2", new InstantCommand());
         NamedCommands.registerCommand("L3", new InstantCommand());
         NamedCommands.registerCommand("L4", new InstantCommand());
@@ -146,6 +146,9 @@ public class RobotContainer {
         joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(+0.15, +0.38));
         joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(-0.15, +0.38));
 
+        // elevator.setDefaultCommand(elevator.positionControl());
+        // elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY()));
+
         // joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         // joyManip.b().onTrue(elevator.setHeight(Height.L2));
         // joyManip.y().onTrue(elevator.setHeight(Height.L3));
@@ -181,10 +184,57 @@ public class RobotContainer {
             Dispenser dispenser,
             Indexer indexer,
             Climber climber) {
-        NamedCommands.registerCommand("L2", AutoCommands.dispense(dispenser, elevator, Height.L2));
-        NamedCommands.registerCommand("L3", AutoCommands.dispense(dispenser, elevator, Height.L3));
-        NamedCommands.registerCommand("L4", AutoCommands.dispense(dispenser, elevator, Height.L4));
-        NamedCommands.registerCommand("Intake", AutoCommands.intakeUntilCoral(dispenser, elevator));
+        // Register commands for pathplanner
+        NamedCommands.registerCommand(
+            "L2-Left",
+            Commands.sequence(
+                drivetrain.driveToNearestScoringSpot(-Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                AutoCommands.dispense(dispenser, elevator, Height.L2)
+            ));
+        
+        NamedCommands.registerCommand(
+            "L2-Right",
+            Commands.sequence(
+                drivetrain.driveToNearestScoringSpot(Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                AutoCommands.dispense(dispenser, elevator, Height.L2)
+            ));
+        
+        NamedCommands.registerCommand(
+            "L3-Left",
+            Commands.sequence(
+                drivetrain.driveToNearestScoringSpot(-Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                AutoCommands.dispense(dispenser, elevator, Height.L3)
+            ));
+            
+        NamedCommands.registerCommand(
+            "L3-Right",
+            Commands.sequence(
+                drivetrain.driveToNearestScoringSpot(Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                AutoCommands.dispense(dispenser, elevator, Height.L3)
+            ));
+        
+        NamedCommands.registerCommand(
+            "L4-Left",
+            Commands.sequence(
+                drivetrain.driveToNearestScoringSpot(-Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                AutoCommands.dispense(dispenser, elevator, Height.L4)
+            ));
+            
+        NamedCommands.registerCommand(
+            "L4-Right",
+            Commands.sequence(
+                drivetrain.driveToNearestScoringSpot(Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                AutoCommands.dispense(dispenser, elevator, Height.L4)
+            ));
+
+    
+                
+
+        // Blank registration
+        // NamedCommands.registerCommand("L2", new InstantCommand());
+        // NamedCommands.registerCommand("L3", new InstantCommand());
+        // NamedCommands.registerCommand("L4", new InstantCommand());
+        // NamedCommands.registerCommand("Intake", new InstantCommand());
     }
 
     /**

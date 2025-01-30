@@ -1,6 +1,7 @@
 package frc.team5115.subsystems.elevator;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.team5115.Constants;
@@ -9,8 +10,12 @@ import frc.team5115.Constants.ElevatorConstants;
 public class ElevatorIOSim implements ElevatorIO {
     private final ElevatorSim sim;
     private double voltage;
+    private PIDController velocityPID;
 
     public ElevatorIOSim() {
+
+        velocityPID = new PIDController(9.0, 20, 0);
+
         final double randomStartPosition =
                 Math.random() * (ElevatorConstants.MAX_HEIGHT - ElevatorConstants.MIN_HEIGHT)
                         + ElevatorConstants.MIN_HEIGHT;
@@ -40,5 +45,11 @@ public class ElevatorIOSim implements ElevatorIO {
     public void setElevatorVoltage(double volts) {
         voltage = MathUtil.clamp(volts, -12.0, 12.0);
         sim.setInputVoltage(voltage);
+    }
+
+    @Override
+    public void setElevatorVelocity(double velocity, double ffVolts) {
+        double volts = velocityPID.calculate(sim.getVelocityMetersPerSecond(), velocity) + ffVolts;
+        setElevatorVoltage(volts);
     }
 }
