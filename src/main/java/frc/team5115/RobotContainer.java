@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.DriveCommands;
@@ -103,10 +102,6 @@ public class RobotContainer {
         // PhotonVision is passed in here to prevent warnings, i.e. "unused variable: vision"
         // registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
         registerCommands(drivetrain, vision, null, null, null, null);
-        NamedCommands.registerCommand("L2", new InstantCommand());
-        NamedCommands.registerCommand("L3", new InstantCommand());
-        NamedCommands.registerCommand("L4", new InstantCommand());
-        NamedCommands.registerCommand("Intake", new InstantCommand());
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -184,51 +179,59 @@ public class RobotContainer {
             Dispenser dispenser,
             Indexer indexer,
             Climber climber) {
+        // NamedCommands.registerCommand(
+        //         "L4Left",
+        //         Commands.sequence(
+        //                 drivetrain.autoDriveToScoringSpot(
+        //                         -Constants.AutoConstants.sideOffset,
+        // Constants.AutoConstants.forwardOffset),
+        //                 AutoCommands.dispense(dispenser, elevator, Height.L4)));
         // Register commands for pathplanner
         NamedCommands.registerCommand(
-            "L2-Left",
-            Commands.sequence(
-                drivetrain.driveToNearestScoringSpot(-Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                AutoCommands.dispense(dispenser, elevator, Height.L2)
-            ));
-        
-        NamedCommands.registerCommand(
-            "L2-Right",
-            Commands.sequence(
-                drivetrain.driveToNearestScoringSpot(Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                AutoCommands.dispense(dispenser, elevator, Height.L2)
-            ));
-        
-        NamedCommands.registerCommand(
-            "L3-Left",
-            Commands.sequence(
-                drivetrain.driveToNearestScoringSpot(-Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                AutoCommands.dispense(dispenser, elevator, Height.L3)
-            ));
-            
-        NamedCommands.registerCommand(
-            "L3-Right",
-            Commands.sequence(
-                drivetrain.driveToNearestScoringSpot(Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                AutoCommands.dispense(dispenser, elevator, Height.L3)
-            ));
-        
-        NamedCommands.registerCommand(
-            "L4-Left",
-            Commands.sequence(
-                drivetrain.driveToNearestScoringSpot(-Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                AutoCommands.dispense(dispenser, elevator, Height.L4)
-            ));
-            
-        NamedCommands.registerCommand(
-            "L4-Right",
-            Commands.sequence(
-                drivetrain.driveToNearestScoringSpot(Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                AutoCommands.dispense(dispenser, elevator, Height.L4)
-            ));
+                "L2Left",
+                Commands.sequence(
+                        drivetrain.autoDriveToScoringSpot(
+                                -Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                        AutoCommands.dispense(dispenser, elevator, Height.L2)));
 
-    
-                
+        NamedCommands.registerCommand(
+                "L2Right",
+                Commands.sequence(
+                        drivetrain.autoDriveToScoringSpot(
+                                Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                        AutoCommands.dispense(dispenser, elevator, Height.L2)));
+
+        NamedCommands.registerCommand(
+                "L3Left",
+                Commands.sequence(
+                        drivetrain.autoDriveToScoringSpot(
+                                -Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                        AutoCommands.dispense(dispenser, elevator, Height.L3)));
+
+        NamedCommands.registerCommand(
+                "L3Right",
+                Commands.sequence(
+                        drivetrain.autoDriveToScoringSpot(
+                                Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                        AutoCommands.dispense(dispenser, elevator, Height.L3)));
+
+        NamedCommands.registerCommand(
+                "L4Left",
+                Commands.sequence(
+                        drivetrain.autoDriveToScoringSpot(
+                                -Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                        AutoCommands.dispense(dispenser, elevator, Height.L4)));
+
+        NamedCommands.registerCommand(
+                "L4Right",
+                Commands.sequence(
+                        drivetrain.autoDriveToScoringSpot(
+                                Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                        AutoCommands.dispense(dispenser, elevator, Height.L4)));
+
+        NamedCommands.registerCommand("Intake", AutoCommands.intakeUntilCoral(dispenser, elevator));
+
+        System.out.println("Registered Commands");
 
         // Blank registration
         // NamedCommands.registerCommand("L2", new InstantCommand());

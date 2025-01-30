@@ -157,6 +157,7 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         gyroIO.updateInputs(gyroInputs);
         Logger.processInputs("Drive/Gyro", gyroInputs);
+        Logger.recordOutput("AutoAim/AtGoals", xPid.atGoal() && yPid.atGoal() && anglePid.atGoal());
         for (var module : modules) {
             module.periodic();
         }
@@ -210,6 +211,13 @@ public class Drivetrain extends SubsystemBase {
                     Logger.recordOutput("AutoAim/Tag Pose", tagPose);
                     return offset;
                 });
+    }
+
+    public Command autoDriveToScoringSpot(double sidewaysOffset, double distanceOffset) {
+        return Commands.print("AutoDriving!")
+                .andThen(
+                        driveToNearestScoringSpot(sidewaysOffset, distanceOffset)
+                                .until(() -> xPid.atGoal() && yPid.atGoal() && anglePid.atGoal()));
     }
 
     private Command driveByAutoAimPids(Supplier<Pose2d> goalSupplier) {
