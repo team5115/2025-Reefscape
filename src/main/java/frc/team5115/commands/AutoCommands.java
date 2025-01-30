@@ -2,7 +2,6 @@ package frc.team5115.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.elevator.Elevator;
 
@@ -25,7 +24,7 @@ public class AutoCommands {
                 elevator.setHeightAndWait(state, 3.0),
                 dispenser.dispense(),
                 dispenser.waitForDetectionState(false, 5.0),
-                Commands.waitSeconds(0.5), //TODO: tune this value 
+                Commands.waitSeconds(0.5), // TODO: tune this value
                 dispenser.stop(),
                 elevator.setHeight(Elevator.Height.INTAKE));
     }
