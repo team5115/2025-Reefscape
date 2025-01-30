@@ -190,49 +190,46 @@ public class RobotContainer {
             Climber climber) {
         // Register commands for pathplanner
         NamedCommands.registerCommand(
-            "L2-Left",
-            Commands.sequence(
-                drivetrain.driveToNearestScoringSpot(-Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                AutoCommands.dispense(dispenser, elevator, Height.L2)
-            ));
-        
-        NamedCommands.registerCommand(
-            "L2-Right",
-            Commands.sequence(
-                drivetrain.driveToNearestScoringSpot(Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                AutoCommands.dispense(dispenser, elevator, Height.L2)
-            ));
-        
-        NamedCommands.registerCommand(
-            "L3-Left",
-            Commands.sequence(
-                drivetrain.driveToNearestScoringSpot(-Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                AutoCommands.dispense(dispenser, elevator, Height.L3)
-            ));
-            
-        NamedCommands.registerCommand(
-            "L3-Right",
-            Commands.sequence(
-                drivetrain.driveToNearestScoringSpot(Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                AutoCommands.dispense(dispenser, elevator, Height.L3)
-            ));
-        
-        NamedCommands.registerCommand(
-            "L4-Left",
-            Commands.sequence(
-                drivetrain.driveToNearestScoringSpot(-Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                AutoCommands.dispense(dispenser, elevator, Height.L4)
-            ));
-            
-        NamedCommands.registerCommand(
-            "L4-Right",
-            Commands.sequence(
-                drivetrain.driveToNearestScoringSpot(Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                AutoCommands.dispense(dispenser, elevator, Height.L4)
-            ));
+                "L2-Left",
+                Commands.sequence(
+                        drivetrain.driveToNearestScoringSpot(
+                                -Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                        AutoCommands.dispense(dispenser, elevator, Height.L2)));
 
-    
-                
+        NamedCommands.registerCommand(
+                "L2-Right",
+                Commands.sequence(
+                        drivetrain.driveToNearestScoringSpot(
+                                Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                        AutoCommands.dispense(dispenser, elevator, Height.L2)));
+
+        NamedCommands.registerCommand(
+                "L3-Left",
+                Commands.sequence(
+                        drivetrain.driveToNearestScoringSpot(
+                                -Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                        AutoCommands.dispense(dispenser, elevator, Height.L3)));
+
+        NamedCommands.registerCommand(
+                "L3-Right",
+                Commands.sequence(
+                        drivetrain.driveToNearestScoringSpot(
+                                Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                        AutoCommands.dispense(dispenser, elevator, Height.L3)));
+
+        NamedCommands.registerCommand(
+                "L4-Left",
+                Commands.sequence(
+                        drivetrain.driveToNearestScoringSpot(
+                                -Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                        AutoCommands.dispense(dispenser, elevator, Height.L4)));
+
+        NamedCommands.registerCommand(
+                "L4-Right",
+                Commands.sequence(
+                        drivetrain.driveToNearestScoringSpot(
+                                Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
+                        AutoCommands.dispense(dispenser, elevator, Height.L4)));
 
         // Blank registration
         // NamedCommands.registerCommand("L2", new InstantCommand());
