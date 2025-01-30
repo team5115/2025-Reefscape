@@ -121,7 +121,7 @@ public final class Constants {
 
     public static class AutoConstants {
         public static final double sideOffset = 0.15;
-        public static final double forwardOffset = 0.38; 
+        public static final double forwardOffset = 0.38;
     }
 
     public static class VisionConstants {
