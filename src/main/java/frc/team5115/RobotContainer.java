@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.team5115.commands.AutoCommands;
+import frc.team5115.commands.AutoCommands.Side;
 import frc.team5115.commands.DriveCommands;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.dispenser.Dispenser;
@@ -189,45 +190,27 @@ public class RobotContainer {
         // Register commands for pathplanner
         NamedCommands.registerCommand(
                 "L2Left",
-                Commands.sequence(
-                        drivetrain.autoDriveToScoringSpot(
-                                -Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                        AutoCommands.dispense(dispenser, elevator, Height.L2)));
+                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.LEFT, Height.L2));
 
         NamedCommands.registerCommand(
                 "L2Right",
-                Commands.sequence(
-                        drivetrain.autoDriveToScoringSpot(
-                                Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                        AutoCommands.dispense(dispenser, elevator, Height.L2)));
+                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.RIGHT, Height.L2));
 
         NamedCommands.registerCommand(
                 "L3Left",
-                Commands.sequence(
-                        drivetrain.autoDriveToScoringSpot(
-                                -Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                        AutoCommands.dispense(dispenser, elevator, Height.L3)));
+                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.LEFT, Height.L3));
 
         NamedCommands.registerCommand(
                 "L3Right",
-                Commands.sequence(
-                        drivetrain.autoDriveToScoringSpot(
-                                Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                        AutoCommands.dispense(dispenser, elevator, Height.L3)));
+                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.RIGHT, Height.L3));
 
         NamedCommands.registerCommand(
                 "L4Left",
-                Commands.sequence(
-                        drivetrain.autoDriveToScoringSpot(
-                                -Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                        AutoCommands.dispense(dispenser, elevator, Height.L4)));
+                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.LEFT, Height.L4));
 
         NamedCommands.registerCommand(
                 "L4Right",
-                Commands.sequence(
-                        drivetrain.autoDriveToScoringSpot(
-                                Constants.AutoConstants.sideOffset, Constants.AutoConstants.forwardOffset),
-                        AutoCommands.dispense(dispenser, elevator, Height.L4)));
+                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.RIGHT, Height.L4));
 
         NamedCommands.registerCommand("Intake", AutoCommands.intakeUntilCoral(dispenser, elevator));
 
