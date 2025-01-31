@@ -22,6 +22,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -122,7 +123,7 @@ public class Drivetrain extends SubsystemBase {
                                 SwerveConstants.DrivingMotorCurrentLimit, // less than the real current limit
                                 1),
                         SwerveConstants.MODULE_TRANSLATIONS),
-                () -> false,
+                () -> isRedAlliance(),
                 this);
         Pathfinding.setPathfinder(new LocalADStarAK());
         PathPlannerLogging.setLogActivePathCallback(
@@ -198,6 +199,10 @@ public class Drivetrain extends SubsystemBase {
 
         // Apply odometry update
         poseEstimator.update(rawGyroRotation, modulePositions);
+    }
+
+    public boolean isRedAlliance() {
+        return DriverStation.getAlliance().orElseGet(() -> Alliance.Blue) == Alliance.Red;
     }
 
     public Command driveToNearestScoringSpot(double sidewaysOffset, double distanceOffset) {
