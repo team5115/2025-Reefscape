@@ -42,7 +42,7 @@ public class AutoCommands {
                 elevator.setHeightAndWait(state, 3.0),
                 dispenser.dispense(),
                 dispenser.waitForDetectionState(false, 5.0),
-                Commands.waitSeconds(0.5), //TODO: tune this value
+                Commands.waitSeconds(0.5), // TODO: tune this value
                 dispenser.stop(),
                 elevator.setHeight(Elevator.Height.INTAKE));
     }
