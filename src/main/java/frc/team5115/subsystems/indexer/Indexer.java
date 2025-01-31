@@ -20,7 +20,7 @@ public class Indexer extends SubsystemBase {
         Logger.processInputs("Intake", inputs);
 
         if (elevator.checkElevator()) {
-            io.setPercent(+1);
+            io.setPercent(+0.25);
         } else {
             io.setPercent(+0);
         }
