@@ -11,13 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Leave and Score"
+                  "pathName": "SM Leave and Score"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Left"
+                  "name": "L2"
                 }
               }
             ]
@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Intake"
+                  "pathName": "SM Intake"
                 }
               },
               {
@@ -49,13 +49,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score L4"
+                  "pathName": "SM Score L4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Right"
+                  "name": "L4"
                 }
               }
             ]
@@ -68,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Intake"
+                  "pathName": "SM Intake"
                 }
               },
               {
@@ -87,13 +87,57 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score L4 - Alt"
+                  "pathName": "SM Score L2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Right"
+                  "name": "L4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": []
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SM Intake Alt"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SM Score L2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4"
                 }
               }
             ]

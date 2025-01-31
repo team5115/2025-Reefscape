@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4-Left "
+                  "name": "L4Left"
                 }
               }
             ]
@@ -55,7 +55,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4-Right"
+                  "name": "L4Right"
                 }
               }
             ]
@@ -93,7 +93,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4-Right"
+                  "name": "L4Right"
                 }
               }
             ]
@@ -131,7 +131,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4-Left "
+                  "name": "L4Left"
                 }
               }
             ]
