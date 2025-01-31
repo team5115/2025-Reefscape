@@ -112,7 +112,7 @@ public class RobotContainer {
         // Register auto commands for pathplanner
         // PhotonVision is passed in here to prevent warnings, i.e. "unused variable: vision"
         // registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
-        registerCommands(drivetrain, vision, null, null, null, null);
+        registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
