@@ -145,6 +145,9 @@ public class RobotContainer {
         // elevator.setDefaultCommand(elevator.positionControl());
         // elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY()));
 
+        // elevator.setDefaultCommand(elevator.positionControl());
+        // elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY()));
+
         // joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         // joyManip.b().onTrue(elevator.setHeight(Height.L2));
         // joyManip.y().onTrue(elevator.setHeight(Height.L3));
