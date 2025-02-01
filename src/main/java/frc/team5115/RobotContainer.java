@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.team5115.Constants.Mode;
 import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.AutoCommands.Side;
 import frc.team5115.commands.DriveCommands;
@@ -35,6 +36,7 @@ import frc.team5115.subsystems.elevator.ElevatorIOSparkMax;
 import frc.team5115.subsystems.indexer.Indexer;
 import frc.team5115.subsystems.indexer.IndexerIOSparkMax;
 import frc.team5115.subsystems.vision.PhotonVision;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -62,6 +64,8 @@ public class RobotContainer {
 
     private boolean robotRelative = false;
     private boolean slowMode = false;
+    private boolean hasFaults = true;
+    private double faultPrintTimeout = 0;
 
     private final GenericEntry clearForMatchEntry;
 
@@ -139,7 +143,6 @@ public class RobotContainer {
         //         drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         configureButtonBindings();
-        preMatchCheck();
     }
 
     private void configureButtonBindings() {
@@ -231,20 +234,6 @@ public class RobotContainer {
         System.out.println("Registered Commands");
     }
 
-    private void preMatchCheck() {
-        final var faults =
-                RobotFaults.fromSubsystems(
-                        drivetrain,
-                        vision,
-                        climber,
-                        elevator,
-                        dispenser,
-                        indexer,
-                        joyDrive.isConnected() && joyManip.isConnected());
-        System.out.println(faults.toString());
-        clearForMatchEntry.setBoolean(faults.hasFaults());
-    }
-
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
@@ -272,5 +261,37 @@ public class RobotContainer {
                         },
                         drivetrain)
                 .ignoringDisable(true);
+    }
+
+    public void disabledPeriodic() {
+        if (Constants.currentMode == Mode.REAL) {
+            if (hasFaults) {
+                if (faultPrintTimeout <= 0) {
+                    preMatchCheck();
+                    faultPrintTimeout = 50;
+                }
+                faultPrintTimeout -= 1;
+            }
+            Logger.recordOutput("HasFaults", hasFaults);
+            clearForMatchEntry.setBoolean(!hasFaults);
+        }
+    }
+
+    private void preMatchCheck() {
+        final var faults =
+                RobotFaults.fromSubsystems(
+                        drivetrain,
+                        vision,
+                        climber,
+                        elevator,
+                        dispenser,
+                        indexer,
+                        joyDrive.isConnected() && joyManip.isConnected());
+        hasFaults = faults.hasFaults();
+        if (hasFaults) {
+            System.err.println(faults.toString());
+        } else {
+            System.out.println(faults.toString());
+        }
     }
 }

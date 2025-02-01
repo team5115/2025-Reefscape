@@ -45,7 +45,7 @@ public class RobotFaults {
         this.elevatorNull = elevatorNull;
         this.dispenserNull = dispenserNull;
         this.indexerNull = indexerNull;
-        cachedToString = toString();
+        cachedToString = cacheString();
     }
 
     public String cacheString() {
@@ -119,9 +119,9 @@ public class RobotFaults {
 
         return new RobotFaults(
                 sparkFaults.toString(),
-                vision.isCameraConnected(),
+                !vision.isCameraConnected(),
                 !joysticksConnected,
-                drivetrain.isGyroConnected(),
+                !drivetrain.isGyroConnected(),
                 drivetrain == null,
                 vision == null,
                 climber == null,
@@ -151,7 +151,7 @@ public class RobotFaults {
             builder.append("GateDriverFault,");
         }
         if (faults.escEeprom) {
-            builder.append("EscEepromFault, (Skibidi Rizz Fault)");
+            builder.append("EscEepromFault (SkibidiRizzFault),");
         }
         if (faults.firmware) {
             builder.append("FirmwareFault,");
