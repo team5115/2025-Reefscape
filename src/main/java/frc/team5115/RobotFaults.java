@@ -56,10 +56,10 @@ public class RobotFaults {
             builder.append("] ; ");
         }
         if (cameraDisconnected) {
-            builder.append("CameraDisconnected");
+            builder.append("CameraDisconnected; ");
         }
         if (joysticksDisconnected) {
-            builder.append("JoysticksDisconnected");
+            builder.append("JoysticksDisconnected; ");
         }
         if (gyroDisconnected) {
             builder.append("GyroDisconnected; ");
@@ -92,6 +92,10 @@ public class RobotFaults {
     @Override
     public String toString() {
         return cachedToString;
+    }
+
+    public boolean hasFaults() {
+        return !cachedToString.equals(NO_FAULTS);
     }
 
     public static RobotFaults fromSubsystems(
@@ -161,9 +165,5 @@ public class RobotFaults {
             mainBuilder.append(builder);
             mainBuilder.append(" },");
         }
-    }
-
-    public static boolean hasFaults(String str) {
-        return !str.equals(NO_FAULTS);
     }
 }

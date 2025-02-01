@@ -5,6 +5,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -58,9 +60,10 @@ public class RobotContainer {
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
 
-    // Shuffleboard
     private boolean robotRelative = false;
     private boolean slowMode = false;
+
+    private final GenericEntry clearForMatchEntry;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -81,6 +84,7 @@ public class RobotContainer {
                                 new ModuleIOSparkMax(3));
                 vision = new PhotonVision(drivetrain);
                 // vision = null;
+                clearForMatchEntry = Shuffleboard.getTab("SmartDashboard").add("ClearForMatch", false).getEntry();
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -93,6 +97,7 @@ public class RobotContainer {
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
                 vision = null;
+                clearForMatchEntry = null;
                 break;
 
             default:
@@ -106,6 +111,7 @@ public class RobotContainer {
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
                 vision = null;
+                clearForMatchEntry = null;
                 break;
         }
 
@@ -234,10 +240,11 @@ public class RobotContainer {
                         dispenser,
                         indexer,
                         joyDrive.isConnected() && joyManip.isConnected());
-        faults.toString();
+        System.out.println(faults.toString());
+        clearForMatchEntry.setBoolean(faults.hasFaults());
     }
 
-    /**
+    /** 
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
