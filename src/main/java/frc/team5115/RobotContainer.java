@@ -114,7 +114,7 @@ public class RobotContainer {
                 // pattern = base.atBrightness(Percent.of(50));
                 // pattern.applyTo(m_ledBuffer);
                 m_ledBuffer.setRGB(0, 0, 0, 0);
-                m_ledBuffer.setRGB(1, 255, 0, 0);
+                m_ledBuffer.setRGB(1, 0, 255, 0);
                 m_led.setData(m_ledBuffer);
                 m_led.start();
                 break;
