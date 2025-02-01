@@ -25,10 +25,10 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     private final DigitalInput thirdSensor;
 
     public ElevatorIOSparkMax() {
-        backSensor = new DigitalInput(Constants.BACK_SENSOR_ID);
-        firstSensor = new DigitalInput(Constants.FIRST_SENSOR_ID);
-        secondSensor = new DigitalInput(Constants.SECOND_SENSOR_ID);
-        thirdSensor = new DigitalInput(Constants.THIRD_SENSOR_ID);
+        backSensor = new DigitalInput(Constants.INTAKE_SENSOR_ID);
+        firstSensor = new DigitalInput(Constants.ELEVATOR_BOTTOM_SENSOR_ID);
+        secondSensor = new DigitalInput(Constants.ELEVATOR_MIDDLE_SENSOR_ID);
+        thirdSensor = new DigitalInput(Constants.ELEVATOR_TOP_SENSOR_ID);
         motor = new SparkMax(Constants.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
         velocityCLC = motor.getClosedLoopController();

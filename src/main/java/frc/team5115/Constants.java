@@ -28,36 +28,40 @@ public final class Constants {
         REPLAY
     }
 
-    public static final byte PNEUMATIC_HUB_ID = 1;
+    public static final byte PNEUMATIC_HUB_ID = 2;
     public static final byte CLIMB_FORWARD_CHANNEL = 0;
     public static final byte CLIMB_REVERSE_CHANNEL = 1;
+    public static final byte DEALGAE_FORWARD_CHANNEL = 2;
+    public static final byte DEALGAE_REVERSE_CHANNEL = 3;
 
-    public static final byte ELEVATOR_MOTOR_ID = 9;
-    public static final byte INDEXER_MOTOR_ID = 10;
-    public static final byte DISPENSER_MOTOR_ID = 11;
+    public static final byte ELEVATOR_MOTOR_ID = 11;
+    public static final byte INDEXER_MOTOR_ID = 12;
+    public static final byte DISPENSER_MOTOR_ID = 13;
 
     public static final byte CLIMBER_SENSOR_ID = 0;
-    public static final byte BACK_SENSOR_ID = 1;
-    public static final byte FRONT_SENSOR_ID = 2;
+    public static final byte INTAKE_SENSOR_ID = 1;
+    public static final byte DISPENSER_SENSOR_ID = 2;
 
-    public static final int FIRST_SENSOR_ID = 3;
-    public static final int SECOND_SENSOR_ID = 4;
-    public static final int THIRD_SENSOR_ID = 5;
+    public static final byte ELEVATOR_BOTTOM_SENSOR_ID = 3;
+    public static final byte ELEVATOR_MIDDLE_SENSOR_ID = 4;
+    public static final byte ELEVATOR_TOP_SENSOR_ID = 5;
+
+    public static final byte LED_STRIP_PWM_ID = 0;
 
     public static final double LOOP_PERIOD_SECS = 0.02;
 
     public static class SwerveConstants {
-        public static final byte BACK_LEFT_DRIVE_ID = 8;
         public static final byte FRONT_LEFT_DRIVE_ID = 6;
-        public static final byte BACK_RIGHT_DRIVE_ID = 4;
-        public static final byte FRONT_RIGHT_DRIVE_ID = 2;
+        public static final byte FRONT_RIGHT_DRIVE_ID = 4;
+        public static final byte BACK_LEFT_DRIVE_ID = 10;
+        public static final byte BACK_RIGHT_DRIVE_ID = 8;
 
-        public static final byte BACK_LEFT_TURN_ID = 7;
         public static final byte FRONT_LEFT_TURN_ID = 5;
-        public static final byte BACK_RIGHT_TURN_ID = 3;
-        public static final byte FRONT_RIGHT_TURN_ID = 1;
+        public static final byte FRONT_RIGHT_TURN_ID = 3;
+        public static final byte BACK_LEFT_TURN_ID = 9;
+        public static final byte BACK_RIGHT_TURN_ID = 7;
 
-        // ! TODO determine mass and moi of robot, and wheel cof
+        // ! TODO determine mass and moi of robot
         public static final Mass ROBOT_MASS = Pounds.of(83.6);
         public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(4);
         public static final double WHEEL_COF = 1.55;

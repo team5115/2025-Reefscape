@@ -16,7 +16,7 @@ public class DispenserIOSparkMax implements DispenserIO {
     private final DigitalInput frontSensor;
 
     public DispenserIOSparkMax() {
-        frontSensor = new DigitalInput(Constants.FRONT_SENSOR_ID);
+        frontSensor = new DigitalInput(Constants.DISPENSER_SENSOR_ID);
         motor = new SparkMax(Constants.DISPENSER_MOTOR_ID, MotorType.kBrushed);
 
         final SparkMaxConfig motorConfig = new SparkMaxConfig();
