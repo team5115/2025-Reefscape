@@ -75,4 +75,8 @@ public class PhotonVision extends SubsystemBase {
             Logger.recordOutput("Vision/EstimatedPose", pose.estimatedPose);
         }
     }
+
+    public boolean isCameraConnected() {
+        return camera.isConnected();
+    }
 }

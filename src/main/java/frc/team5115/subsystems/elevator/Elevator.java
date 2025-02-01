@@ -1,5 +1,6 @@
 package frc.team5115.subsystems.elevator;
 
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -8,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants;
+import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -184,5 +186,9 @@ public class Elevator extends SubsystemBase {
                                     positionPID.calculate(getActualHeight(), height.position), -maxSpeed, +maxSpeed);
                 },
                 this);
+    }
+
+    public void getSparks(ArrayList<SparkMax> sparks) {
+        io.getSparks(sparks);
     }
 }

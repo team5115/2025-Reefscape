@@ -1,5 +1,6 @@
 package frc.team5115.subsystems.drive;
 
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -7,6 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.team5115.Constants;
 import frc.team5115.Constants.SwerveConstants;
+import java.util.ArrayList;
 import org.littletonrobotics.junction.Logger;
 
 public class Module {
@@ -142,5 +144,14 @@ public class Module {
     /** Returns the drive velocity in radians/sec. */
     public double getCharacterizationVelocity() {
         return inputs.driveVelocityRadPerSec;
+    }
+
+    /**
+     * Get the drive and turn sparks into a list
+     *
+     * @param sparks the arraylist to append the sparks into
+     */
+    public void getAllSparks(ArrayList<SparkMax> sparks) {
+        io.getSparks(sparks);
     }
 }

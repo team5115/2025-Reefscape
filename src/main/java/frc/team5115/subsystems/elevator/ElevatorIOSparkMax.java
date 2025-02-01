@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.team5115.Constants;
 import frc.team5115.Constants.ElevatorConstants;
+import java.util.ArrayList;
 
 public class ElevatorIOSparkMax implements ElevatorIO {
     private final SparkMax motor;
@@ -75,5 +76,10 @@ public class ElevatorIOSparkMax implements ElevatorIO {
                 ClosedLoopSlot.kSlot0,
                 ffVolts,
                 SparkClosedLoopController.ArbFFUnits.kVoltage);
+    }
+
+    @Override
+    public void getSparks(ArrayList<SparkMax> sparks) {
+        sparks.add(motor);
     }
 }

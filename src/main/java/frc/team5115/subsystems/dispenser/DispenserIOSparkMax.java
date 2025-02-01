@@ -8,6 +8,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.team5115.Constants;
+import java.util.ArrayList;
 
 public class DispenserIOSparkMax implements DispenserIO {
     private final SparkMax motor;
@@ -39,5 +40,10 @@ public class DispenserIOSparkMax implements DispenserIO {
     @Override
     public void setVoltage(double volts) {
         motor.setVoltage(volts);
+    }
+
+    @Override
+    public void getSparks(ArrayList<SparkMax> sparks) {
+        sparks.add(motor);
     }
 }

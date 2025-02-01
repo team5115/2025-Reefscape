@@ -132,6 +132,7 @@ public class RobotContainer {
         //         drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         configureButtonBindings();
+        preMatchCheck();
     }
 
     private void configureButtonBindings() {
@@ -221,6 +222,19 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake", AutoCommands.intakeUntilCoral(dispenser, elevator));
 
         System.out.println("Registered Commands");
+    }
+
+    private void preMatchCheck() {
+        final var faults =
+                RobotFaults.fromSubsystems(
+                        drivetrain,
+                        vision,
+                        climber,
+                        elevator,
+                        dispenser,
+                        indexer,
+                        joyDrive.isConnected() && joyManip.isConnected());
+        faults.toString();
     }
 
     /**

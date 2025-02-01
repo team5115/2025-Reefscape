@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.team5115.Constants;
+import java.util.ArrayList;
 
 public class IndexerIOSparkMax implements IndexerIO {
     private final SparkMax motor;
@@ -37,5 +38,10 @@ public class IndexerIOSparkMax implements IndexerIO {
     @Override
     public void setVoltage(double volts) {
         motor.setVoltage(volts);
+    }
+
+    @Override
+    public void getSparks(ArrayList<SparkMax> sparks) {
+        sparks.add(motor);
     }
 }
