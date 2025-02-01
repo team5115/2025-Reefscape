@@ -84,7 +84,8 @@ public class RobotContainer {
                                 new ModuleIOSparkMax(3));
                 vision = new PhotonVision(drivetrain);
                 // vision = null;
-                clearForMatchEntry = Shuffleboard.getTab("SmartDashboard").add("ClearForMatch", false).getEntry();
+                clearForMatchEntry =
+                        Shuffleboard.getTab("SmartDashboard").add("ClearForMatch", false).getEntry();
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -244,7 +245,7 @@ public class RobotContainer {
         clearForMatchEntry.setBoolean(faults.hasFaults());
     }
 
-    /** 
+    /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous

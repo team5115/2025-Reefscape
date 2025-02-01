@@ -152,7 +152,6 @@ public class RobotFaults {
         }
         if (faults.escEeprom) {
             builder.append("EscEepromFault, (Skibidi Rizz Fault)");
-            
         }
         if (faults.firmware) {
             builder.append("FirmwareFault,");
