@@ -1,11 +1,16 @@
 package frc.team5115;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -54,7 +59,9 @@ public class RobotContainer {
     private final Elevator elevator;
     private final Dispenser dispenser;
     private final Indexer indexer;
-
+    private final AddressableLED m_led;
+    private final AddressableLEDBuffer m_ledBuffer;
+    // private final LEDPattern pattern;
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
     private final CommandXboxController joyManip = new CommandXboxController(1);
@@ -90,6 +97,26 @@ public class RobotContainer {
                 // vision = null;
                 clearForMatchEntry =
                         Shuffleboard.getTab("SmartDashboard").add("ClearForMatch", false).getEntry();
+                // LED bling
+                m_led = new AddressableLED(0);
+                // m_led.setBitTiming();
+                m_ledBuffer = new AddressableLEDBuffer(192);
+                m_led.setLength(m_ledBuffer.getLength());
+                Distance ledSpacing = Meters.of(1 / 192.0);
+                // LEDPattern base =
+                //         LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, Color.kBlack,
+                // Color.kRed);
+                // LEDPattern base = LEDPattern.solid(Color.kBlue);
+                // base = base.scrollAtRelativeSpeed(Percent.per(Second).of(25));
+                // LEDPattern absolute =
+                //         base.scrollAtAbsoluteSpeed(Centimeters.per(Second).of(12.5), ledSpacing);
+                // LEDPattern base = LEDPattern.solid(Color.kWhite);
+                // pattern = base.atBrightness(Percent.of(50));
+                // pattern.applyTo(m_ledBuffer);
+                m_ledBuffer.setRGB(0, 0, 0, 0);
+                m_ledBuffer.setRGB(1, 255, 0, 0);
+                m_led.setData(m_ledBuffer);
+                m_led.start();
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -103,6 +130,9 @@ public class RobotContainer {
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
                 vision = null;
                 clearForMatchEntry = null;
+                m_led = null;
+                m_ledBuffer = null;
+                // pattern = null;
                 break;
 
             default:
@@ -117,6 +147,9 @@ public class RobotContainer {
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
                 vision = null;
                 clearForMatchEntry = null;
+                m_led = null;
+                m_ledBuffer = null;
+                // pattern = null;
                 break;
         }
 
@@ -143,6 +176,24 @@ public class RobotContainer {
         //         drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         configureButtonBindings();
+    }
+
+    public void robotPeriodic() {
+        if (Constants.currentMode == Mode.REAL) {
+            // final LEDPattern base = LEDPattern.solid(Color.kRed);
+            // final LEDPattern pattern = base.atBrightness(Percent.of(100));
+            // Distance ledSpacing = Meters.of(1 / 120.0);
+            // LEDPattern base = LEDPattern.discontinuousGradient(Color.kRed, Color.kBlue);
+            // LEDPattern pattern = base.scrollAtRelativeSpeed(Percent.per(Second).of(25));
+            // LEDPattern absolute = base.scrollAtAbsoluteSpeed(Centimeters.per(Second).of(12.5),
+            // ledSpacing);
+            // pattern.applyTo(m_ledBuffer);
+            // m_led.setData(m_ledBuffer);
+            // m_led.start();
+            // pattern.applyTo(m_ledBuffer);
+            // m_ledBuffer.setRGB(0, 0, 0, 0);
+            // m_led.setData(m_ledBuffer);
+        }
     }
 
     private void configureButtonBindings() {
@@ -184,8 +235,6 @@ public class RobotContainer {
     private Command setSlowMode(boolean state) {
         return Commands.runOnce(() -> slowMode = state);
     }
-
-    public void robotPeriodic() {}
 
     /**
      * Register commands for pathplanner to use in autos
