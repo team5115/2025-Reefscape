@@ -1,5 +1,7 @@
 package frc.team5115.subsystems.elevator;
 
+import com.revrobotics.spark.SparkMax;
+import java.util.ArrayList;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
@@ -22,4 +24,7 @@ public interface ElevatorIO {
 
     // velocity in m/s
     public default void setElevatorVelocity(double velocity, double ffVolts) {}
+
+    /** This should not really be here but it must be */
+    public default void getSparks(ArrayList<SparkMax> sparks) {}
 }

@@ -1,5 +1,7 @@
 package frc.team5115.subsystems.indexer;
 
+import com.revrobotics.spark.SparkMax;
+import java.util.ArrayList;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface IndexerIO {
@@ -18,4 +20,7 @@ public interface IndexerIO {
 
     /** Run the intake motor at the specified percentage. */
     public default void setPercent(double percent) {}
+
+    /** This should not really be here but it must be */
+    public default void getSparks(ArrayList<SparkMax> sparks) {}
 }

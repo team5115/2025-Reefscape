@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.team5115.Constants.SwerveConstants;
+import java.util.ArrayList;
 
 public class ModuleIOSparkMax implements ModuleIO {
     private final SparkMax driveSparkMax;
@@ -120,5 +121,11 @@ public class ModuleIOSparkMax implements ModuleIO {
     @Override
     public void setTurnVoltage(double volts) {
         turnSparkMax.setVoltage(volts);
+    }
+
+    @Override
+    public void getSparks(ArrayList<SparkMax> sparks) {
+        sparks.add(driveSparkMax);
+        sparks.add(turnSparkMax);
     }
 }

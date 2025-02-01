@@ -28,21 +28,21 @@ public final class Constants {
         REPLAY
     }
 
-    public static final byte PNEUMATIC_HUB_ID = -1;
-    public static final byte CLIMB_FORWARD_CHANNEL = -1;
-    public static final byte CLIMB_REVERSE_CHANNEL = -1;
+    public static final byte PNEUMATIC_HUB_ID = 1;
+    public static final byte CLIMB_FORWARD_CHANNEL = 0;
+    public static final byte CLIMB_REVERSE_CHANNEL = 1;
 
-    public static final byte ELEVATOR_MOTOR_ID = -1;
-    public static final byte INDEXER_MOTOR_ID = -1;
-    public static final byte DISPENSER_MOTOR_ID = -1;
+    public static final byte ELEVATOR_MOTOR_ID = 9;
+    public static final byte INDEXER_MOTOR_ID = 10;
+    public static final byte DISPENSER_MOTOR_ID = 11;
 
-    public static final byte CLIMBER_SENSOR_ID = -1;
-    public static final byte BACK_SENSOR_ID = -1;
-    public static final byte FRONT_SENSOR_ID = -1;
+    public static final byte CLIMBER_SENSOR_ID = 0;
+    public static final byte BACK_SENSOR_ID = 1;
+    public static final byte FRONT_SENSOR_ID = 2;
 
-    public static final int FIRST_SENSOR_ID = -1;
-    public static final int SECOND_SENSOR_ID = -1;
-    public static final int THIRD_SENSOR_ID = -1;
+    public static final int FIRST_SENSOR_ID = 3;
+    public static final int SECOND_SENSOR_ID = 4;
+    public static final int THIRD_SENSOR_ID = 5;
 
     public static final double LOOP_PERIOD_SECS = 0.02;
 

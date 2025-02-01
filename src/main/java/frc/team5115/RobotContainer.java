@@ -5,9 +5,12 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.team5115.Constants.Mode;
 import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.AutoCommands.Side;
 import frc.team5115.commands.DriveCommands;
@@ -33,6 +36,7 @@ import frc.team5115.subsystems.elevator.ElevatorIOSparkMax;
 import frc.team5115.subsystems.indexer.Indexer;
 import frc.team5115.subsystems.indexer.IndexerIOSparkMax;
 import frc.team5115.subsystems.vision.PhotonVision;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -58,9 +62,12 @@ public class RobotContainer {
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
 
-    // Shuffleboard
     private boolean robotRelative = false;
     private boolean slowMode = false;
+    private boolean hasFaults = true;
+    private double faultPrintTimeout = 0;
+
+    private final GenericEntry clearForMatchEntry;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -81,6 +88,8 @@ public class RobotContainer {
                                 new ModuleIOSparkMax(3));
                 vision = new PhotonVision(drivetrain);
                 // vision = null;
+                clearForMatchEntry =
+                        Shuffleboard.getTab("SmartDashboard").add("ClearForMatch", false).getEntry();
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -93,6 +102,7 @@ public class RobotContainer {
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
                 vision = null;
+                clearForMatchEntry = null;
                 break;
 
             default:
@@ -106,6 +116,7 @@ public class RobotContainer {
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
                 vision = null;
+                clearForMatchEntry = null;
                 break;
         }
 
@@ -250,5 +261,37 @@ public class RobotContainer {
                         },
                         drivetrain)
                 .ignoringDisable(true);
+    }
+
+    public void disabledPeriodic() {
+        if (Constants.currentMode == Mode.REAL) {
+            if (hasFaults) {
+                if (faultPrintTimeout <= 0) {
+                    preMatchCheck();
+                    faultPrintTimeout = 50;
+                }
+                faultPrintTimeout -= 1;
+            }
+            Logger.recordOutput("HasFaults", hasFaults);
+            clearForMatchEntry.setBoolean(!hasFaults);
+        }
+    }
+
+    private void preMatchCheck() {
+        final var faults =
+                RobotFaults.fromSubsystems(
+                        drivetrain,
+                        vision,
+                        climber,
+                        elevator,
+                        dispenser,
+                        indexer,
+                        joyDrive.isConnected() && joyManip.isConnected());
+        hasFaults = faults.hasFaults();
+        if (hasFaults) {
+            System.err.println(faults.toString());
+        } else {
+            System.out.println(faults.toString());
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants.SwerveConstants;
 import frc.team5115.subsystems.vision.PhotonVision;
 import frc.team5115.util.LocalADStarAK;
+import java.util.ArrayList;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -361,5 +363,15 @@ public class Drivetrain extends SubsystemBase {
 
     public void offsetGyro() {
         gyroOffset = rawGyroRotation;
+    }
+
+    public void getSparks(ArrayList<SparkMax> sparks) {
+        for (var module : modules) {
+            module.getAllSparks(sparks);
+        }
+    }
+
+    public boolean isGyroConnected() {
+        return gyroInputs.connected;
     }
 }

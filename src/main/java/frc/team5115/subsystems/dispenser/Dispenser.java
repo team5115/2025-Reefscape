@@ -1,8 +1,10 @@
 package frc.team5115.subsystems.dispenser;
 
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.ArrayList;
 import org.littletonrobotics.junction.Logger;
 
 public class Dispenser extends SubsystemBase {
@@ -16,7 +18,7 @@ public class Dispenser extends SubsystemBase {
     @Override
     public void periodic() {
         io.updateInputs(inputs);
-        Logger.processInputs("Dispense", inputs);
+        Logger.processInputs("Dispenser", inputs);
     }
 
     public Command waitForDetectionState(boolean state, double timeout) {
@@ -41,5 +43,9 @@ public class Dispenser extends SubsystemBase {
 
     public boolean coralDetected() {
         return inputs.frontCoralDetected;
+    }
+
+    public void getSparks(ArrayList<SparkMax> sparks) {
+        io.getSparks(sparks);
     }
 }

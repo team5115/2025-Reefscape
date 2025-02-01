@@ -1,6 +1,8 @@
 package frc.team5115.subsystems.drive;
 
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.geometry.Rotation2d;
+import java.util.ArrayList;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ModuleIO {
@@ -25,4 +27,7 @@ public interface ModuleIO {
 
     /** Run the turn motor at the specified voltage. */
     public default void setTurnVoltage(double volts) {}
+
+    /** This should not really be here but it must be */
+    public default void getSparks(ArrayList<SparkMax> sparks) {}
 }
