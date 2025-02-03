@@ -9,4 +9,6 @@ public interface Dealgaefacationinator5000IO {
     public default void updateInputs(Dealgaefacationinator5000IOInputs inputs){}
 
     public default void setVoltage(double volts){}
+
+    public default void triggerPnumatics(){}
 }
