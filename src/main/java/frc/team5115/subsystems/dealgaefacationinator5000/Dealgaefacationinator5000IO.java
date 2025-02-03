@@ -1,12 +1,22 @@
 package frc.team5115.subsystems.dealgaefacationinator5000;
 
+import org.littletonrobotics.junction.AutoLog;
+
 public interface Dealgaefacationinator5000IO {
 
+    @AutoLog
     public static class Dealgaefacationinator5000IOInputs{
+        double motorVolts;
+        double motorVelocityRPM;
 
+        boolean state;
     }
 
     public default void updateInputs(Dealgaefacationinator5000IOInputs inputs){}
 
     public default void setVoltage(double volts){}
+
+    public default void setPnumatic(boolean extend){}
+
+    public default void setPercent(double percent){}
 }
