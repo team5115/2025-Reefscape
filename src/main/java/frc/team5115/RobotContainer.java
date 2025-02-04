@@ -1,6 +1,5 @@
 package frc.team5115;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -9,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.AutoCommands.Side;
+import frc.team5115.subsystems.bling.Bling;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.drive.Drivetrain;
@@ -16,7 +16,6 @@ import frc.team5115.subsystems.elevator.Elevator;
 import frc.team5115.subsystems.elevator.Elevator.Height;
 import frc.team5115.subsystems.indexer.Indexer;
 import frc.team5115.subsystems.vision.PhotonVision;
-import frc.team5115.util.LedStrip;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -34,14 +33,13 @@ public class RobotContainer {
     // private final Elevator elevator;
     // private final Dispenser dispenser;
     // private final Indexer indexer;
-    private final LedStrip led;
-    // private final LEDPattern pattern;
+    private final Bling bling = new Bling();
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
     private final CommandXboxController joyManip = new CommandXboxController(1);
 
     // Dashboard inputs
-    private final LoggedDashboardChooser<Command> autoChooser;
+    private final LoggedDashboardChooser<Command> autoChooser = null;
 
     private boolean robotRelative = false;
     private boolean slowMode = false;
@@ -71,10 +69,6 @@ public class RobotContainer {
                 // vision = null;
                 clearForMatchEntry =
                         Shuffleboard.getTab("SmartDashboard").add("ClearForMatch", false).getEntry();
-                led = new LedStrip(0, 144);
-                led.setRGB(0, 255, 0, 0, 0);
-                led.start();
-                led.setData();
                 break;
 
             case SIM:
@@ -90,8 +84,6 @@ public class RobotContainer {
                 // ModuleIOSim());
                 // vision = null;
                 clearForMatchEntry = null;
-                // pattern = null;
-                led = null;
                 break;
 
             default:
@@ -107,8 +99,6 @@ public class RobotContainer {
                 // ModuleIO() {});
                 // vision = null;
                 clearForMatchEntry = null;
-                // pattern = null;
-                led = null;
                 break;
         }
 
@@ -118,7 +108,7 @@ public class RobotContainer {
         // registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
 
         // Set up auto routines
-        autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+        // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
         // Set up SysId routines
         // autoChooser.addOption(
