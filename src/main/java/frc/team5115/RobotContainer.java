@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.AutoCommands.Side;
 import frc.team5115.subsystems.bling.Bling;
+import frc.team5115.subsystems.bling.BlingIO;
+import frc.team5115.subsystems.bling.BlingIOReal;
+import frc.team5115.subsystems.bling.BlingIOSim;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.drive.Drivetrain;
@@ -33,7 +36,8 @@ public class RobotContainer {
     // private final Elevator elevator;
     // private final Dispenser dispenser;
     // private final Indexer indexer;
-    private final Bling bling = new Bling();
+    private final Bling bling;
+
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
     private final CommandXboxController joyManip = new CommandXboxController(1);
@@ -67,6 +71,7 @@ public class RobotContainer {
                 //                 new ModuleIOSparkMax(3));
                 // vision = new PhotonVision(drivetrain);
                 // vision = null;
+                bling = new Bling(new BlingIOReal());
                 clearForMatchEntry =
                         Shuffleboard.getTab("SmartDashboard").add("ClearForMatch", false).getEntry();
                 break;
@@ -83,6 +88,7 @@ public class RobotContainer {
                 //                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new
                 // ModuleIOSim());
                 // vision = null;
+                bling = new Bling(new BlingIOSim());
                 clearForMatchEntry = null;
                 break;
 
@@ -98,6 +104,7 @@ public class RobotContainer {
                 //                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new
                 // ModuleIO() {});
                 // vision = null;
+                bling = new Bling(new BlingIO() {});
                 clearForMatchEntry = null;
                 break;
         }
@@ -125,9 +132,16 @@ public class RobotContainer {
         //         drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         configureButtonBindings();
+        configureBlingBindings();
     }
 
     public void robotPeriodic() {}
+
+    private void configureBlingBindings() {
+        bling.setDefaultCommand(bling.redKITT());
+        joyManip.a().whileTrue(bling.greenKITT());
+        joyManip.b().whileTrue(bling.off().repeatedly());
+    }
 
     private void configureButtonBindings() {
         // drive control
