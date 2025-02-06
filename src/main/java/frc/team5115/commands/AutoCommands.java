@@ -50,7 +50,7 @@ public class AutoCommands {
     public static Command getReefAlignCommand(
             Drivetrain drivetrain, Elevator elevator, Dispenser dispenser, Side side, Height height) {
         return Commands.sequence(
-                // elevator.setHeight(height),
+                elevator.setHeight(height),
                 drivetrain.autoDriveToScoringSpot(
                         side.offsetMul * Constants.AutoConstants.sideOffset,
                         Constants.AutoConstants.forwardOffset),
