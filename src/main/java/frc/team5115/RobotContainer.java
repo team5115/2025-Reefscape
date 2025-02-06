@@ -88,8 +88,8 @@ public class RobotContainer {
                                 new ModuleIOSparkMax(1),
                                 new ModuleIOSparkMax(2),
                                 new ModuleIOSparkMax(3));
-                vision = new PhotonVision(drivetrain);
-                // vision = null;
+                // vision = new PhotonVision(drivetrain);
+                vision = null;
                 clearForMatchEntry =
                         Shuffleboard.getTab("SmartDashboard").add("ClearForMatch", false).getEntry();
                 break;
