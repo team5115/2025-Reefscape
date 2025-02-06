@@ -21,6 +21,7 @@ public class Bling extends SubsystemBase {
     private int timer = 0;
     private int counter = 0;
     private int direction = 1;
+    private int counter2 = 0;
 
     public Bling(BlingIO io) {
         this.io = io;
@@ -105,6 +106,53 @@ public class Bling extends SubsystemBase {
                     for (int i = 0; i < LED_COUNT; i++) {
                         double power;
                         if (i == counter) {
+                            power = maxPower;
+                        } else {
+                            power =
+                                    Math.max(
+                                            minPower,
+                                            totalBrightness(inputs.ledStrip[i]) / (red + green + blue + white) - decay);
+                        }
+                        io.setRGBW(
+                                i,
+                                (int) (power * red),
+                                (int) (power * green),
+                                (int) (power * blue),
+                                (int) (power * white));
+                    }
+                },
+                this);
+    }
+
+    public Command scrollIn(double red, double green, double blue, double white) {
+        return Commands.startRun(
+                () -> {
+                    // Start
+                    for (int i = 0; i < LED_COUNT; i++) {
+                        io.setRGBW(i, 0, 0, 0, 0);
+                    }
+                    counter2 = LED_COUNT;
+                    counter = 0;
+                },
+                () -> {
+                    // Repeating
+                    timer++;
+                    if (timer >= period) {
+                        timer = 0;
+                    } else {
+                        return;
+                    }
+
+                    counter += 1;
+                    counter2 += -1;
+                    if (counter >= LED_COUNT - LED_COUNT / 2) {
+                        counter = 0;
+                        counter2 = LED_COUNT;
+                    }
+
+                    for (int i = 0; i < LED_COUNT; i++) {
+                        double power;
+                        if (i == counter || i == counter2) {
                             power = maxPower;
                         } else {
                             power =

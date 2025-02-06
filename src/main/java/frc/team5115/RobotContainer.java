@@ -139,7 +139,7 @@ public class RobotContainer {
 
     private void configureBlingBindings() {
         bling.setDefaultCommand(bling.redKITT());
-        joyManip.a().whileTrue(bling.greenKITT());
+        joyManip.a().whileTrue(bling.scrollIn(255, 0, 0, 0));
         joyManip.b().whileTrue(bling.off().repeatedly());
     }
 
