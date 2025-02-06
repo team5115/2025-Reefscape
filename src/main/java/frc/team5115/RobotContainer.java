@@ -34,6 +34,8 @@ import frc.team5115.subsystems.elevator.ElevatorIO;
 import frc.team5115.subsystems.elevator.ElevatorIOSim;
 import frc.team5115.subsystems.elevator.ElevatorIOSparkMax;
 import frc.team5115.subsystems.indexer.Indexer;
+import frc.team5115.subsystems.indexer.IndexerIO;
+import frc.team5115.subsystems.indexer.IndexerIOSim;
 import frc.team5115.subsystems.indexer.IndexerIOSparkMax;
 import frc.team5115.subsystems.vision.PhotonVision;
 import org.littletonrobotics.junction.Logger;
@@ -97,7 +99,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIOSim());
                 elevator = new Elevator(new ElevatorIOSim());
                 dispenser = new Dispenser(new DispenserIOSim());
-                indexer = new Indexer(new IndexerIOSparkMax(), elevator);
+                indexer = new Indexer(new IndexerIOSim(), elevator);
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
@@ -111,7 +113,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIO() {});
                 elevator = new Elevator(new ElevatorIO() {});
                 dispenser = new Dispenser(new DispenserIO() {});
-                indexer = new Indexer(new IndexerIOSparkMax(), elevator);
+                indexer = new Indexer(new IndexerIO() {}, elevator);
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
@@ -163,17 +165,15 @@ public class RobotContainer {
         joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(+0.15, +0.38));
         joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(-0.15, +0.38));
 
+        elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY()));
         // elevator.setDefaultCommand(elevator.positionControl());
-        elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY()));
-
-        elevator.setDefaultCommand(elevator.positionControl());
-        elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY()));
 
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         joyManip.b().onTrue(elevator.setHeight(Height.L2));
         joyManip.y().onTrue(elevator.setHeight(Height.L3));
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
+        joyManip.leftStick().onTrue(indexer.setSpeed(1)).onFalse(indexer.setSpeed(0));
         joyManip.rightStick().onTrue(climber.deploy());
     }
 
