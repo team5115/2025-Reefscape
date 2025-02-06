@@ -1,6 +1,10 @@
 package frc.team5115.subsystems.dealgaefacationinator5000;
 
+import java.util.ArrayList;
+
 import org.littletonrobotics.junction.AutoLog;
+
+import com.revrobotics.spark.SparkMax;
 
 public interface Dealgaefacationinator5000IO {
 
@@ -8,6 +12,7 @@ public interface Dealgaefacationinator5000IO {
     public static class Dealgaefacationinator5000IOInputs {
         double motorVolts;
         double motorVelocityRPM;
+        double motorAmps;
 
         boolean state;
     }
@@ -19,4 +24,6 @@ public interface Dealgaefacationinator5000IO {
     public default void setPneumatic(boolean extend) {}
 
     public default void setPercent(double percent) {}
+
+    public default void getSparks(ArrayList<SparkMax> sparks) {}
 }

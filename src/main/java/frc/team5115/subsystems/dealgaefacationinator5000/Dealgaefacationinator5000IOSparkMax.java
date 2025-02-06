@@ -1,5 +1,7 @@
 package frc.team5115.subsystems.dealgaefacationinator5000;
 
+import java.util.ArrayList;
+
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -7,15 +9,16 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
+import frc.team5115.Constants;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class Dealgaefacationinator5000IOSparkMax implements Dealgaefacationinator5000IO {
-
-    Solenoid extender;
-    SparkMax motor;
+    private final DoubleSolenoid extender;
+    private final SparkMax motor;
+    private boolean state;
 
     public Dealgaefacationinator5000IOSparkMax() {
-        extender = new Solenoid(PneumaticsModuleType.REVPH, 0); // TODO: set channel
+        extender = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.DEALGAE_FORWARD_CHANNEL, Constants.DEALGAE_REVERSE_CHANNEL);
         motor = new SparkMax(0, MotorType.kBrushless);
 
         final SparkMaxConfig motorConfig = new SparkMaxConfig();
@@ -24,8 +27,18 @@ public class Dealgaefacationinator5000IOSparkMax implements Dealgaefacationinato
     }
 
     @Override
+    public void updateInputs(Dealgaefacationinator5000IOInputs inputs) {
+        inputs.motorVolts = motor.getAppliedOutput() * motor.getBusVoltage();
+        inputs.motorAmps = motor.getOutputCurrent();
+        inputs.motorVelocityRPM = motor.getEncoder().getVelocity();
+
+        inputs.state = state;
+    }
+
+    @Override
     public void setPneumatic(boolean extend) {
-        extender.set(extend);
+        state = extend;
+        extender.set((extend ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse));
     }
 
     @Override
@@ -36,5 +49,10 @@ public class Dealgaefacationinator5000IOSparkMax implements Dealgaefacationinato
     @Override
     public void setPercent(double percent) {
         motor.set(percent);
+    }
+
+    @Override
+    public void getSparks(ArrayList<SparkMax> sparks) {
+        sparks.add(motor);
     }
 }

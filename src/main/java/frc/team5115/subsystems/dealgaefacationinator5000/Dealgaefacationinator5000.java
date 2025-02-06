@@ -1,6 +1,10 @@
 package frc.team5115.subsystems.dealgaefacationinator5000;
 
+import java.util.ArrayList;
+
 import org.littletonrobotics.junction.Logger;
+
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -33,6 +37,10 @@ public class Dealgaefacationinator5000 extends SubsystemBase{
             io.setPneumatic(false);
             io.setPercent(0);
         }, this);
+    }
+
+    public void getSparks(ArrayList<SparkMax> sparks) {
+        io.getSparks(sparks);
     }
 
 }

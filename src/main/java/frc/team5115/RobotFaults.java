@@ -3,6 +3,7 @@ package frc.team5115;
 import com.revrobotics.spark.SparkBase.Faults;
 import com.revrobotics.spark.SparkMax;
 import frc.team5115.subsystems.climber.Climber;
+import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000;
 import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.drive.Drivetrain;
 import frc.team5115.subsystems.elevator.Elevator;
@@ -105,6 +106,7 @@ public class RobotFaults {
             Elevator elevator,
             Dispenser dispenser,
             Indexer indexer,
+            Dealgaefacationinator5000 dealgaefacationinator5000,
             boolean joysticksConnected) {
 
         ArrayList<SparkMax> sparks = new ArrayList<>();
@@ -112,6 +114,7 @@ public class RobotFaults {
         elevator.getSparks(sparks);
         dispenser.getSparks(sparks);
         indexer.getSparks(sparks);
+        dealgaefacationinator5000.getSparks(sparks);
         StringBuilder sparkFaults = new StringBuilder();
         for (var spark : sparks) {
             appendSparkFaults(sparkFaults, spark.getFaults(), spark.getDeviceId());
