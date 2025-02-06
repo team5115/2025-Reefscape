@@ -18,6 +18,10 @@ import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIORev;
 import frc.team5115.subsystems.climber.ClimberIOSim;
+import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000;
+import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IO;
+import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IOSim;
+import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IOSparkMax;
 import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.dispenser.DispenserIO;
 import frc.team5115.subsystems.dispenser.DispenserIOSim;
@@ -54,6 +58,7 @@ public class RobotContainer {
     private final Elevator elevator;
     private final Dispenser dispenser;
     private final Indexer indexer;
+    private final Dealgaefacationinator5000 dealgaefacationinator5000;
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
@@ -79,6 +84,7 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser = new Dispenser(new DispenserIOSparkMax());
                 indexer = new Indexer(new IndexerIOSparkMax(), elevator);
+                dealgaefacationinator5000 = new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax());
                 drivetrain =
                         new Drivetrain(
                                 gyro,
@@ -98,6 +104,7 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIOSim());
                 dispenser = new Dispenser(new DispenserIOSim());
                 indexer = new Indexer(new IndexerIOSparkMax(), elevator);
+                dealgaefacationinator5000 = new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
@@ -112,6 +119,7 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIO() {});
                 dispenser = new Dispenser(new DispenserIO() {});
                 indexer = new Indexer(new IndexerIOSparkMax(), elevator);
+                dealgaefacationinator5000 = new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
@@ -175,6 +183,7 @@ public class RobotContainer {
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
         joyManip.rightStick().onTrue(climber.deploy());
+        joyManip.leftBumper().onTrue(dealgaefacationinator5000.extend()).onFalse(dealgaefacationinator5000.retract());
     }
 
     private Command setRobotRelative(boolean state) {
