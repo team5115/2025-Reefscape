@@ -1,5 +1,5 @@
 {
- "name":"reef",
+ "name":"autoaward",
  "version":1,
  "type":"Swerve",
  "variables":{
@@ -28,8 +28,8 @@
    }
   },
   "mass":{
-   "exp":"83.6 lb",
-   "val":37.920322132
+   "exp":"110 lb",
+   "val":49.895160700000005
   },
   "inertia":{
    "exp":"4 kg m ^ 2",
@@ -44,12 +44,12 @@
    "val":0.038099999999999995
   },
   "vmax":{
-   "exp":"5000 RPM",
-   "val":523.5987755982989
+   "exp":"5625 RPM",
+   "val":589.0486225480862
   },
   "tmax":{
-   "exp":"0.4 N * m",
-   "val":0.4
+   "exp":"1.17 N * m",
+   "val":1.17
   },
   "cof":{
    "exp":"1.55",
@@ -57,16 +57,16 @@
   },
   "bumper":{
    "front":{
-    "exp":"16.5 in",
-    "val":0.4191
+    "exp":"16 in",
+    "val":0.4064
    },
    "side":{
-    "exp":"16.5 in",
-    "val":0.4191
+    "exp":"16 in",
+    "val":0.4064
    },
    "back":{
-    "exp":"16.5 in",
-    "val":0.4191
+    "exp":"16 in",
+    "val":0.4064
    }
   },
   "differentialTrackWidth":{
