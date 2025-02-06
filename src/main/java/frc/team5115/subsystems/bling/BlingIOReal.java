@@ -39,10 +39,10 @@ public class BlingIOReal implements BlingIO {
         // Transfer the preBuffer into the postBuffer; maps from RGBW to GRB
         final int mod = index % 3;
         index += index / 3;
-        postBuffer[index + 0][0 + mod] = preBuffer[index][1];
-        postBuffer[index + (mod >= 2 ? 1 : 0)][(1 + mod) % 3] = preBuffer[index][0];
-        postBuffer[index + (mod >= 1 ? 1 : 0)][(2 + mod) % 3] = preBuffer[index][2];
-        postBuffer[index + 1][0 + mod] = preBuffer[index][3];
+        postBuffer[index + 0][0 + mod] = green;
+        postBuffer[index + (mod >= 2 ? 1 : 0)][(1 + mod) % 3] = red;
+        postBuffer[index + (mod >= 1 ? 1 : 0)][(2 + mod) % 3] = blue;
+        postBuffer[index + 1][0 + mod] = white;
     }
 
     @Override
