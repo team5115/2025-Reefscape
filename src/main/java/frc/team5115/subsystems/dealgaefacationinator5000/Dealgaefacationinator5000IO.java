@@ -1,10 +1,8 @@
 package frc.team5115.subsystems.dealgaefacationinator5000;
 
-import java.util.ArrayList;
-
-import org.littletonrobotics.junction.AutoLog;
-
 import com.revrobotics.spark.SparkMax;
+import java.util.ArrayList;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface Dealgaefacationinator5000IO {
 

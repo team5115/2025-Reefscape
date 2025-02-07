@@ -1,16 +1,15 @@
 package frc.team5115.subsystems.dealgaefacationinator5000;
 
-import java.util.ArrayList;
-
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.team5115.Constants;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import java.util.ArrayList;
 
 public class Dealgaefacationinator5000IOSparkMax implements Dealgaefacationinator5000IO {
     private final DoubleSolenoid extender;
@@ -18,7 +17,11 @@ public class Dealgaefacationinator5000IOSparkMax implements Dealgaefacationinato
     private boolean state;
 
     public Dealgaefacationinator5000IOSparkMax() {
-        extender = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.DEALGAE_FORWARD_CHANNEL, Constants.DEALGAE_REVERSE_CHANNEL);
+        extender =
+                new DoubleSolenoid(
+                        PneumaticsModuleType.REVPH,
+                        Constants.DEALGAE_FORWARD_CHANNEL,
+                        Constants.DEALGAE_REVERSE_CHANNEL);
         motor = new SparkMax(0, MotorType.kBrushless);
 
         final SparkMaxConfig motorConfig = new SparkMaxConfig();

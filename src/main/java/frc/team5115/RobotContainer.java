@@ -86,7 +86,8 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser = new Dispenser(new DispenserIOSparkMax());
                 indexer = new Indexer(new IndexerIOSparkMax(), elevator);
-                dealgaefacationinator5000 = new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax());
+                dealgaefacationinator5000 =
+                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax());
                 drivetrain =
                         new Drivetrain(
                                 gyro,
@@ -106,7 +107,8 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIOSim());
                 dispenser = new Dispenser(new DispenserIOSim());
                 indexer = new Indexer(new IndexerIOSim(), elevator);
-                dealgaefacationinator5000 = new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
+                dealgaefacationinator5000 =
+                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
@@ -121,7 +123,8 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIO() {});
                 dispenser = new Dispenser(new DispenserIO() {});
                 indexer = new Indexer(new IndexerIO() {}, elevator);
-                dealgaefacationinator5000 = new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
+                dealgaefacationinator5000 =
+                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
@@ -183,7 +186,10 @@ public class RobotContainer {
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
         joyManip.leftStick().onTrue(indexer.setSpeed(1)).onFalse(indexer.setSpeed(0));
         joyManip.rightStick().onTrue(climber.deploy());
-        joyManip.leftBumper().onTrue(dealgaefacationinator5000.extend()).onFalse(dealgaefacationinator5000.retract());
+        joyManip
+                .leftBumper()
+                .onTrue(dealgaefacationinator5000.extend())
+                .onFalse(dealgaefacationinator5000.retract());
     }
 
     private Command setRobotRelative(boolean state) {

@@ -123,7 +123,7 @@ public class RobotFaults {
             indexer.getSparks(sparks);
         }
         if (dealgaefacationinator5000 != null) {
-            defalgaefacationinator5000.getSparks(sparks);
+            dealgaefacationinator5000.getSparks(sparks);
         }
         StringBuilder sparkFaults = new StringBuilder();
         for (var spark : sparks) {

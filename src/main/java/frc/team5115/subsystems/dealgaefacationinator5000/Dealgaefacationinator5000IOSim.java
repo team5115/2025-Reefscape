@@ -3,8 +3,8 @@ package frc.team5115.subsystems.dealgaefacationinator5000;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
 import frc.team5115.Constants;
@@ -23,7 +23,7 @@ public class Dealgaefacationinator5000IOSim implements Dealgaefacationinator5000
     }
 
     @Override
-    public void updateInputs(Dealgaefacationinator5000IOInputs inputs){
+    public void updateInputs(Dealgaefacationinator5000IOInputs inputs) {
         motorSim.update(Constants.LOOP_PERIOD_SECS);
         inputs.motorVelocityRPM = motorSim.getAngularVelocityRPM();
         inputs.motorVolts = motorVolts;
@@ -46,7 +46,7 @@ public class Dealgaefacationinator5000IOSim implements Dealgaefacationinator5000
 
     @Override
     public void setPercent(double percent) {
-        motorVolts = MathUtil.clamp(percent*12, +12, -12);
+        motorVolts = MathUtil.clamp(percent * 12, +12, -12);
         motorSim.setInput(percent);
     }
 }
