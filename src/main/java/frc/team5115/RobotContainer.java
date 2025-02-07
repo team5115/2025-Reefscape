@@ -175,7 +175,7 @@ public class RobotContainer {
         joyManip.y().onTrue(elevator.setHeight(Height.L3));
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        joyManip.leftStick().onTrue(indexer.setSpeed(0.5)).onFalse(indexer.setSpeed(0));
+        joyManip.x().onTrue(indexer.index()).onFalse(indexer.stop());
         joyManip.rightStick().onTrue(climber.deploy());
     }
 
