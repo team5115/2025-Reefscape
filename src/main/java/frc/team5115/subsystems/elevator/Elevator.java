@@ -49,7 +49,7 @@ public class Elevator extends SubsystemBase {
 
     public enum Height {
         MINIMUM(minHeightInches),
-        INTAKE(30), // TODO find intake height
+        INTAKE(27), // TODO find intake height
         L2(33),
         L3(49),
         L4(74);
@@ -68,7 +68,7 @@ public class Elevator extends SubsystemBase {
             case REAL:
             case REPLAY:
                 // TODO tune elevator feedforward and pid
-                positionPID = new PIDController(0.0, 0.0, 0.0);
+                positionPID = new PIDController(0.1, 0.0, 0.0);
                 break;
             case SIM:
                 positionPID = new PIDController(1.0, 0.0, 0.0);
@@ -94,7 +94,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public double getActualHeight() {
-        return inputs.positionMeters - offset;
+        return inputs.positionMeters + offset;
     }
 
     @Override
