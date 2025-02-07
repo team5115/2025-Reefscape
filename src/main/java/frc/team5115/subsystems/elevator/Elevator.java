@@ -119,6 +119,14 @@ public class Elevator extends SubsystemBase {
         elevatorMechanismLigament2d.setLength(getActualHeight() * 8);
     }
 
+    public Command zero() {
+        return Commands.runOnce(
+                () -> {
+                    offset = -inputs.positionMeters;
+                },
+                this);
+    }
+
     private void recordOutputs() {
         Logger.recordOutput("Elevator/Goal Height", height.position);
         Logger.recordOutput("Elevator/Setpoint Velocity", velocitySetpoint);
@@ -127,6 +135,7 @@ public class Elevator extends SubsystemBase {
         Logger.recordOutput("Elevator/At Goal?", atGoal());
         Logger.recordOutput("Elevator/State", getStateString());
         Logger.recordOutput("Elevator/Offset Delta", positionPID.getSetpoint() - getActualHeight());
+        Logger.recordOutput("Elevator/OffsetValue", offset);
     }
 
     public Command waitForSetpoint(double timeout) {

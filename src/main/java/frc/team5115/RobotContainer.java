@@ -169,12 +169,13 @@ public class RobotContainer {
         elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY() / 10));
         // elevator.setDefaultCommand(elevator.positionControl());
 
+        joyManip.start().onTrue(elevator.zero());
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         joyManip.b().onTrue(elevator.setHeight(Height.L2));
         joyManip.y().onTrue(elevator.setHeight(Height.L3));
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        joyManip.leftStick().onTrue(indexer.setSpeed(0.25)).onFalse(indexer.setSpeed(0));
+        joyManip.leftStick().onTrue(indexer.setSpeed(0.5)).onFalse(indexer.setSpeed(0));
         joyManip.rightStick().onTrue(climber.deploy());
     }
 
