@@ -149,15 +149,16 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
-        // drive control
-        drivetrain.setDefaultCommand(
-                DriveCommands.joystickDrive(
-                        drivetrain,
-                        () -> robotRelative,
-                        () -> slowMode,
-                        () -> -joyDrive.getLeftY(),
-                        () -> -joyDrive.getLeftX(),
-                        () -> -joyDrive.getRightX()));
+        // // drive control
+        // drivetrain.setDefaultCommand(
+        //         DriveCommands.joystickDrive(
+        //                 drivetrain,
+        //                 () -> robotRelative,
+        //                 () -> slowMode,
+        //                 () -> -joyDrive.getLeftY(),
+        //                 () -> -joyDrive.getLeftX(),
+        //                 () -> -joyDrive.getRightX()));
+        // ! Disabled drive control ^^^
 
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));

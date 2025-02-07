@@ -22,7 +22,7 @@ public class Elevator extends SubsystemBase {
     private static final double maxSpeed = 4.0; // m/s
     private static final double maxVolts = 10.0;
     private static final double kgVolts = 0.0;
-    private static final double minHeightInches = 30; // TODO: find minimum height
+    private static final double minHeightInches = 23.5;
     // TODO find sensor heights
     private static final double firstHeight = 0;
     private static final double secondHeight = 0;
@@ -49,10 +49,10 @@ public class Elevator extends SubsystemBase {
 
     public enum Height {
         MINIMUM(minHeightInches),
-        L2(30),
-        INTAKE(30), // TODO: find intake height
-        L3(45),
-        L4(71);
+        INTAKE(30), // TODO find intake height
+        L2(33),
+        L3(49),
+        L4(74);
 
         public final double position; // meters
 
