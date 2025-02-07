@@ -176,7 +176,9 @@ public class RobotContainer {
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
         joyManip.x().onTrue(indexer.index()).onFalse(indexer.stop());
-        joyManip.rightStick().onTrue(climber.deploy());
+        joyManip.rightStick().onTrue(climber.stopCommand());
+        joyManip.leftBumper().onTrue(climber.retract());
+        joyManip.rightBumper().onTrue(climber.extend());
     }
 
     private Command setRobotRelative(boolean state) {
