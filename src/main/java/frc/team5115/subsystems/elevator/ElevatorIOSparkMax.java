@@ -36,10 +36,11 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
         final SparkMaxConfig config = new SparkMaxConfig();
         config
-                .inverted(false)
+                .inverted(true)
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(
                         ElevatorConstants.STALL_CURRENT_AMPS, ElevatorConstants.FREE_CURRENT_AMPS);
+
         config
                 .closedLoop
                 .p(ElevatorConstants.kP)

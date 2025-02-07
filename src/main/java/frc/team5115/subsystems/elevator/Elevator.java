@@ -21,7 +21,7 @@ public class Elevator extends SubsystemBase {
     // TODO determine max speed, max volts, kG for elevator
     private static final double maxSpeed = 4.0; // m/s
     private static final double maxVolts = 10.0;
-    private static final double kgVolts = 0.9;
+    private static final double kgVolts = 0.0;
     private static final double minHeightInches = 30; // TODO: find minimum height
     // TODO find sensor heights
     private static final double firstHeight = 0;

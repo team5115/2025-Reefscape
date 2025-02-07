@@ -68,6 +68,7 @@ public class RobotContainer {
     private boolean slowMode = false;
     private boolean hasFaults = true;
     private double faultPrintTimeout = 0;
+    private final boolean constantlyCheckFaults = true;
 
     private final GenericEntry clearForMatchEntry;
 
@@ -165,7 +166,7 @@ public class RobotContainer {
         joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(+0.15, +0.38));
         joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(-0.15, +0.38));
 
-        elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY()));
+        elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY() / 10));
         // elevator.setDefaultCommand(elevator.positionControl());
 
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
@@ -173,7 +174,7 @@ public class RobotContainer {
         joyManip.y().onTrue(elevator.setHeight(Height.L3));
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        joyManip.leftStick().onTrue(indexer.setSpeed(1)).onFalse(indexer.setSpeed(0));
+        joyManip.leftStick().onTrue(indexer.setSpeed(0.25)).onFalse(indexer.setSpeed(0));
         joyManip.rightStick().onTrue(climber.deploy());
     }
 
@@ -265,7 +266,7 @@ public class RobotContainer {
 
     public void disabledPeriodic() {
         if (Constants.currentMode == Mode.REAL) {
-            if (hasFaults) {
+            if (hasFaults || constantlyCheckFaults) {
                 if (faultPrintTimeout <= 0) {
                     preMatchCheck();
                     faultPrintTimeout = 50;

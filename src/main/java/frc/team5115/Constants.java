@@ -118,7 +118,7 @@ public final class Constants {
         public static final double KV_NEO = 473;
         public static final double KV_NEO_550 = 917;
         // TODO tune the Elevator spark velocity pid
-        public static final double kP = 0;
+        public static final double kP = 0.00001;
         public static final double kI = 0;
         public static final double kD = 0;
     }
