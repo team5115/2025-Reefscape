@@ -11,13 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SM Leave and Score"
+                  "pathName": "Leave and Score L2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L2"
+                  "name": "L2Right"
                 }
               }
             ]
@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SM Intake"
+                  "pathName": "L2-Intake"
                 }
               },
               {
@@ -49,13 +49,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SM Score L4"
+                  "pathName": "Score L2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4"
+                  "name": "L2Right"
                 }
               }
             ]
@@ -68,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SM Intake"
+                  "pathName": "IntakeAlt"
                 }
               },
               {
@@ -87,13 +87,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SM Score L2"
+                  "pathName": "Score L2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4"
+                  "name": "L2Left"
                 }
               }
             ]
@@ -112,7 +112,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SM Intake Alt"
+                  "pathName": "IntakeAlt"
                 }
               },
               {
@@ -131,13 +131,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SM Score L2"
+                  "pathName": "ScoreFinalL2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4"
+                  "name": "L4Left"
                 }
               }
             ]

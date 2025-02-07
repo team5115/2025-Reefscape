@@ -34,6 +34,6 @@ public class Climber extends SubsystemBase {
     }
 
     public boolean isCageIntakeDetected() {
-        return inputs.cageIntake;
+        return true;
     }
 }

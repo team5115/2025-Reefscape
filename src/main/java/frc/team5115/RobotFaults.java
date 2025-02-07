@@ -110,21 +110,30 @@ public class RobotFaults {
             boolean joysticksConnected) {
 
         ArrayList<SparkMax> sparks = new ArrayList<>();
-        drivetrain.getSparks(sparks);
-        elevator.getSparks(sparks);
-        dispenser.getSparks(sparks);
-        indexer.getSparks(sparks);
-        dealgaefacationinator5000.getSparks(sparks);
+        if (drivetrain != null) {
+            drivetrain.getSparks(sparks);
+        }
+        if (elevator != null) {
+            elevator.getSparks(sparks);
+        }
+        if (dispenser != null) {
+            dispenser.getSparks(sparks);
+        }
+        if (indexer != null) {
+            indexer.getSparks(sparks);
+        }
+        if (dealgaefacationinator5000 != null) {
+            defalgaefacationinator5000.getSparks(sparks);
+        }
         StringBuilder sparkFaults = new StringBuilder();
         for (var spark : sparks) {
             appendSparkFaults(sparkFaults, spark.getFaults(), spark.getDeviceId());
         }
-
         return new RobotFaults(
                 sparkFaults.toString(),
-                !vision.isCameraConnected(),
+                vision == null ? true : !vision.isCameraConnected(),
                 !joysticksConnected,
-                !drivetrain.isGyroConnected(),
+                drivetrain == null ? true : !drivetrain.isGyroConnected(),
                 drivetrain == null,
                 vision == null,
                 climber == null,

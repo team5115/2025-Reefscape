@@ -1,6 +1,9 @@
 package frc.team5115.subsystems.indexer;
 
 import com.revrobotics.spark.SparkMax;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team5115.subsystems.elevator.Elevator;
 import java.util.ArrayList;
@@ -21,11 +24,16 @@ public class Indexer extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Intake", inputs);
 
-        if (elevator.checkElevator()) {
-            io.setPercent(+0.25);
-        } else {
-            io.setPercent(+0);
-        }
+        // TODO readd after tests
+        // if (elevator.checkElevator()) {
+        //     io.setPercent(+0.25);
+        // } else {
+        //     io.setPercent(+0);
+        // }
+    }
+
+    public Command setSpeed(double speed) {
+        return Commands.runOnce(() -> io.setPercent(speed));
     }
 
     public void getSparks(ArrayList<SparkMax> sparks) {
