@@ -52,6 +52,34 @@ public class Bling extends SubsystemBase {
         return scrollingKITT(0, 1, 0, 0);
     }
 
+    public Command yellowKITT() {
+        return scrollingKITT(1, 1, 0, 0);
+    }
+
+    public Command blueKITT() {
+        return scrollingKITT(0, 0, 1, 0);
+    }
+
+    public Command blueSolid() {
+        return staticColor(0, 0, 1, 0);
+    }
+
+    public Command purpleSolid() {
+        return staticColor(0.35f, 0, 0.75f, 0);
+    }
+
+    public Command yellowScrollIn() {
+        return scrollIn(1, 1, 0, 0);
+    }
+
+    public Command greenScrollIn() {
+        return scrollIn(0, 1, 0, 0);
+    }
+
+    public Command blueScrollIn() {
+        return scrollIn(0, 0, 1, 0);
+    }
+
     /**
      * Set the whole strip to a color
      *
@@ -61,11 +89,13 @@ public class Bling extends SubsystemBase {
      * @param white the white component (0-255)
      * @return a command that sets the color
      */
-    public Command staticColor(int red, int green, int blue, int white) {
-        return Commands.runOnce(
+    public Command staticColor(float red, float green, float blue, float white) {
+        return Commands.startRun(
+                () -> {},
                 () -> {
                     for (int i = 0; i < LED_COUNT; i++) {
-                        io.setRGBW(i, red, green, blue, white);
+                        io.setRGBW(
+                                i, (int) (red * 255), (int) (green * 255), (int) (blue * 255), (int) (white * 255));
                     }
                 },
                 this);

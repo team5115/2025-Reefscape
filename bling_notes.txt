@@ -1,0 +1,8 @@
+default ambient : red kitt, ___ amps
+has a coral : yellow kitt, ___ amps
+aligning to reef: yellow scroll in, ___ amps
+aligned fully to reef : green scroll in, ___ amps
+??? : blue kitt, ___ amps
+??? : blue scroll in, ___ amps
+??? : fully blue, ___ amps
+??? : fully purple, ___ amps
