@@ -22,6 +22,7 @@ public class Bling extends SubsystemBase {
     private int counter = 0;
     private int direction = 1;
     private int counter2 = 0;
+    int on = 1;
 
     public Bling(BlingIO io) {
         this.io = io;
@@ -78,6 +79,10 @@ public class Bling extends SubsystemBase {
 
     public Command blueScrollIn() {
         return scrollIn(0, 0, 1, 0);
+    }
+
+    public Command faultFlash() {
+        return seizure(333, 0.1, 0, 0, 0, 0.1, 0.05, 0, 0);
     }
 
     /**
@@ -149,6 +154,56 @@ public class Bling extends SubsystemBase {
                                 (int) (power * green),
                                 (int) (power * blue),
                                 (int) (power * white));
+                    }
+                },
+                this);
+    }
+
+    public Command seizure(
+            double period,
+            double red,
+            double green,
+            double blue,
+            double white,
+            double red2,
+            double green2,
+            double blue2,
+            double white2) {
+        final double adjPeriod = (period / 20 / 4);
+        return Commands.startRun(
+                () -> {
+                    // Start
+                    for (int i = 0; i < LED_COUNT; i++) {
+                        io.setRGBW(i, 0, 0, 0, 0);
+                    }
+                },
+                () -> {
+                    // Repeating
+                    timer++;
+                    if (timer >= adjPeriod) {
+                        timer = 0;
+                        on = on == 1 ? 0 : 1;
+                    } else {
+                        return;
+                    }
+                    if (on == 1) {
+                        for (int i = 0; i < LED_COUNT; i++) {
+                            io.setRGBW(
+                                    i,
+                                    (int) (red * 255),
+                                    (int) (green * 255),
+                                    (int) (blue * 255),
+                                    (int) (white * 255));
+                        }
+                    } else {
+                        for (int i = 0; i < LED_COUNT; i++) {
+                            io.setRGBW(
+                                    i,
+                                    (int) (red2 * 255),
+                                    (int) (green2 * 255),
+                                    (int) (blue2 * 255),
+                                    (int) (white2 * 255));
+                        }
                     }
                 },
                 this);
