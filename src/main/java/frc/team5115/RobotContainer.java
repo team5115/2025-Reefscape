@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.team5115.Constants.Mode;
 import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.AutoCommands.Side;
+import frc.team5115.commands.DriveCommands;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIORev;
@@ -148,16 +149,15 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
-        // // drive control
-        // drivetrain.setDefaultCommand(
-        //         DriveCommands.joystickDrive(
-        //                 drivetrain,
-        //                 () -> robotRelative,
-        //                 () -> slowMode,
-        //                 () -> -joyDrive.getLeftY(),
-        //                 () -> -joyDrive.getLeftX(),
-        //                 () -> -joyDrive.getRightX()));
-        // ! Disabled drive control ^^^
+        // drive control
+        drivetrain.setDefaultCommand(
+                DriveCommands.joystickDrive(
+                        drivetrain,
+                        () -> robotRelative,
+                        () -> slowMode,
+                        () -> -joyDrive.getLeftY(),
+                        () -> -joyDrive.getLeftX(),
+                        () -> -joyDrive.getRightX()));
 
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
@@ -168,10 +168,10 @@ public class RobotContainer {
 
         elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY() / 10));
         // elevator.setDefaultCommand(elevator.positionControl());
-        // joyManip
-        //         .leftStick()
-        //         .onTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 15))
-        //         .onFalse(elevator.zero());
+        joyManip
+                .leftStick()
+                .onTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 30.0))
+                .onFalse(elevator.zero());
         joyManip.start().onTrue(elevator.zero());
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         joyManip.b().onTrue(elevator.setHeight(Height.L2));
