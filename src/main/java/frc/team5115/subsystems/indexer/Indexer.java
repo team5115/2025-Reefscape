@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import org.littletonrobotics.junction.Logger;
 
 public class Indexer extends SubsystemBase {
-    private static final double INDEXING_SPEED = 0.5;
+    private static final double INDEXING_SPEED = 0.15;
     private final IndexerIO io;
     private final Elevator elevator;
     private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();

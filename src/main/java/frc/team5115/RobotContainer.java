@@ -149,16 +149,15 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
-        // // drive control
-        // drivetrain.setDefaultCommand(
-        //         DriveCommands.joystickDrive(
-        //                 drivetrain,
-        //                 () -> robotRelative,
-        //                 () -> slowMode,
-        //                 () -> -joyDrive.getLeftY(),
-        //                 () -> -joyDrive.getLeftX(),
-        //                 () -> -joyDrive.getRightX()));
-        // ! Disabled drive control ^^^
+        // drive control
+        drivetrain.setDefaultCommand(
+                DriveCommands.joystickDrive(
+                        drivetrain,
+                        () -> robotRelative,
+                        () -> slowMode,
+                        () -> -joyDrive.getLeftY(),
+                        () -> -joyDrive.getLeftX(),
+                        () -> -joyDrive.getRightX()));
 
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
@@ -169,7 +168,10 @@ public class RobotContainer {
 
         elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY() / 10));
         // elevator.setDefaultCommand(elevator.positionControl());
-
+        joyManip
+                .leftStick()
+                .onTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 30.0))
+                .onFalse(elevator.zero());
         joyManip.start().onTrue(elevator.zero());
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         joyManip.b().onTrue(elevator.setHeight(Height.L2));

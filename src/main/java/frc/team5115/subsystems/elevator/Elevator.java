@@ -20,7 +20,7 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 public class Elevator extends SubsystemBase {
     // TODO determine max speed, acceleration, max volts, kG for elevator
-    private static final double maxSpeed = 4.0; // m/s
+    private static final double maxSpeed = 0.5; // m/s
     private static final double maxAcceleration = 2.0;
     private static final double maxVolts = 10.0;
     private static final double kgVolts = 0.9;
@@ -51,10 +51,10 @@ public class Elevator extends SubsystemBase {
 
     public enum Height {
         MINIMUM(minHeightInches),
-        L2(30),
-        INTAKE(30), // TODO: find intake height
-        L3(45),
-        L4(71);
+        INTAKE(27), // TODO find intake height
+        L2(33),
+        L3(49),
+        L4(74);
 
         public final double position; // meters
 
@@ -71,7 +71,7 @@ public class Elevator extends SubsystemBase {
             case REPLAY:
                 // TODO tune elevator feedforward and pid
                 positionPID =
-                        new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                        new ProfiledPIDController(0.01, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
                 break;
             case SIM:
                 positionPID =
@@ -99,7 +99,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public double getActualHeight() {
-        return inputs.positionMeters - offset;
+        return inputs.positionMeters + offset;
     }
 
     @Override
