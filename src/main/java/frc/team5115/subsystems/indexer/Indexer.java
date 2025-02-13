@@ -24,12 +24,11 @@ public class Indexer extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Intake", inputs);
 
-        // TODO readd after tests
-        // if (elevator.checkElevator()) {
-        //     io.setPercent(INDEXING_SPEED);
-        // } else {
-        //     io.setPercent(+0);
-        // }
+        if (elevator.atIntake()) {
+            io.setPercent(INDEXING_SPEED);
+        } else {
+            io.setPercent(+0);
+        }
     }
 
     public Command setSpeed(double speed) {

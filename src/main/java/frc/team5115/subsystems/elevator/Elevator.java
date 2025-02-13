@@ -156,7 +156,7 @@ public class Elevator extends SubsystemBase {
         return Commands.waitUntil(() -> inputs.backCoralDetected == state).withTimeout(timeout);
     }
 
-    public boolean checkElevator() {
+    public boolean atIntake() {
         return atGoal() && positionPID.getSetpoint().position == Height.INTAKE.position;
     }
 
@@ -194,7 +194,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public Command velocityControl(DoubleSupplier speedMetersPerSecond) {
-        return Commands.runOnce(() -> velocitySetpoint = speedMetersPerSecond.getAsDouble(), this);
+        return Commands.run(() -> velocitySetpoint = speedMetersPerSecond.getAsDouble(), this);
     }
 
     public Command positionControl() {
