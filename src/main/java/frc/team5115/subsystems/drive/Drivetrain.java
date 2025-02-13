@@ -9,6 +9,7 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -32,6 +33,7 @@ import frc.team5115.Constants.SwerveConstants;
 import frc.team5115.subsystems.vision.PhotonVision;
 import frc.team5115.util.LocalADStarAK;
 import java.util.ArrayList;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -71,6 +73,8 @@ public class Drivetrain extends SubsystemBase {
                     linear_kd,
                     new TrapezoidProfile.Constraints(
                             SwerveConstants.MAX_LINEAR_SPEED, SwerveConstants.MAX_LINEAR_SPEED * 2));
+
+    PIDController thetaPid = new PIDController(0.0, 0.0, 0.0); // TODO: tune pids
 
     private final SwerveDriveKinematics kinematics =
             new SwerveDriveKinematics(SwerveConstants.MODULE_TRANSLATIONS);
@@ -205,6 +209,42 @@ public class Drivetrain extends SubsystemBase {
 
     public boolean isRedAlliance() {
         return DriverStation.getAlliance().orElseGet(() -> Alliance.Blue) == Alliance.Red;
+    }
+
+    public Command reefOrbitDrive(DoubleSupplier omegaSupplier, DoubleSupplier tauSupplier) {
+        return Commands.run(
+            () -> {
+                //live omega and tau values
+                double omega = omegaSupplier.getAsDouble();
+                double tau = tauSupplier.getAsDouble();
+
+                // Radius and gamma calculations
+                double robotX = getPose().getX();
+                double robotY = getPose().getY();
+                double gamma = Math.atan2(robotY, robotX);
+                double radius = Math.sqrt(Math.pow(robotX, 2) + Math.pow(robotY, 2));
+                double vConstant = 3.0; // meters per second 
+
+                // Calculate the desired x and y velocities
+                double xVelocity = (vConstant * omega * radius * Math.cos(gamma)) - (tau * vConstant * Math.sin(gamma)); 
+                double yVelocity = -(vConstant * omega * radius * Math.sin(gamma)) - (tau * vConstant * Math.cos(gamma)); 
+
+                //Desired angle as setpoint 
+                double angle = Math.PI + gamma;
+
+                // Get the current angle
+                double currentAngle = getRotation().getRadians();
+
+                // Compute angular velocity using PID
+                double angularVelocity = anglePid.calculate(currentAngle, angle);
+
+                // Run the velocities with angle correction
+                if (radius > 0.5)  {  //TODO: find correct radius
+                    runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, angularVelocity, getRotation()));
+                }
+            },
+            this
+        );
     }
 
     public Command driveToNearestScoringSpot(double sidewaysOffset, double distanceOffset) {
