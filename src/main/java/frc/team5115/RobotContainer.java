@@ -166,13 +166,10 @@ public class RobotContainer {
         joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(+0.15, +0.38));
         joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(-0.15, +0.38));
 
-        elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY() / 10));
-        // elevator.setDefaultCommand(elevator.positionControl());
-        joyManip
-                .leftStick()
-                .onTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 30.0))
-                .onFalse(elevator.zero());
+        elevator.setDefaultCommand(elevator.positionControl());
+        joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 30.0));
         joyManip.start().onTrue(elevator.zero());
+        joyManip.back().onTrue(elevator.setHeight(Height.MINIMUM));
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         joyManip.b().onTrue(elevator.setHeight(Height.L2));
         joyManip.y().onTrue(elevator.setHeight(Height.L3));

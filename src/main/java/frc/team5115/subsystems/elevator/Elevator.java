@@ -23,8 +23,8 @@ public class Elevator extends SubsystemBase {
     private static final double maxSpeed = 0.5; // m/s
     private static final double maxAcceleration = 2.0;
     private static final double maxVolts = 10.0;
-    private static final double kgVolts = 0.9;
-    private static final double minHeightInches = 30; // TODO: find minimum height
+    private static final double kgVolts = 0.0;
+    private static final double minHeightInches = 23; // TODO: find minimum height
     // TODO find sensor heights
     private static final double firstHeight = 0;
     private static final double secondHeight = 0;
@@ -51,7 +51,7 @@ public class Elevator extends SubsystemBase {
 
     public enum Height {
         MINIMUM(minHeightInches),
-        INTAKE(27), // TODO find intake height
+        INTAKE(27.5),
         L2(33),
         L3(49),
         L4(74);
@@ -71,15 +71,18 @@ public class Elevator extends SubsystemBase {
             case REPLAY:
                 // TODO tune elevator feedforward and pid
                 positionPID =
-                        new ProfiledPIDController(0.01, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                        new ProfiledPIDController(
+                                0.2, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
                 break;
             case SIM:
                 positionPID =
-                        new ProfiledPIDController(1.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                        new ProfiledPIDController(
+                                1.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
                 break;
             default:
                 positionPID =
-                        new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                        new ProfiledPIDController(
+                                0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
                 break;
         }
 
@@ -93,7 +96,8 @@ public class Elevator extends SubsystemBase {
                         new SysIdRoutine.Mechanism(
                                 (voltage) -> io.setElevatorVoltage(voltage.magnitude()), null, this));
 
-        height = Height.L2;
+        zero().schedule(); // ! auto zero on startup
+        height = Height.MINIMUM;
         positionPID.setTolerance(0.05);
         positionPID.setGoal(height.position);
     }
@@ -139,7 +143,8 @@ public class Elevator extends SubsystemBase {
         Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
         Logger.recordOutput("Elevator/At Goal?", atGoal());
         Logger.recordOutput("Elevator/State", getStateString());
-        Logger.recordOutput("Elevator/Offset Delta", positionPID.getSetpoint().position - getActualHeight());
+        Logger.recordOutput(
+                "Elevator/Offset Delta", positionPID.getSetpoint().position - getActualHeight());
         Logger.recordOutput("Elevator/OffsetValue", offset);
     }
 
