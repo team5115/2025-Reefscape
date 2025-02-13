@@ -185,6 +185,7 @@ public class RobotContainer {
         joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(-0.15, +0.38));
         joyDrive
                 .y()
+                .onTrue(drivetrain.setRadius())
                 .whileTrue(
                         drivetrain.reefOrbitDrive(() -> joyDrive.getLeftX(), () -> -joyDrive.getLeftY()));
 
