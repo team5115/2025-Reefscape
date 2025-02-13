@@ -42,7 +42,6 @@ import frc.team5115.subsystems.indexer.IndexerIO;
 import frc.team5115.subsystems.indexer.IndexerIOSim;
 import frc.team5115.subsystems.indexer.IndexerIOSparkMax;
 import frc.team5115.subsystems.vision.PhotonVision;
-import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -74,9 +73,6 @@ public class RobotContainer {
     private boolean slowMode = false;
     private boolean hasFaults = true;
     private double faultPrintTimeout = 0;
-
-    private final DoubleSupplier tau = () -> joyDrive.getLeftY();
-    private final DoubleSupplier omega = () -> joyDrive.getLeftX();
 
     private final GenericEntry clearForMatchEntry;
 
@@ -179,7 +175,10 @@ public class RobotContainer {
         joyDrive.start().onTrue(resetFieldOrientation());
         joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(+0.15, +0.38));
         joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(-0.15, +0.38));
-        joyDrive.y().whileTrue(drivetrain.reefOrbitDrive(omega, tau));
+        joyDrive
+                .y()
+                .whileTrue(
+                        drivetrain.reefOrbitDrive(() -> joyDrive.getLeftX(), () -> -joyDrive.getLeftY()));
 
         elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY()));
         // elevator.setDefaultCommand(elevator.positionControl());

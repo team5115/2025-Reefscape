@@ -213,38 +213,53 @@ public class Drivetrain extends SubsystemBase {
 
     public Command reefOrbitDrive(DoubleSupplier omegaSupplier, DoubleSupplier tauSupplier) {
         return Commands.run(
-            () -> {
-                //live omega and tau values
-                double omega = omegaSupplier.getAsDouble();
-                double tau = tauSupplier.getAsDouble();
+                () -> {
+                    System.out.println("working omg");
+                    // live omega and tau values
+                    double omega = omegaSupplier.getAsDouble();
+                    double tau = tauSupplier.getAsDouble();
 
-                // Radius and gamma calculations
-                double robotX = getPose().getX();
-                double robotY = getPose().getY();
-                double gamma = Math.atan2(robotY, robotX);
-                double radius = Math.sqrt(Math.pow(robotX, 2) + Math.pow(robotY, 2));
-                double vConstant = 3.0; // meters per second 
+                    Logger.recordOutput("Orbit/omega", omega);
+                    Logger.recordOutput("Orbit/tau", tau);
+                    final double reefX = isRedAlliance() ? 11.3 : 4.5;
+                    final double reefY = isRedAlliance() ? 4.0 : 4.0;
+                    // Radius and gamma calculations
+                    double robotX = getPose().getX() - reefX;
+                    double robotY = getPose().getY() - reefY;
+                    double gamma = Math.atan2(robotY, robotX);
+                    double radius = Math.sqrt(Math.pow(robotX, 2) + Math.pow(robotY, 2));
+                    double vConstant = 2.0; // meters per second
+                    double vConstant2 = 1.0;
 
-                // Calculate the desired x and y velocities
-                double xVelocity = (vConstant * omega * radius * Math.cos(gamma)) - (tau * vConstant * Math.sin(gamma)); 
-                double yVelocity = -(vConstant * omega * radius * Math.sin(gamma)) - (tau * vConstant * Math.cos(gamma)); 
+                    // Calculate the desired x and y velocities
+                    double xVelocity =
+                            (vConstant * omega * radius * Math.sin(gamma)) - (tau * vConstant2 * Math.cos(gamma));
+                    double yVelocity =
+                            -(vConstant * omega * radius * Math.cos(gamma))
+                                    - (tau * vConstant2 * Math.sin(gamma));
 
-                //Desired angle as setpoint 
-                double angle = Math.PI + gamma;
+                    Logger.recordOutput("Orbit/radius", radius);
+                    Logger.recordOutput("Orbit/xVelocity", xVelocity);
+                    Logger.recordOutput("Orbit/yVelocity", yVelocity);
+                    Logger.recordOutput("Orbit/gamma", gamma);
 
-                // Get the current angle
-                double currentAngle = getRotation().getRadians();
+                    // Desired angle as setpoint
+                    double angle = Math.PI + gamma;
 
-                // Compute angular velocity using PID
-                double angularVelocity = anglePid.calculate(currentAngle, angle);
+                    // Get the current angle
+                    double currentAngle = getRotation().getRadians();
 
-                // Run the velocities with angle correction
-                if (radius > 0.5)  {  //TODO: find correct radius
-                    runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, angularVelocity, getRotation()));
-                }
-            },
-            this
-        );
+                    // Compute angular velocity using PID
+                    double angularVelocity = anglePid.calculate(currentAngle, angle);
+
+                    // Run the velocities with angle correction
+                    if (radius > 0) { // TODO: find correct radius
+                        runVelocity(
+                                ChassisSpeeds.fromFieldRelativeSpeeds(
+                                        xVelocity, yVelocity, angularVelocity, getRotation()));
+                    }
+                },
+                this);
     }
 
     public Command driveToNearestScoringSpot(double sidewaysOffset, double distanceOffset) {
