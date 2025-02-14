@@ -7,7 +7,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import frc.team5115.Constants;
 import java.util.ArrayList;
 
@@ -16,12 +16,10 @@ public class Dealgaefacationinator5000IOSparkMax implements Dealgaefacationinato
     private final SparkMax motor;
     private boolean state;
 
-    public Dealgaefacationinator5000IOSparkMax() {
+    public Dealgaefacationinator5000IOSparkMax(PneumaticHub hub) {
         extender =
-                new DoubleSolenoid(
-                        PneumaticsModuleType.REVPH,
-                        Constants.DEALGAE_FORWARD_CHANNEL,
-                        Constants.DEALGAE_REVERSE_CHANNEL);
+                hub.makeDoubleSolenoid(
+                        Constants.DEALGAE_FORWARD_CHANNEL, Constants.DEALGAE_REVERSE_CHANNEL);
         motor = new SparkMax(Constants.DEALGAE_MOTOR_ID, MotorType.kBrushless);
 
         final SparkMaxConfig motorConfig = new SparkMaxConfig();

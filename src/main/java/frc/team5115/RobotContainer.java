@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -14,10 +15,6 @@ import frc.team5115.Constants.Mode;
 import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.AutoCommands.Side;
 import frc.team5115.commands.DriveCommands;
-import frc.team5115.subsystems.bling.Bling;
-import frc.team5115.subsystems.bling.BlingIO;
-import frc.team5115.subsystems.bling.BlingIOReal;
-import frc.team5115.subsystems.bling.BlingIOSim;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIORev;
@@ -87,14 +84,15 @@ public class RobotContainer {
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
+                final PneumaticHub hub = new PneumaticHub(Constants.PNEUMATIC_HUB_ID);
                 gyro = new GyroIONavx();
-                climber = new Climber(new ClimberIORev());
+                climber = new Climber(new ClimberIORev(hub));
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser = new Dispenser(new DispenserIOSparkMax());
                 indexer = new Indexer(new IndexerIOSparkMax(), elevator);
                 // bling = new Bling(new BlingIOReal());
                 dealgaefacationinator5000 =
-                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax());
+                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax(hub));
                 drivetrain =
                         new Drivetrain(
                                 gyro,
@@ -177,7 +175,6 @@ public class RobotContainer {
                         () -> -joyDrive.getLeftY(),
                         () -> -joyDrive.getLeftX(),
                         () -> -joyDrive.getRightX()));
-
 
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));

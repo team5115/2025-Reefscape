@@ -10,13 +10,11 @@ public class ClimberIORev implements ClimberIO {
 
     private final DigitalInput climbSensor;
     private final DoubleSolenoid m_doubleSolenoid; // Declare as a class-level variable
-    private final PneumaticHub m_pH;
 
-    public ClimberIORev() {
+    public ClimberIORev(PneumaticHub hub) {
         climbSensor = new DigitalInput(Constants.CLIMBER_SENSOR_ID);
-        m_pH = new PneumaticHub(Constants.PNEUMATIC_HUB_ID);
         m_doubleSolenoid =
-                m_pH.makeDoubleSolenoid(Constants.CLIMB_FORWARD_CHANNEL, Constants.CLIMB_REVERSE_CHANNEL);
+                hub.makeDoubleSolenoid(Constants.CLIMB_FORWARD_CHANNEL, Constants.CLIMB_REVERSE_CHANNEL);
     }
 
     @Override
