@@ -19,7 +19,7 @@ public class ClimberIORev implements ClimberIO {
 
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
-        inputs.cageIntake = climbSensor.get();
+        inputs.cageIntake = !climbSensor.get();
     }
 
     @Override
