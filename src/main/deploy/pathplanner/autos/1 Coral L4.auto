@@ -11,13 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Leave and Score"
+                  "pathName": "Score (1)"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Left"
+                  "name": "L4Right"
                 }
               }
             ]
