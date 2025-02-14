@@ -16,44 +16,18 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class PhotonVision extends SubsystemBase {
+    private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     private static final List<AprilTag> reefTags = new ArrayList<AprilTag>();
     private final Drivetrain drivetrain;
     private final PhotonCamera camera;
-    private final AprilTagFieldLayout fieldLayout;
     private final PhotonPoseEstimator poseEstimator;
 
     public PhotonVision(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
         camera = new PhotonCamera(VisionConstants.cameraName);
-        fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
-        for (var tag : fieldLayout.getTags()) {
-            if (((tag.ID >= 6 && tag.ID <= 11) || (tag.ID >= 17 && tag.ID <= 22))) {
-                reefTags.add(tag);
-            }
-        }
         poseEstimator =
                 new PhotonPoseEstimator(
-                        fieldLayout, PoseStrategy.LOWEST_AMBIGUITY, VisionConstants.robotToCam);
-    }
-
-    /**
-     * Get the pose of the nearest april tag on the reef
-     *
-     * @param robot the pose of the robot
-     * @return the pose of the nearest reef april tag
-     */
-    public static Pose2d getNearestReefTagPose(Pose2d robot) {
-        double shortestDistance = Double.MAX_VALUE;
-        Pose2d closestPose = null;
-        for (var tag : reefTags) {
-            final var pose = tag.pose.toPose2d();
-            final double distance = pose.getTranslation().getDistance(robot.getTranslation());
-            if (distance < shortestDistance) {
-                shortestDistance = distance;
-                closestPose = pose;
-            }
-        }
-        return closestPose;
+                        fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, VisionConstants.robotToCam);
     }
 
     @Override
@@ -78,5 +52,36 @@ public class PhotonVision extends SubsystemBase {
 
     public boolean isCameraConnected() {
         return camera.isConnected();
+    }
+
+    /** 
+     * Must call this method at robot start!
+     */
+    public static void setupReefTags() {
+        for (var tag : fieldLayout.getTags()) {
+            if (((tag.ID >= 6 && tag.ID <= 11) || (tag.ID >= 17 && tag.ID <= 22))) {
+                reefTags.add(tag);
+            }
+        }
+    }
+
+    /**
+     * Get the pose of the nearest april tag on the reef
+     *
+     * @param robot the pose of the robot
+     * @return the pose of the nearest reef april tag
+     */
+    public static Pose2d getNearestReefTagPose(Pose2d robot) {
+        double shortestDistance = Double.MAX_VALUE;
+        Pose2d closestPose = null;
+        for (var tag : reefTags) {
+            final var pose = tag.pose.toPose2d();
+            final double distance = pose.getTranslation().getDistance(robot.getTranslation());
+            if (distance < shortestDistance) {
+                shortestDistance = distance;
+                closestPose = pose;
+            }
+        }
+        return closestPose;
     }
 }
