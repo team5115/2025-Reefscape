@@ -2,7 +2,8 @@ package frc.team5115.subsystems.elevator;
 
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -18,11 +19,12 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 public class Elevator extends SubsystemBase {
-    // TODO determine max speed, max volts, kG for elevator
-    private static final double maxSpeed = 4.0; // m/s
+    // TODO determine max speed, acceleration, max volts, kG for elevator
+    private static final double maxSpeed = 0.5; // m/s
+    private static final double maxAcceleration = 2.0;
     private static final double maxVolts = 10.0;
-    private static final double kgVolts = 0.9;
-    private static final double minHeightInches = 30; // TODO: find minimum height
+    private static final double kgVolts = 0.0;
+    private static final double minHeightInches = 23; // TODO: find minimum height
     // TODO find sensor heights
     private static final double firstHeight = 0;
     private static final double secondHeight = 0;
@@ -30,7 +32,7 @@ public class Elevator extends SubsystemBase {
 
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-    private final PIDController positionPID; // control meters, output m/s
+    private final ProfiledPIDController positionPID; // control meters, output m/s
     private final SysIdRoutine sysId;
     private Height height = Height.L2;
     private double velocitySetpoint;
@@ -49,10 +51,10 @@ public class Elevator extends SubsystemBase {
 
     public enum Height {
         MINIMUM(minHeightInches),
-        L2(30),
-        INTAKE(30), // TODO: find intake height
-        L3(45),
-        L4(71);
+        INTAKE(27.5),
+        L2(33),
+        L3(49),
+        L4(74);
 
         public final double position; // meters
 
@@ -68,13 +70,19 @@ public class Elevator extends SubsystemBase {
             case REAL:
             case REPLAY:
                 // TODO tune elevator feedforward and pid
-                positionPID = new PIDController(0.0, 0.0, 0.0);
+                positionPID =
+                        new ProfiledPIDController(
+                                0.2, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
                 break;
             case SIM:
-                positionPID = new PIDController(1.0, 0.0, 0.0);
+                positionPID =
+                        new ProfiledPIDController(
+                                1.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
                 break;
             default:
-                positionPID = new PIDController(0.0, 0.0, 0.0);
+                positionPID =
+                        new ProfiledPIDController(
+                                0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
                 break;
         }
 
@@ -88,13 +96,14 @@ public class Elevator extends SubsystemBase {
                         new SysIdRoutine.Mechanism(
                                 (voltage) -> io.setElevatorVoltage(voltage.magnitude()), null, this));
 
-        height = Height.L2;
-        positionPID.setTolerance(0.05); // meters
-        positionPID.setSetpoint(height.position);
+        zero().schedule(); // ! auto zero on startup
+        height = Height.MINIMUM;
+        positionPID.setTolerance(0.05);
+        positionPID.setGoal(height.position);
     }
 
     public double getActualHeight() {
-        return inputs.positionMeters - offset;
+        return inputs.positionMeters + offset;
     }
 
     @Override
@@ -119,6 +128,14 @@ public class Elevator extends SubsystemBase {
         elevatorMechanismLigament2d.setLength(getActualHeight() * 8);
     }
 
+    public Command zero() {
+        return Commands.runOnce(
+                () -> {
+                    offset = -inputs.positionMeters;
+                },
+                this);
+    }
+
     private void recordOutputs() {
         Logger.recordOutput("Elevator/Goal Height", height.position);
         Logger.recordOutput("Elevator/Setpoint Velocity", velocitySetpoint);
@@ -126,7 +143,9 @@ public class Elevator extends SubsystemBase {
         Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
         Logger.recordOutput("Elevator/At Goal?", atGoal());
         Logger.recordOutput("Elevator/State", getStateString());
-        Logger.recordOutput("Elevator/Offset Delta", positionPID.getSetpoint() - getActualHeight());
+        Logger.recordOutput(
+                "Elevator/Offset Delta", positionPID.getSetpoint().position - getActualHeight());
+        Logger.recordOutput("Elevator/OffsetValue", offset);
     }
 
     public Command waitForSetpoint(double timeout) {
@@ -137,15 +156,15 @@ public class Elevator extends SubsystemBase {
         return Commands.waitUntil(() -> inputs.backCoralDetected == state).withTimeout(timeout);
     }
 
-    public boolean checkElevator() {
-        return atGoal() && positionPID.getSetpoint() == Height.INTAKE.position;
+    public boolean atIntake() {
+        return atGoal() && positionPID.getSetpoint().position == Height.INTAKE.position;
     }
 
     public Command setHeight(Height height) {
         return Commands.runOnce(
                 () -> {
                     this.height = height;
-                    positionPID.setSetpoint(height.position);
+                    positionPID.setGoal(height.position);
                 });
     }
 
@@ -163,7 +182,7 @@ public class Elevator extends SubsystemBase {
 
     public boolean atGoal() {
         return Math.abs(velocitySetpoint - inputs.velocityMetersPerSecond) <= 0.1
-                && positionPID.atSetpoint();
+                && positionPID.atGoal();
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -175,7 +194,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public Command velocityControl(DoubleSupplier speedMetersPerSecond) {
-        return Commands.runOnce(() -> velocitySetpoint = speedMetersPerSecond.getAsDouble(), this);
+        return Commands.run(() -> velocitySetpoint = speedMetersPerSecond.getAsDouble(), this);
     }
 
     public Command positionControl() {

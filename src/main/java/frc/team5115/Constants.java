@@ -37,6 +37,7 @@ public final class Constants {
     public static final byte ELEVATOR_MOTOR_ID = 11;
     public static final byte INDEXER_MOTOR_ID = 12;
     public static final byte DISPENSER_MOTOR_ID = 13;
+    public static final byte DEALGAE_MOTOR_ID = 14;
 
     public static final byte CLIMBER_SENSOR_ID = 0;
     public static final byte INTAKE_SENSOR_ID = 1;
@@ -62,7 +63,7 @@ public final class Constants {
         public static final byte BACK_RIGHT_TURN_ID = 7;
 
         // ! TODO determine mass and moi of robot
-        public static final Mass ROBOT_MASS = Pounds.of(83.6);
+        public static final Mass ROBOT_MASS = Pounds.of(95.0);
         public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(4);
         public static final double WHEEL_COF = 1.55;
         public static final double MAX_LINEAR_SPEED = 5; // meters per second
@@ -107,20 +108,20 @@ public final class Constants {
         public static final double MIN_HEIGHT = 0;
         public static final double DRUM_RADIUS = 0.05;
         public static final double CARRIAGE_MASS_KG = 9.072; // 20 lbs
-        public static final double GEARING = 36.0; // numbers greater than 1 represent reductions
-        // Below conversion factor found empirically
-        public static final double METERS_PER_ROTATION = 0.0035181942;
-        // ! These amp limits are for a neo 550
-        public static final int STALL_CURRENT_AMPS = 20;
+        public static final double GEARING = 20.0; // numbers greater than 1 represent reductions
+        // Below conversion factor found empirically, adjusted from old gear ratio to new one
+        public static final double METERS_PER_ROTATION = 0.0035181942 * 36.0 / 20.0;
+
+        public static final int STALL_CURRENT_AMPS = 40;
         public static final int FREE_CURRENT_AMPS = 40;
         // Kv values for neo and neo 550
         // Kf for closed loop velocity control is 1 / kv
         public static final double KV_NEO = 473;
         public static final double KV_NEO_550 = 917;
-        // TODO tune the Elevator spark velocity pid
-        public static final double kP = 0;
-        public static final double kI = 0;
-        public static final double kD = 0;
+
+        public static final double sparkP = 0.00001;
+        public static final double sparkI = 0;
+        public static final double sparkD = 0;
     }
 
     public static class AutoConstants {

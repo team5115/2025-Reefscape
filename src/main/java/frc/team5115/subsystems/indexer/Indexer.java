@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.littletonrobotics.junction.Logger;
 
 public class Indexer extends SubsystemBase {
+    private static final double INDEXING_SPEED = 0.15;
     private final IndexerIO io;
     private final Elevator elevator;
     private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
@@ -23,16 +24,23 @@ public class Indexer extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Intake", inputs);
 
-        // TODO readd after tests
-        // if (elevator.checkElevator()) {
-        //     io.setPercent(+0.25);
-        // } else {
-        //     io.setPercent(+0);
-        // }
+        if (elevator.atIntake()) {
+            io.setPercent(INDEXING_SPEED);
+        } else {
+            io.setPercent(+0);
+        }
     }
 
     public Command setSpeed(double speed) {
         return Commands.runOnce(() -> io.setPercent(speed));
+    }
+
+    public Command index() {
+        return setSpeed(INDEXING_SPEED);
+    }
+
+    public Command stop() {
+        return setSpeed(0);
     }
 
     public void getSparks(ArrayList<SparkMax> sparks) {

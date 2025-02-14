@@ -19,7 +19,7 @@ public class IndexerIOSparkMax implements IndexerIO {
         encoder = motor.getEncoder();
 
         final SparkMaxConfig motorConfig = new SparkMaxConfig();
-        motorConfig.smartCurrentLimit(20, 40).idleMode(IdleMode.kCoast);
+        motorConfig.smartCurrentLimit(30, 40).idleMode(IdleMode.kCoast);
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 

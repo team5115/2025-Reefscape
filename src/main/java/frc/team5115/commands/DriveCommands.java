@@ -54,7 +54,7 @@ public class DriveCommands {
                                     .getTranslation();
 
                     // Convert to ChassisSpeeds & send command
-                    final double multiplier = slowMode.getAsBoolean() ? 0.5 : 1.0;
+                    final double multiplier = slowMode.getAsBoolean() ? 0.1 : 1.0;
                     final double vx = linearVelocity.getX() * SwerveConstants.MAX_LINEAR_SPEED * multiplier;
                     final double vy = linearVelocity.getY() * SwerveConstants.MAX_LINEAR_SPEED * multiplier;
                     omega *= SwerveConstants.MAX_ANGULAR_SPEED * multiplier;

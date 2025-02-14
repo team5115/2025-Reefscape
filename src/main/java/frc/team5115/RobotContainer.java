@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -14,10 +15,6 @@ import frc.team5115.Constants.Mode;
 import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.AutoCommands.Side;
 import frc.team5115.commands.DriveCommands;
-import frc.team5115.subsystems.bling.Bling;
-import frc.team5115.subsystems.bling.BlingIO;
-import frc.team5115.subsystems.bling.BlingIOReal;
-import frc.team5115.subsystems.bling.BlingIOSim;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIORev;
@@ -65,7 +62,7 @@ public class RobotContainer {
     private final Dispenser dispenser;
     private final Indexer indexer;
     private final Dealgaefacationinator5000 dealgaefacationinator5000;
-    private final Bling bling;
+    // private final Bling bling;
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
@@ -78,22 +75,25 @@ public class RobotContainer {
     private boolean slowMode = false;
     private boolean hasFaults = true;
     private double faultPrintTimeout = 0;
+    private final boolean constantlyCheckFaults = true;
 
     private final GenericEntry clearForMatchEntry;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
+        PhotonVision.setupReefTags();
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
+                final PneumaticHub hub = new PneumaticHub(Constants.PNEUMATIC_HUB_ID);
                 gyro = new GyroIONavx();
-                climber = new Climber(new ClimberIORev());
+                climber = new Climber(new ClimberIORev(hub));
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser = new Dispenser(new DispenserIOSparkMax());
                 indexer = new Indexer(new IndexerIOSparkMax(), elevator);
-                bling = new Bling(new BlingIOReal());
+                // bling = new Bling(new BlingIOReal());
                 dealgaefacationinator5000 =
-                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax());
+                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax(hub));
                 drivetrain =
                         new Drivetrain(
                                 gyro,
@@ -112,7 +112,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIOSim());
                 elevator = new Elevator(new ElevatorIOSim());
                 dispenser = new Dispenser(new DispenserIOSim());
-                bling = new Bling(new BlingIOSim());
+                // bling = new Bling(new BlingIOSim());
                 indexer = new Indexer(new IndexerIOSim(), elevator);
                 dealgaefacationinator5000 =
                         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
@@ -130,7 +130,7 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIO() {});
                 dispenser = new Dispenser(new DispenserIO() {});
                 indexer = new Indexer(new IndexerIO() {}, elevator);
-                bling = new Bling(new BlingIO() {});
+                // bling = new Bling(new BlingIO() {});
                 dealgaefacationinator5000 =
                         new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
                 drivetrain =
@@ -189,18 +189,20 @@ public class RobotContainer {
                 .whileTrue(
                         drivetrain.reefOrbitDrive(() -> joyDrive.getLeftX(), () -> -joyDrive.getLeftY()));
 
-        elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY()));
-        // elevator.setDefaultCommand(elevator.positionControl());
-
+        elevator.setDefaultCommand(elevator.positionControl());
+        joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 10.0));
+        joyManip.start().onTrue(elevator.zero());
+        joyManip.back().onTrue(elevator.setHeight(Height.MINIMUM));
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         joyManip.b().onTrue(elevator.setHeight(Height.L2));
-        joyManip.y().onTrue(elevator.setHeight(Height.L3));
+        // joyManip.y().onTrue(elevator.setHeight(Height.L3));
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        joyManip.leftStick().onTrue(indexer.setSpeed(1)).onFalse(indexer.setSpeed(0));
-        joyManip.rightStick().onTrue(climber.deploy());
+        joyManip.rightStick().onTrue(climber.stopCommand());
+        joyManip.leftBumper().onTrue(climber.retract());
+        joyManip.rightBumper().onTrue(climber.extend());
         joyManip
-                .leftBumper()
+                .x()
                 .onTrue(dealgaefacationinator5000.extend())
                 .onFalse(dealgaefacationinator5000.retract());
     }
@@ -293,7 +295,7 @@ public class RobotContainer {
 
     public void disabledPeriodic() {
         if (Constants.currentMode == Mode.REAL) {
-            if (hasFaults) {
+            if (hasFaults || constantlyCheckFaults) {
                 if (faultPrintTimeout <= 0) {
                     preMatchCheck();
                     faultPrintTimeout = 50;

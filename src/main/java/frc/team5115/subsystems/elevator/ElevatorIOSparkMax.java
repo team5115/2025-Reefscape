@@ -40,12 +40,13 @@ public class ElevatorIOSparkMax implements ElevatorIO {
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(
                         ElevatorConstants.STALL_CURRENT_AMPS, ElevatorConstants.FREE_CURRENT_AMPS);
+
         config
                 .closedLoop
-                .p(ElevatorConstants.kP)
-                .i(ElevatorConstants.kI)
-                .d(ElevatorConstants.kD)
-                .velocityFF(1 / ElevatorConstants.KV_NEO_550);
+                .p(ElevatorConstants.sparkP)
+                .i(ElevatorConstants.sparkI)
+                .d(ElevatorConstants.sparkD)
+                .velocityFF(1.0 / ElevatorConstants.KV_NEO);
 
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
