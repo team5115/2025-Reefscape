@@ -22,7 +22,7 @@ public class Dealgaefacationinator5000IOSparkMax implements Dealgaefacationinato
                         PneumaticsModuleType.REVPH,
                         Constants.DEALGAE_FORWARD_CHANNEL,
                         Constants.DEALGAE_REVERSE_CHANNEL);
-        motor = new SparkMax(0, MotorType.kBrushless);
+        motor = new SparkMax(Constants.DEALGAE_MOTOR_ID, MotorType.kBrushless);
 
         final SparkMaxConfig motorConfig = new SparkMaxConfig();
         motorConfig.smartCurrentLimit(20, 40).idleMode(IdleMode.kCoast);
@@ -41,7 +41,7 @@ public class Dealgaefacationinator5000IOSparkMax implements Dealgaefacationinato
     @Override
     public void setPneumatic(boolean extend) {
         state = extend;
-        extender.set((extend ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse));
+        extender.set(extend ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
     }
 
     @Override
