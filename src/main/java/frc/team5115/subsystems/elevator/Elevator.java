@@ -53,7 +53,7 @@ public class Elevator extends SubsystemBase {
         MINIMUM(minHeightInches),
         INTAKE(27.5),
         L2(33),
-        L3(49),
+        L3(36), // ! isn't actually L3; it's the max height
         L4(74);
 
         public final double position; // meters

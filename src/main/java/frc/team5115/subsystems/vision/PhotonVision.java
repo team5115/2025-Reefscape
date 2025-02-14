@@ -16,7 +16,8 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class PhotonVision extends SubsystemBase {
-    private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+    private static final AprilTagFieldLayout fieldLayout =
+            AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     private static final List<AprilTag> reefTags = new ArrayList<AprilTag>();
     private final Drivetrain drivetrain;
     private final PhotonCamera camera;
@@ -54,9 +55,7 @@ public class PhotonVision extends SubsystemBase {
         return camera.isConnected();
     }
 
-    /** 
-     * Must call this method at robot start!
-     */
+    /** Must call this method at robot start! */
     public static void setupReefTags() {
         for (var tag : fieldLayout.getTags()) {
             if (((tag.ID >= 6 && tag.ID <= 11) || (tag.ID >= 17 && tag.ID <= 22))) {
