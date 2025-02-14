@@ -172,7 +172,7 @@ public class RobotContainer {
         joyManip.back().onTrue(elevator.setHeight(Height.MINIMUM));
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         joyManip.b().onTrue(elevator.setHeight(Height.L2));
-        joyManip.y().onTrue(elevator.setHeight(Height.L3));
+        // joyManip.y().onTrue(elevator.setHeight(Height.L3));
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
         joyManip.x().onTrue(indexer.index()).onFalse(indexer.stop());

@@ -158,7 +158,7 @@ public class RobotFaults {
             builder.append("GateDriverFault,");
         }
         if (faults.escEeprom) {
-            builder.append("EscEepromFault (SkibidiRizzFault),");
+            builder.append("EscEepromFault,");
         }
         if (faults.firmware) {
             builder.append("FirmwareFault,");
