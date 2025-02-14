@@ -65,7 +65,7 @@ public class RobotContainer {
     private final Dispenser dispenser;
     private final Indexer indexer;
     private final Dealgaefacationinator5000 dealgaefacationinator5000;
-    private final Bling bling;
+    // private final Bling bling;
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
@@ -92,7 +92,7 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser = new Dispenser(new DispenserIOSparkMax());
                 indexer = new Indexer(new IndexerIOSparkMax(), elevator);
-                bling = new Bling(new BlingIOReal());
+                // bling = new Bling(new BlingIOReal());
                 dealgaefacationinator5000 =
                         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax());
                 drivetrain =
@@ -113,7 +113,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIOSim());
                 elevator = new Elevator(new ElevatorIOSim());
                 dispenser = new Dispenser(new DispenserIOSim());
-                bling = new Bling(new BlingIOSim());
+                // bling = new Bling(new BlingIOSim());
                 indexer = new Indexer(new IndexerIOSim(), elevator);
                 dealgaefacationinator5000 =
                         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
@@ -131,7 +131,7 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIO() {});
                 dispenser = new Dispenser(new DispenserIO() {});
                 indexer = new Indexer(new IndexerIO() {}, elevator);
-                bling = new Bling(new BlingIO() {});
+                // bling = new Bling(new BlingIO() {});
                 dealgaefacationinator5000 =
                         new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
                 drivetrain =
@@ -177,6 +177,7 @@ public class RobotContainer {
                         () -> -joyDrive.getLeftY(),
                         () -> -joyDrive.getLeftX(),
                         () -> -joyDrive.getRightX()));
+
 
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
