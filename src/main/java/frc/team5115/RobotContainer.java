@@ -14,10 +14,18 @@ import frc.team5115.Constants.Mode;
 import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.AutoCommands.Side;
 import frc.team5115.commands.DriveCommands;
+import frc.team5115.subsystems.bling.Bling;
+import frc.team5115.subsystems.bling.BlingIO;
+import frc.team5115.subsystems.bling.BlingIOReal;
+import frc.team5115.subsystems.bling.BlingIOSim;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIORev;
 import frc.team5115.subsystems.climber.ClimberIOSim;
+import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000;
+import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IO;
+import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IOSim;
+import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IOSparkMax;
 import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.dispenser.DispenserIO;
 import frc.team5115.subsystems.dispenser.DispenserIOSim;
@@ -56,6 +64,8 @@ public class RobotContainer {
     private final Elevator elevator;
     private final Dispenser dispenser;
     private final Indexer indexer;
+    private final Dealgaefacationinator5000 dealgaefacationinator5000;
+    private final Bling bling;
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
@@ -82,6 +92,9 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser = new Dispenser(new DispenserIOSparkMax());
                 indexer = new Indexer(new IndexerIOSparkMax(), elevator);
+                bling = new Bling(new BlingIOReal());
+                dealgaefacationinator5000 =
+                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax());
                 drivetrain =
                         new Drivetrain(
                                 gyro,
@@ -100,7 +113,10 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIOSim());
                 elevator = new Elevator(new ElevatorIOSim());
                 dispenser = new Dispenser(new DispenserIOSim());
+                bling = new Bling(new BlingIOSim());
                 indexer = new Indexer(new IndexerIOSim(), elevator);
+                dealgaefacationinator5000 =
+                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
@@ -115,6 +131,9 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIO() {});
                 dispenser = new Dispenser(new DispenserIO() {});
                 indexer = new Indexer(new IndexerIO() {}, elevator);
+                bling = new Bling(new BlingIO() {});
+                dealgaefacationinator5000 =
+                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
@@ -165,6 +184,11 @@ public class RobotContainer {
         joyDrive.start().onTrue(resetFieldOrientation());
         joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(+0.15, +0.38));
         joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(-0.15, +0.38));
+        joyDrive
+                .y()
+                .onTrue(drivetrain.setRadius())
+                .whileTrue(
+                        drivetrain.reefOrbitDrive(() -> joyDrive.getLeftX(), () -> -joyDrive.getLeftY()));
 
         elevator.setDefaultCommand(elevator.positionControl());
         joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 10.0));
@@ -175,10 +199,13 @@ public class RobotContainer {
         // joyManip.y().onTrue(elevator.setHeight(Height.L3));
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        joyManip.x().onTrue(indexer.index()).onFalse(indexer.stop());
         joyManip.rightStick().onTrue(climber.stopCommand());
         joyManip.leftBumper().onTrue(climber.retract());
         joyManip.rightBumper().onTrue(climber.extend());
+        joyManip
+                .x()
+                .onTrue(dealgaefacationinator5000.extend())
+                .onFalse(dealgaefacationinator5000.retract());
     }
 
     private Command setRobotRelative(boolean state) {
@@ -290,6 +317,7 @@ public class RobotContainer {
                         elevator,
                         dispenser,
                         indexer,
+                        dealgaefacationinator5000,
                         joyDrive.isConnected() && joyManip.isConnected());
         hasFaults = faults.hasFaults();
         if (hasFaults) {
