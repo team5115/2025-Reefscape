@@ -19,6 +19,20 @@ public class Climber extends SubsystemBase {
         Logger.processInputs("Climber", inputs);
     }
 
+    /** Extends with no check */
+    public Command extend() {
+        return Commands.runOnce(() -> io.extendSolenoid(), this);
+    }
+
+    /** Retracts with no check */
+    public Command retract() {
+        return Commands.runOnce(() -> io.retractSolenoid(), this);
+    }
+
+    public Command stopCommand() {
+        return Commands.runOnce(() -> io.stopSolenoid(), this);
+    }
+
     public Command deploy() {
         return Commands.runOnce(
                 () -> {
@@ -34,6 +48,6 @@ public class Climber extends SubsystemBase {
     }
 
     public boolean isCageIntakeDetected() {
-        return true;
+        return inputs.cageIntake;
     }
 }

@@ -78,6 +78,7 @@ public class RobotContainer {
     private boolean slowMode = false;
     private boolean hasFaults = true;
     private double faultPrintTimeout = 0;
+    private final boolean constantlyCheckFaults = true;
 
     private final GenericEntry clearForMatchEntry;
 
@@ -189,18 +190,20 @@ public class RobotContainer {
                 .whileTrue(
                         drivetrain.reefOrbitDrive(() -> joyDrive.getLeftX(), () -> -joyDrive.getLeftY()));
 
-        elevator.setDefaultCommand(elevator.velocityControl(() -> -joyManip.getLeftY()));
-        // elevator.setDefaultCommand(elevator.positionControl());
-
+        elevator.setDefaultCommand(elevator.positionControl());
+        joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 10.0));
+        joyManip.start().onTrue(elevator.zero());
+        joyManip.back().onTrue(elevator.setHeight(Height.MINIMUM));
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         joyManip.b().onTrue(elevator.setHeight(Height.L2));
-        joyManip.y().onTrue(elevator.setHeight(Height.L3));
+        // joyManip.y().onTrue(elevator.setHeight(Height.L3));
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        joyManip.leftStick().onTrue(indexer.setSpeed(1)).onFalse(indexer.setSpeed(0));
-        joyManip.rightStick().onTrue(climber.deploy());
+        joyManip.rightStick().onTrue(climber.stopCommand());
+        joyManip.leftBumper().onTrue(climber.retract());
+        joyManip.rightBumper().onTrue(climber.extend());
         joyManip
-                .leftBumper()
+                .x()
                 .onTrue(dealgaefacationinator5000.extend())
                 .onFalse(dealgaefacationinator5000.retract());
     }
@@ -293,7 +296,7 @@ public class RobotContainer {
 
     public void disabledPeriodic() {
         if (Constants.currentMode == Mode.REAL) {
-            if (hasFaults) {
+            if (hasFaults || constantlyCheckFaults) {
                 if (faultPrintTimeout <= 0) {
                     preMatchCheck();
                     faultPrintTimeout = 50;
