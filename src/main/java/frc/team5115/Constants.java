@@ -125,8 +125,20 @@ public final class Constants {
     }
 
     public static class AutoConstants {
-        public static final double sideOffset = 0.15;
-        public static final double forwardOffset = 0.38;
+        public static final double digestionOffset = +19.5; // right from center
+        public static final double branchDistance = 0.33; // between the scoring spots
+        public static final double forwardOffset = 0.38; // distance from the april tag
+
+        public enum Side {
+            LEFT(-1),
+            RIGHT(1);
+
+            public final int offsetMul;
+
+            Side(int offsetMul) {
+                this.offsetMul = offsetMul;
+            }
+        }
     }
 
     public static class VisionConstants {
@@ -136,7 +148,7 @@ public final class Constants {
         public static final double camRoll = Math.toRadians(0);
         public static final double camZ = +0.16;
         public static final double camX = +0.235;
-        public static final double camY = -0.145;
+        public static final double camY = -0.285;
         public static final Transform3d robotToCam =
                 new Transform3d(camX, camY, camZ, new Rotation3d(camRoll, camPitch, camYaw));
     }

@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.team5115.Constants.AutoConstants.Side;
 import frc.team5115.Constants.Mode;
 import frc.team5115.commands.AutoCommands;
-import frc.team5115.commands.AutoCommands.Side;
 import frc.team5115.commands.DriveCommands;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
@@ -101,8 +101,8 @@ public class RobotContainer {
                                 new ModuleIOSparkMax(1),
                                 new ModuleIOSparkMax(2),
                                 new ModuleIOSparkMax(3));
-                // vision = new PhotonVision(drivetrain);
-                vision = null;
+                vision = new PhotonVision(drivetrain);
+                // vision = null;
                 clearForMatchEntry =
                         Shuffleboard.getTab("SmartDashboard").add("ClearForMatch", false).getEntry();
                 break;
@@ -142,9 +142,8 @@ public class RobotContainer {
         }
 
         // Register auto commands for pathplanner
-        // PhotonVision is passed in here to prevent warnings, i.e. "unused variable: vision"
-        // registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
-        registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
+        registerCommands(
+                drivetrain, vision, elevator, dispenser, indexer, dealgaefacationinator5000, climber);
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -181,30 +180,32 @@ public class RobotContainer {
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
         joyDrive.start().onTrue(resetFieldOrientation());
-        joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(+0.15, +0.38));
-        joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(-0.15, +0.38));
-        joyDrive
-                .y()
-                .onTrue(drivetrain.setRadius())
-                .whileTrue(
-                        drivetrain.reefOrbitDrive(() -> joyDrive.getLeftX(), () -> -joyDrive.getLeftY()));
+        joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(Side.LEFT));
+        joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(Side.RIGHT));
+        // joyDrive
+        //         .y()
+        //         .onTrue(drivetrain.setRadius())
+        //         .whileTrue(
+        //                 drivetrain.reefOrbitDrive(() -> joyDrive.getLeftX(), () ->
+        // -joyDrive.getLeftY()));
 
+        // joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 10.0));
         elevator.setDefaultCommand(elevator.positionControl());
-        joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 10.0));
-        joyManip.start().onTrue(elevator.zero());
-        joyManip.back().onTrue(elevator.setHeight(Height.MINIMUM));
+        joyManip.start().onTrue(elevator.setHeight(Height.MINIMUM));
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
         joyManip.b().onTrue(elevator.setHeight(Height.L2));
-        // joyManip.y().onTrue(elevator.setHeight(Height.L3));
-        joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
-        joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        joyManip.rightStick().onTrue(climber.stopCommand());
-        joyManip.leftBumper().onTrue(climber.retract());
-        joyManip.rightBumper().onTrue(climber.extend());
+        joyManip.y().onTrue(elevator.setHeight(Height.L3));
+        joyManip.back().onTrue(elevator.zero());
+
         joyManip
                 .x()
                 .onTrue(dealgaefacationinator5000.extend())
                 .onFalse(dealgaefacationinator5000.retract());
+        joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
+        joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
+        // joyManip.rightStick().onTrue(climber.stopCommand());
+        // joyManip.leftBumper().onTrue(climber.retract());
+        // joyManip.rightBumper().onTrue(climber.extend());
     }
 
     private Command setRobotRelative(boolean state) {
@@ -220,12 +221,13 @@ public class RobotContainer {
     /**
      * Register commands for pathplanner to use in autos
      *
-     * @param drivetrain (not used)
-     * @param vision (not used)
+     * @param drivetrain
+     * @param vision
      * @param elevator
      * @param dispenser
-     * @param indexer (not used)
-     * @param climber (not used)
+     * @param indexer
+     * @param dealgaefacationinator5000
+     * @param climber
      */
     public static void registerCommands(
             Drivetrain drivetrain,
@@ -233,6 +235,7 @@ public class RobotContainer {
             Elevator elevator,
             Dispenser dispenser,
             Indexer indexer,
+            Dealgaefacationinator5000 dealgaefacationinator5000,
             Climber climber) {
         // Register commands for pathplanner
         NamedCommands.registerCommand(
@@ -316,8 +319,8 @@ public class RobotContainer {
                         elevator,
                         dispenser,
                         indexer,
-                        dealgaefacationinator5000,
-                        joyDrive.isConnected() && joyManip.isConnected());
+                        null,
+                        joyDrive.isConnected() && true); // joyManip.isConnected());
         hasFaults = faults.hasFaults();
         if (hasFaults) {
             System.err.println(faults.toString());

@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.team5115.Constants.AutoConstants;
 import frc.team5115.Constants.SwerveConstants;
 import frc.team5115.subsystems.vision.PhotonVision;
 import frc.team5115.util.LocalADStarAK;
@@ -287,6 +288,13 @@ public class Drivetrain extends SubsystemBase {
                 this);
     }
 
+    /** Overload for using AutoConstants math */
+    public Command driveToNearestScoringSpot(AutoConstants.Side side) {
+        return driveToNearestScoringSpot(
+                side.offsetMul * AutoConstants.branchDistance / 2, AutoConstants.forwardOffset);
+    }
+
+    /** Never completes */
     public Command driveToNearestScoringSpot(double sidewaysOffset, double distanceOffset) {
         return driveByAutoAimPids(
                 () -> {
@@ -300,10 +308,11 @@ public class Drivetrain extends SubsystemBase {
                 });
     }
 
-    public Command autoDriveToScoringSpot(double sidewaysOffset, double distanceOffset) {
+    /** Drives to nearest scoring spot until all pids at goal */
+    public Command autoDriveToScoringSpot(AutoConstants.Side side) {
         return Commands.print("AutoDriving!")
                 .andThen(
-                        driveToNearestScoringSpot(sidewaysOffset, distanceOffset)
+                        driveToNearestScoringSpot(side)
                                 .until(() -> xPid.atGoal() && yPid.atGoal() && anglePid.atGoal()));
     }
 
