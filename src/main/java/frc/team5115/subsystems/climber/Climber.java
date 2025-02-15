@@ -11,6 +11,8 @@ public class Climber extends SubsystemBase {
 
     public Climber(ClimberIO io) {
         this.io = io;
+        // start retracted
+        io.retractSolenoid();
     }
 
     @Override
