@@ -189,7 +189,7 @@ public class RobotContainer {
         //                 drivetrain.reefOrbitDrive(() -> joyDrive.getLeftX(), () ->
         // -joyDrive.getLeftY()));
 
-        // joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 10.0));
+        joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 10.0));
         elevator.setDefaultCommand(elevator.positionControl());
         joyManip.start().onTrue(elevator.setHeight(Height.MINIMUM));
         joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
