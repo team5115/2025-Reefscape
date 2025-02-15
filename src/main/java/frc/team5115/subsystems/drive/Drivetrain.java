@@ -291,7 +291,8 @@ public class Drivetrain extends SubsystemBase {
     /** Overload for using AutoConstants math */
     public Command driveToNearestScoringSpot(AutoConstants.Side side) {
         return driveToNearestScoringSpot(
-                side.offsetMul * AutoConstants.branchDistance / 2, AutoConstants.forwardOffset);
+                side.offsetMul * AutoConstants.branchDistance / 2 - AutoConstants.digestionOffset,
+                AutoConstants.forwardOffset);
     }
 
     /** Never completes */
