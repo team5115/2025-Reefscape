@@ -125,7 +125,7 @@ public final class Constants {
     }
 
     public static class AutoConstants {
-        public static final double digestionOffset = +19.5; // right from center
+        public static final double digestionOffset = 0.195; // right from center
         public static final double branchDistance = 0.33; // between the scoring spots
         public static final double forwardOffset = 0.38; // distance from the april tag
 
