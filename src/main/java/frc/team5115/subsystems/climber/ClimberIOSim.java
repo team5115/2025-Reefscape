@@ -11,7 +11,7 @@ public class ClimberIOSim implements ClimberIO {
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
         inputs.cageIntake = true;
-        Logger.recordOutput("PISTON STATE", pistonState);
+        Logger.recordOutput("Climber/PistonState", pistonState);
     }
 
     @Override

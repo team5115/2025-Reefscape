@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.team5115.Constants.AutoConstants;
 import frc.team5115.Constants.AutoConstants.Side;
 import frc.team5115.Constants.Mode;
 import frc.team5115.commands.AutoCommands;
@@ -81,7 +82,7 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        PhotonVision.setupReefTags();
+        AutoConstants.precomputeAlignmentPoses();
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
@@ -180,14 +181,19 @@ public class RobotContainer {
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
         joyDrive.start().onTrue(resetFieldOrientation());
-        joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(Side.LEFT));
-        joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(Side.RIGHT));
-        // joyDrive
-        //         .y()
-        //         .onTrue(drivetrain.setRadius())
-        //         .whileTrue(
-        //                 drivetrain.reefOrbitDrive(() -> joyDrive.getLeftX(), () ->
-        // -joyDrive.getLeftY()));
+        joyDrive
+                .leftTrigger()
+                .onTrue(drivetrain.selectNearestScoringSpot(Side.LEFT))
+                .whileTrue(drivetrain.alignSelectedSpot(Side.LEFT));
+        joyDrive
+                .rightTrigger()
+                .onTrue(drivetrain.selectNearestScoringSpot(Side.RIGHT))
+                .whileTrue(drivetrain.alignSelectedSpot(Side.RIGHT));
+        joyDrive
+                .y()
+                .onTrue(drivetrain.setRadius())
+                .whileTrue(
+                        drivetrain.reefOrbitDrive(() -> -joyDrive.getLeftX(), () -> -joyDrive.getLeftY()));
 
         joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 10.0));
         elevator.setDefaultCommand(elevator.positionControl());
