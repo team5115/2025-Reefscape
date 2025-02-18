@@ -198,9 +198,9 @@ public class RobotContainer {
         joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 10.0));
         elevator.setDefaultCommand(elevator.positionControl());
         joyManip.start().onTrue(elevator.setHeight(Height.MINIMUM));
-        joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
-        joyManip.b().onTrue(elevator.setHeight(Height.L2));
-        joyManip.y().onTrue(elevator.setHeight(Height.L3));
+        joyManip.a().onTrue(elevator.setHeight(Height.INTAKE)).onFalse(elevator.setHeight(Height.MINIMUM));
+        joyManip.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.MINIMUM));
+        joyManip.y().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.MINIMUM));
         joyManip.back().onTrue(elevator.zero()).onTrue(elevator.setHeight(Height.MINIMUM));
 
         joyManip

@@ -201,12 +201,12 @@ public final class Constants {
         public static final AprilTagFieldLayout FIELD_LAYOUT =
                 AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
         public static final String CAMERA_NAME = "USB_GS_Camera (1)";
-        private static final double camYaw = Math.toRadians(0);
-        private static final double camPitch = Math.toRadians(0);
+        private static final double camYaw = Math.toRadians(131);
+        private static final double camPitch = Math.toRadians(13);
         private static final double camRoll = Math.toRadians(0);
-        private static final double camZ = +0.16;
-        private static final double camX = +0.235;
-        private static final double camY = -0.285;
+        private static final double camZ = +0.21d;
+        private static final double camX = +((75d/2d)-6d)/100d;
+        private static final double camY = -((75d/2d)-4d)/100d;
         public static final Transform3d ROBOT_TO_CAM =
                 new Transform3d(camX, camY, camZ, new Rotation3d(camRoll, camPitch, camYaw));
     }
