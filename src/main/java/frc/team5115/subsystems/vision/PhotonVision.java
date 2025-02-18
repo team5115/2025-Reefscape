@@ -15,7 +15,9 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
+
 public class PhotonVision extends SubsystemBase {
+    
     private static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     private static final List<AprilTag> reefTags = new ArrayList<AprilTag>();
     private final Drivetrain drivetrain;
