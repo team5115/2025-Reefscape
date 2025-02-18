@@ -146,17 +146,11 @@ public final class Constants {
             }
         }
 
-        private static final double digestionOffset = 0.195; // right from center
-        private static final double branchDistance = 0.33; // between the scoring spots
         private static final double forwardOffset = 0.40; // distance from the april tag
         private static final Transform2d transformLeft =
-                new Transform2d(
-                        new Translation2d(forwardOffset, branchDistance / -2.0 - digestionOffset),
-                        Rotation2d.k180deg);
+                new Transform2d(new Translation2d(forwardOffset, -0.53), Rotation2d.k180deg);
         private static final Transform2d transformRight =
-                new Transform2d(
-                        new Translation2d(forwardOffset, branchDistance / +2.0 - digestionOffset),
-                        Rotation2d.k180deg);
+                new Transform2d(new Translation2d(forwardOffset, -0.16), Rotation2d.k180deg);
 
         public static Pose2d getNearestScoringSpot(final Pose2d robot, final Side side) {
             double shortestDistance = Double.MAX_VALUE;
@@ -201,7 +195,7 @@ public final class Constants {
         public static final AprilTagFieldLayout FIELD_LAYOUT =
                 AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
         public static final String CAMERA_NAME = "USB_GS_Camera (1)";
-        private static final double camYaw = Math.toRadians(131);
+        private static final double camYaw = Math.toRadians(41);
         private static final double camPitch = Math.toRadians(13);
         private static final double camRoll = Math.toRadians(0);
         private static final double camZ = +0.21d;
