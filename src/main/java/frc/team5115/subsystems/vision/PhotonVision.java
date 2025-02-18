@@ -20,7 +20,7 @@ public class PhotonVision extends SubsystemBase {
         poseEstimator =
                 new PhotonPoseEstimator(
                         VisionConstants.FIELD_LAYOUT,
-                        PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
+                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                         VisionConstants.ROBOT_TO_CAM);
     }
 
