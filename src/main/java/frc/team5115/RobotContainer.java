@@ -119,7 +119,7 @@ public class RobotContainer {
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
-                vision = null;
+                vision = new PhotonVision(drivetrain);
                 clearForMatchEntry = null;
                 break;
 
