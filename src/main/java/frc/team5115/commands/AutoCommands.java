@@ -40,7 +40,15 @@ public class AutoCommands {
             Drivetrain drivetrain, Elevator elevator, Dispenser dispenser, Side side, Height height) {
         return Commands.sequence(
                 elevator.setHeight(height),
-                // drivetrain.autoAlignToScoringSpot(side),
+                drivetrain.autoAlignToScoringSpot(side),
                 dispense(dispenser, elevator, height));
     }
+
+    public static Command testingGetReefAlignCommand(
+        Drivetrain drivetrain, Elevator elevator, Dispenser dispenser, Height height) {
+    return Commands.sequence(
+            elevator.setHeight(height),
+            //drivetrain.autoAlignToScoringSpot(side),
+            dispense(dispenser, elevator, height));
+}
 }
