@@ -46,7 +46,7 @@ public class PhotonVision extends SubsystemBase {
                 visionSim = new VisionSystemSim("main");
                 visionSim.addAprilTags(fieldLayout);
                 var cameraProp = new SimCameraProperties();
-                cameraProp.setCalibration(1080, 920, Rotation2d.fromDegrees(0));
+                cameraProp.setCalibration(1080, 920, Rotation2d.fromDegrees(100));
                 cameraProp.setCalibError(0, 0);
                 cameraProp.setFPS(30);
                 cameraProp.setAvgLatencyMs(50);
@@ -54,6 +54,8 @@ public class PhotonVision extends SubsystemBase {
                 cameraSim = new PhotonCameraSim(camera, cameraProp);
                 visionSim.addCamera(cameraSim, VisionConstants.robotToCam);
                 cameraSim.enableDrawWireframe(true);
+                cameraSim.enableProcessedStream(true);
+                cameraSim.enableRawStream(true);
                 break;
             case REPLAY:
                 visionSim = null;
@@ -84,6 +86,11 @@ public class PhotonVision extends SubsystemBase {
         if (hasMeasurement) {
             Logger.recordOutput("Vision/EstimatedPose", pose.estimatedPose);
         }
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        visionSim.update(drivetrain.getPose());
     }
 
     public boolean isCameraConnected() {
