@@ -256,8 +256,7 @@ public class RobotContainer {
                 AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.RIGHT, Height.L2));
 
         NamedCommands.registerCommand(
-                    "L2",
-                    AutoCommands.testingGetReefAlignCommand(drivetrain, elevator, dispenser, Height.L2));
+                "L2", AutoCommands.testingGetReefAlignCommand(drivetrain, elevator, dispenser, Height.L2));
 
         NamedCommands.registerCommand(
                 "L3Left",
