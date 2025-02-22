@@ -43,6 +43,9 @@ import frc.team5115.subsystems.indexer.IndexerIO;
 import frc.team5115.subsystems.indexer.IndexerIOSim;
 import frc.team5115.subsystems.indexer.IndexerIOSparkMax;
 import frc.team5115.subsystems.vision.PhotonVision;
+import frc.team5115.subsystems.vision.PhotonVisionIO;
+import frc.team5115.subsystems.vision.PhotonVisionIOReal;
+import frc.team5115.subsystems.vision.PhotonVisionIOSim;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -101,8 +104,7 @@ public class RobotContainer {
                                 new ModuleIOSparkMax(1),
                                 new ModuleIOSparkMax(2),
                                 new ModuleIOSparkMax(3));
-                // vision = new PhotonVision(drivetrain);
-                vision = null;
+                vision = new PhotonVision(new PhotonVisionIOReal(), drivetrain);
                 clearForMatchEntry =
                         Shuffleboard.getTab("SmartDashboard").add("ClearForMatch", false).getEntry();
                 break;
@@ -119,7 +121,7 @@ public class RobotContainer {
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
-                vision = new PhotonVision(drivetrain);
+                vision = new PhotonVision(new PhotonVisionIOSim(), drivetrain);
                 clearForMatchEntry = null;
                 break;
 
@@ -136,7 +138,7 @@ public class RobotContainer {
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
-                vision = null;
+                vision = new PhotonVision(new PhotonVisionIO() {}, drivetrain);
                 clearForMatchEntry = null;
                 break;
         }

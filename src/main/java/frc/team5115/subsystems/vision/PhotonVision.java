@@ -4,7 +4,6 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team5115.Constants;
 import frc.team5115.Constants.VisionConstants;
@@ -13,12 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.simulation.PhotonCameraSim;
-import org.photonvision.simulation.SimCameraProperties;
-import org.photonvision.simulation.VisionSystemSim;
 
 public class PhotonVision extends SubsystemBase {
 
@@ -26,55 +19,37 @@ public class PhotonVision extends SubsystemBase {
             AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     private static final List<AprilTag> reefTags = new ArrayList<AprilTag>();
     private final Drivetrain drivetrain;
-    private final PhotonCamera camera;
-    private final PhotonPoseEstimator poseEstimator;
-    private final VisionSystemSim visionSim;
-    private final PhotonCameraSim cameraSim;
+    private final PhotonVisionIO io;
 
-    public PhotonVision(Drivetrain drivetrain) {
+    public PhotonVision(PhotonVisionIO io, Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
-        camera = new PhotonCamera(VisionConstants.cameraName);
-        poseEstimator =
-                new PhotonPoseEstimator(
-                        fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, VisionConstants.robotToCam);
+        this.io = io;
         switch (Constants.currentMode) {
             case REAL:
-                visionSim = null;
-                cameraSim = null;
+                io = new PhotonVisionIOReal();
+                io.addCamera(VisionConstants.cameraName, null);
                 break;
             case SIM:
-                visionSim = new VisionSystemSim("main");
-                visionSim.addAprilTags(fieldLayout);
-                var cameraProp = new SimCameraProperties();
-                cameraProp.setCalibration(1080, 920, Rotation2d.fromDegrees(100));
-                cameraProp.setCalibError(0, 0);
-                cameraProp.setFPS(30);
-                cameraProp.setAvgLatencyMs(50);
-                cameraProp.setLatencyStdDevMs(15);
-                cameraSim = new PhotonCameraSim(camera, cameraProp);
-                visionSim.addCamera(cameraSim, VisionConstants.robotToCam);
-                cameraSim.enableDrawWireframe(true);
-                cameraSim.enableProcessedStream(true);
-                cameraSim.enableRawStream(true);
+                io = new PhotonVisionIOSim();
+                io.addSimCamera(
+                        VisionConstants.cameraName, 1080, 720, 100, 0, 0, 30, 15, 50, true, true, true);
                 break;
             case REPLAY:
-                visionSim = null;
-                cameraSim = null;
+                io = new PhotonVisionIOSim();
                 break;
             default:
-                visionSim = null;
-                cameraSim = null;
+                io = null;
                 break;
         }
     }
 
     @Override
     public void periodic() {
-        poseEstimator.setReferencePose(drivetrain.getPose());
-        final var unread = camera.getAllUnreadResults();
+        io.setReferencePose(drivetrain.getPose());
+        final var unread = io.getAllUnreadResults();
         EstimatedRobotPose pose = null;
         for (final var result : unread) {
-            final var option = poseEstimator.update(result);
+            final var option = io.updatePose(result);
             if (option.isPresent()) {
                 pose = option.get();
                 drivetrain.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
@@ -90,11 +65,24 @@ public class PhotonVision extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        visionSim.update(drivetrain.getPose());
+        io.setReferencePose(drivetrain.getPose());
+        final var unread = io.getAllUnreadResults();
+        EstimatedRobotPose pose = null;
+        for (final var result : unread) {
+            final var option = io.updatePose(result);
+            if (option.isPresent()) {
+                pose = option.get();
+                drivetrain.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+            }
+        }
     }
 
-    public boolean isCameraConnected() {
-        return camera.isConnected();
+    public boolean isCameraConnected(String name) {
+        return io.isConnected(name);
+    }
+
+    public boolean isAnyCameraConnected() {
+        return io.isAnyCameraConnected();
     }
 
     /** Must call this method at robot start! */
