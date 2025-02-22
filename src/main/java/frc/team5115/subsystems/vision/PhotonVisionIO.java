@@ -9,12 +9,15 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public interface PhotonVisionIO {
+    // TODO add some inputs, e.g. a boolean for each camera for if that cam is connected
     @AutoLog
     public static class PhotonVisionIOInputs {}
 
     public default boolean isConnected(String name) {
         return false;
     }
+
+    // TODO: add an updateInputs function and override it in implementations
 
     public default List<PhotonPipelineResult> getAllUnreadResults() {
         return null;

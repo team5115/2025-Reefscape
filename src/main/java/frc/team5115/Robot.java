@@ -53,7 +53,7 @@ public class Robot extends LoggedRobot {
                 // 1) flash the drive for ext4, probably using a linux computer
                 // 2) set the permissions:
                 //      i) ssh into the rio using `ssh admin@10.51.15.2` (or whatever ip)
-                //      ii) set the permission with chmod: `chmod 777 U/logs`
+                //      ii) set the permission with chmod: `chmod 777 /U/logs`
                 String path = "/U/logs";
                 var directory = new File(path);
                 if (!directory.exists()) {

@@ -1,7 +1,5 @@
 package frc.team5115.subsystems.vision;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.team5115.Constants.VisionConstants;
@@ -19,18 +17,18 @@ import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class PhotonVisionIOSim implements PhotonVisionIO {
-    public Map<String, PhotonCameraSim> cameras = new HashMap<String, PhotonCameraSim>();
-    private static final AprilTagFieldLayout fieldLayout =
-            AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+    public final Map<String, PhotonCameraSim> cameras = new HashMap<String, PhotonCameraSim>();
     private final PhotonPoseEstimator poseEstimator;
     private final VisionSystemSim visionSim;
 
     public PhotonVisionIOSim() {
         poseEstimator =
                 new PhotonPoseEstimator(
-                        fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, VisionConstants.robotToCam);
+                        VisionConstants.FIELD_LAYOUT,
+                        PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
+                        VisionConstants.ROBOT_TO_CAM);
         visionSim = new VisionSystemSim("main");
-        visionSim.addAprilTags(fieldLayout);
+        visionSim.addAprilTags(VisionConstants.FIELD_LAYOUT);
     }
 
     @Override
@@ -40,7 +38,7 @@ public class PhotonVisionIOSim implements PhotonVisionIO {
 
     @Override
     public List<PhotonPipelineResult> getAllUnreadResults() {
-        return cameras.get(VisionConstants.cameraName).getCamera().getAllUnreadResults();
+        return cameras.get(VisionConstants.CAMERA_NAME).getCamera().getAllUnreadResults();
     }
 
     @Override
@@ -68,6 +66,7 @@ public class PhotonVisionIOSim implements PhotonVisionIO {
             boolean rawStreamEnabled,
             boolean processedStreamEnabled,
             boolean wireframeEnabled) {
+
         PhotonCamera camera = new PhotonCamera(name);
         var cameraProp = new SimCameraProperties();
         cameraProp.setCalibration(width, height, Rotation2d.fromDegrees(fovDeg));
@@ -75,8 +74,10 @@ public class PhotonVisionIOSim implements PhotonVisionIO {
         cameraProp.setFPS(fps);
         cameraProp.setAvgLatencyMs(avgLatencyMs);
         cameraProp.setLatencyStdDevMs(stdDevLatencyMs);
+
         PhotonCameraSim cameraSim = new PhotonCameraSim(camera, cameraProp);
-        visionSim.addCamera(cameraSim, VisionConstants.robotToCam);
+        visionSim.addCamera(cameraSim, VisionConstants.ROBOT_TO_CAM);
+
         cameras.put(name, cameraSim);
         cameraSim.enableDrawWireframe(wireframeEnabled);
         cameraSim.enableProcessedStream(processedStreamEnabled);

@@ -11,9 +11,10 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.team5115.Constants.AutoConstants;
+import frc.team5115.Constants.AutoConstants.Side;
 import frc.team5115.Constants.Mode;
 import frc.team5115.commands.AutoCommands;
-import frc.team5115.commands.AutoCommands.Side;
 import frc.team5115.commands.DriveCommands;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
@@ -84,7 +85,7 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        PhotonVision.setupReefTags();
+        AutoConstants.precomputeAlignmentPoses();
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
@@ -144,9 +145,8 @@ public class RobotContainer {
         }
 
         // Register auto commands for pathplanner
-        // PhotonVision is passed in here to prevent warnings, i.e. "unused variable: vision"
-        // registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
-        registerCommands(drivetrain, vision, elevator, dispenser, indexer, climber);
+        registerCommands(
+                drivetrain, vision, elevator, dispenser, indexer, dealgaefacationinator5000, climber);
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -183,30 +183,40 @@ public class RobotContainer {
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
         joyDrive.start().onTrue(resetFieldOrientation());
-        joyDrive.rightTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(+0.15, +0.38));
-        joyDrive.leftTrigger().whileTrue(drivetrain.driveToNearestScoringSpot(-0.15, +0.38));
+        joyDrive
+                .leftTrigger()
+                .onTrue(drivetrain.selectNearestScoringSpot(Side.LEFT))
+                .whileTrue(drivetrain.alignSelectedSpot(Side.LEFT));
+        joyDrive
+                .rightTrigger()
+                .onTrue(drivetrain.selectNearestScoringSpot(Side.RIGHT))
+                .whileTrue(drivetrain.alignSelectedSpot(Side.RIGHT));
         joyDrive
                 .y()
                 .onTrue(drivetrain.setRadius())
                 .whileTrue(
-                        drivetrain.reefOrbitDrive(() -> joyDrive.getLeftX(), () -> -joyDrive.getLeftY()));
+                        drivetrain.reefOrbitDrive(() -> -joyDrive.getLeftX(), () -> -joyDrive.getLeftY()));
 
-        elevator.setDefaultCommand(elevator.positionControl());
         joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 10.0));
-        joyManip.start().onTrue(elevator.zero());
-        joyManip.back().onTrue(elevator.setHeight(Height.MINIMUM));
-        joyManip.a().onTrue(elevator.setHeight(Height.INTAKE));
-        joyManip.b().onTrue(elevator.setHeight(Height.L2));
-        // joyManip.y().onTrue(elevator.setHeight(Height.L3));
+        elevator.setDefaultCommand(elevator.positionControl());
+        joyManip.start().onTrue(elevator.setHeight(Height.MINIMUM));
+        joyManip
+                .a()
+                .onTrue(elevator.setHeight(Height.INTAKE))
+                .onFalse(elevator.setHeight(Height.MINIMUM));
+        joyManip.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.MINIMUM));
+        joyManip.y().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.MINIMUM));
+        joyManip.back().onTrue(elevator.zero()).onTrue(elevator.setHeight(Height.MINIMUM));
+
+        joyManip
+                .x()
+                .onTrue(dealgaefacationinator5000.extend())
+                .onFalse(dealgaefacationinator5000.retract());
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
         joyManip.rightStick().onTrue(climber.stopCommand());
         joyManip.leftBumper().onTrue(climber.retract());
         joyManip.rightBumper().onTrue(climber.extend());
-        joyManip
-                .x()
-                .onTrue(dealgaefacationinator5000.extend())
-                .onFalse(dealgaefacationinator5000.retract());
     }
 
     private Command setRobotRelative(boolean state) {
@@ -222,12 +232,13 @@ public class RobotContainer {
     /**
      * Register commands for pathplanner to use in autos
      *
-     * @param drivetrain (not used)
-     * @param vision (not used)
+     * @param drivetrain
+     * @param vision
      * @param elevator
      * @param dispenser
-     * @param indexer (not used)
-     * @param climber (not used)
+     * @param indexer
+     * @param dealgaefacationinator5000
+     * @param climber
      */
     public static void registerCommands(
             Drivetrain drivetrain,
@@ -235,6 +246,7 @@ public class RobotContainer {
             Elevator elevator,
             Dispenser dispenser,
             Indexer indexer,
+            Dealgaefacationinator5000 dealgaefacationinator5000,
             Climber climber) {
         // Register commands for pathplanner
         NamedCommands.registerCommand(
@@ -244,6 +256,9 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "L2Right",
                 AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.RIGHT, Height.L2));
+
+        NamedCommands.registerCommand(
+                "L2", AutoCommands.testingGetReefAlignCommand(drivetrain, elevator, dispenser, Height.L2));
 
         NamedCommands.registerCommand(
                 "L3Left",
@@ -318,8 +333,8 @@ public class RobotContainer {
                         elevator,
                         dispenser,
                         indexer,
-                        dealgaefacationinator5000,
-                        joyDrive.isConnected() && joyManip.isConnected());
+                        null,
+                        joyDrive.isConnected() && true); // joyManip.isConnected());
         hasFaults = faults.hasFaults();
         if (hasFaults) {
             System.err.println(faults.toString());

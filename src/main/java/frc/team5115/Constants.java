@@ -3,14 +3,21 @@ package frc.team5115;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Pounds;
 
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.wpilibj.RobotBase;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Constants {
     private static final boolean isReplay = false;
@@ -125,19 +132,76 @@ public final class Constants {
     }
 
     public static class AutoConstants {
-        public static final double sideOffset = 0.15;
-        public static final double forwardOffset = 0.38;
+        private static final List<Pose2d> leftScoringPoses = new ArrayList<Pose2d>();
+        private static final List<Pose2d> rightScoringPoses = new ArrayList<Pose2d>();
+
+        public enum Side {
+            LEFT(leftScoringPoses),
+            RIGHT(rightScoringPoses);
+
+            public final List<Pose2d> poses;
+
+            Side(final List<Pose2d> poses) {
+                this.poses = poses;
+            }
+        }
+
+        private static final double forwardOffset = 0.40; // distance from the april tag
+        private static final Transform2d transformLeft =
+                new Transform2d(new Translation2d(forwardOffset, -0.53), Rotation2d.k180deg);
+        private static final Transform2d transformRight =
+                new Transform2d(new Translation2d(forwardOffset, -0.16), Rotation2d.k180deg);
+
+        public static Pose2d getNearestScoringSpot(final Pose2d robot, final Side side) {
+            double shortestDistance = Double.MAX_VALUE;
+            Pose2d closestPose = null;
+            for (final Pose2d pose : side.poses) {
+                final double distance = pose.getTranslation().getDistance(robot.getTranslation());
+                if (distance < shortestDistance) {
+                    shortestDistance = distance;
+                    closestPose = pose;
+                }
+            }
+            return closestPose;
+        }
+
+        public static void precomputeAlignmentPoses() {
+            for (final AprilTag tag : VisionConstants.FIELD_LAYOUT.getTags()) {
+                if (((tag.ID >= 6 && tag.ID <= 11) || (tag.ID >= 17 && tag.ID <= 22))) {
+                    final Pose2d tagPose = tag.pose.toPose2d();
+                    leftScoringPoses.add(tagPose.transformBy(transformLeft));
+                    rightScoringPoses.add(tagPose.transformBy(transformRight));
+                }
+            }
+        }
+
+        // Calculated using AndyMark april tag json combined with field cad
+        // 0.818973 is the distance from the center of the reef to the center of an edge
+        private static final Translation2d blueReefCenter =
+                new Translation2d(5.321046 - 0.818973, 4.02082);
+        private static final Translation2d redReefCenter =
+                new Translation2d(12.227306 + 0.818973, 4.02082);
+
+        public static double getReefX(boolean isRedAlliance) {
+            return isRedAlliance ? redReefCenter.getX() : blueReefCenter.getX();
+        }
+
+        public static double getReefY(boolean isRedAlliance) {
+            return isRedAlliance ? redReefCenter.getY() : blueReefCenter.getY();
+        }
     }
 
     public static class VisionConstants {
-        public static final String cameraName = "USB_GS_Camera";
-        public static final double camYaw = Math.toRadians(0);
-        public static final double camPitch = Math.toRadians(0);
-        public static final double camRoll = Math.toRadians(0);
-        public static final double camZ = +0.30;
-        public static final double camX = +0.16;
-        public static final double camY = 0;
-        public static final Transform3d robotToCam =
+        public static final AprilTagFieldLayout FIELD_LAYOUT =
+                AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+        public static final String CAMERA_NAME = "USB_GS_Camera (1)";
+        private static final double camYaw = Math.toRadians(32);
+        private static final double camPitch = Math.toRadians(13);
+        private static final double camRoll = Math.toRadians(0);
+        private static final double camZ = +0.21d;
+        private static final double camX = +((75d / 2d) - 6d) / 100d;
+        private static final double camY = -((75d / 2d) - 4d) / 100d;
+        public static final Transform3d ROBOT_TO_CAM =
                 new Transform3d(camX, camY, camZ, new Rotation3d(camRoll, camPitch, camYaw));
     }
 }

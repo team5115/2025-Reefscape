@@ -1,7 +1,5 @@
 package frc.team5115.subsystems.vision;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.team5115.Constants.VisionConstants;
 import java.util.HashMap;
@@ -17,14 +15,14 @@ import org.photonvision.targeting.PhotonPipelineResult;
 
 public class PhotonVisionIOReal implements PhotonVisionIO {
     public Map<String, PhotonCamera> cameras = new HashMap<String, PhotonCamera>();
-    private static final AprilTagFieldLayout fieldLayout =
-            AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
     private final PhotonPoseEstimator poseEstimator;
 
     public PhotonVisionIOReal() {
         poseEstimator =
                 new PhotonPoseEstimator(
-                        fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, VisionConstants.robotToCam);
+                        VisionConstants.FIELD_LAYOUT,
+                        PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
+                        VisionConstants.ROBOT_TO_CAM);
     }
 
     @Override
@@ -34,7 +32,7 @@ public class PhotonVisionIOReal implements PhotonVisionIO {
 
     @Override
     public List<PhotonPipelineResult> getAllUnreadResults() {
-        return cameras.get(VisionConstants.cameraName).getAllUnreadResults();
+        return cameras.get(VisionConstants.CAMERA_NAME).getAllUnreadResults();
     }
 
     @Override

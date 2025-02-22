@@ -14,7 +14,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -29,8 +28,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.team5115.Constants.AutoConstants;
 import frc.team5115.Constants.SwerveConstants;
-import frc.team5115.subsystems.vision.PhotonVision;
 import frc.team5115.util.LocalADStarAK;
 import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
@@ -74,7 +73,8 @@ public class Drivetrain extends SubsystemBase {
                     new TrapezoidProfile.Constraints(
                             SwerveConstants.MAX_LINEAR_SPEED, SwerveConstants.MAX_LINEAR_SPEED * 2));
 
-    PIDController radiusPID = new PIDController(3.0, 0.0, 0.0); // TODO: tune pids
+    // TODO: tune radius pid
+    final PIDController radiusPID = new PIDController(3.0, 0.0, 0.0);
 
     private final SwerveDriveKinematics kinematics =
             new SwerveDriveKinematics(SwerveConstants.MODULE_TRANSLATIONS);
@@ -166,7 +166,6 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         gyroIO.updateInputs(gyroInputs);
         Logger.processInputs("Drive/Gyro", gyroInputs);
-        Logger.recordOutput("AutoAim/AtGoals", xPid.atGoal() && yPid.atGoal() && anglePid.atGoal());
         for (var module : modules) {
             module.periodic();
         }
@@ -209,6 +208,7 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator.update(rawGyroRotation, modulePositions);
     }
 
+    @AutoLogOutput
     public boolean isRedAlliance() {
         return DriverStation.getAlliance().orElseGet(() -> Alliance.Blue) == Alliance.Red;
     }
@@ -216,70 +216,66 @@ public class Drivetrain extends SubsystemBase {
     public Command setRadius() {
         return Commands.runOnce(
                 () -> {
-                    final double reefX = isRedAlliance() ? 13 : 4.5; // TODO: set in constants
-                    final double reefY = isRedAlliance() ? 4.0 : 4.0; // TODO: set in constants
-
-                    double robotX = getPose().getX() - reefX;
-                    double robotY = getPose().getY() - reefY;
-                    desiredRadius = Math.sqrt(Math.pow(robotX, 2) + Math.pow(robotY, 2));
+                    final double robotX = getPose().getX() - AutoConstants.getReefX(isRedAlliance());
+                    final double robotY = getPose().getY() - AutoConstants.getReefY(isRedAlliance());
+                    desiredRadius = Math.sqrt(robotX * robotX + robotY * robotY);
+                    radiusPID.reset();
+                    anglePid.reset(getPose().getRotation().getRadians());
                     radiusPID.setSetpoint(desiredRadius);
                 },
                 this);
     }
 
-    public Command reefOrbitDrive(DoubleSupplier omegaSupplier, DoubleSupplier radVSupplier) {
+    public Command reefOrbitDrive(
+            DoubleSupplier omegaSupplier, DoubleSupplier radiusVelocitySupplier) {
         return Commands.run(
                 () -> {
-                    System.out.println("working omg");
-                    // live omega and tau values
-                    double omega = omegaSupplier.getAsDouble();
-                    double radiusV = -radVSupplier.getAsDouble() * 0.5; // meters per second
+                    // Omega is the desired angular velocity around the reef
+                    // Radius velocity is the speed we want to move to or from the reef
+                    final double omega = omegaSupplier.getAsDouble();
+                    final double radiusVelocity =
+                            -radiusVelocitySupplier.getAsDouble() * 0.5; // meters per second
+                    // modify the radius setpoint based on the radius velocity, clamped on the bottom
+                    final double minRadius = 1.62; // prevents robot from getting too close
+                    desiredRadius = Math.max(minRadius, desiredRadius + radiusVelocity * 0.02);
 
-                    desiredRadius += radiusV * 0.02;
-                    desiredRadius = Math.max(0.7, desiredRadius);
+                    // Gamma is the angle of the robot around the reef
+                    final double robotX = getPose().getX() - AutoConstants.getReefX(isRedAlliance());
+                    final double robotY = getPose().getY() - AutoConstants.getReefY(isRedAlliance());
+                    final double gamma = Math.atan2(robotY, robotX);
 
-                    Logger.recordOutput("Orbit/omega", omega);
+                    // PID from the the current radius to the desired radius
+                    final double currentRadius = Math.sqrt(robotX * robotX + robotY * robotY);
+                    final double tau = -radiusPID.calculate(currentRadius, desiredRadius);
 
-                    final double reefX = isRedAlliance() ? 13 : 4.5;
-                    final double reefY = isRedAlliance() ? 4.0 : 4.0;
-                    // Radius and gamma calculations
-                    double robotX = getPose().getX() - reefX;
-                    double robotY = getPose().getY() - reefY;
-                    double gamma = Math.atan2(robotY, robotX);
-
-                    double currentRadius = Math.sqrt(Math.pow(robotX, 2) + Math.pow(robotY, 2));
-
-                    double tau = -radiusPID.calculate(currentRadius, desiredRadius);
-
-                    Logger.recordOutput("Orbit/tau", tau);
-                    Logger.recordOutput("Orbit/desiredRadius", desiredRadius);
-
-                    double vConstant = 2.0; // meters per second
-                    double vConstant2 = 1.0;
+                    // Scaling constants speeds in meters per second
+                    final double vConstantAngular = 2.0;
+                    final double vConstantForeBack = 2.0;
 
                     // Calculate the desired x and y velocities
-                    double xVelocity =
-                            (vConstant * omega * desiredRadius * Math.sin(gamma))
-                                    - (tau * vConstant2 * Math.cos(gamma));
-                    double yVelocity =
-                            -(vConstant * omega * desiredRadius * Math.cos(gamma))
-                                    - (tau * vConstant2 * Math.sin(gamma));
-
-                    Logger.recordOutput("Orbit/actualRadius", currentRadius);
-                    Logger.recordOutput("Orbit/xVelocity", xVelocity);
-                    Logger.recordOutput("Orbit/yVelocity", yVelocity);
-                    Logger.recordOutput("Orbit/gamma", gamma);
-
-                    // Desired angle as setpoint
-                    double angle = Math.PI + gamma;
-
-                    // Get the current angle
-                    double currentAngle = getRotation().getRadians();
+                    final double xVelocity =
+                            +(vConstantAngular * omega * desiredRadius * Math.sin(gamma))
+                                    - (tau * vConstantForeBack * Math.cos(gamma));
+                    final double yVelocity =
+                            -(vConstantAngular * omega * desiredRadius * Math.cos(gamma))
+                                    - (tau * vConstantForeBack * Math.sin(gamma));
 
                     // Compute angular velocity using PID
-                    double angularVelocity = anglePid.calculate(currentAngle, angle);
+                    // Measurement from odometry, setpoint is offset by pi
+                    final double angularVelocity =
+                            anglePid.calculate(getRotation().getRadians(), Math.PI + gamma);
 
-                    // Run the velocities with angle correction
+                    Logger.recordOutput("Orbit/gamma", gamma);
+                    Logger.recordOutput("Orbit/tau", tau);
+                    Logger.recordOutput("Orbit/omega", omega);
+
+                    Logger.recordOutput("Orbit/currentRadius", currentRadius);
+                    Logger.recordOutput("Orbit/desiredRadius", desiredRadius);
+
+                    Logger.recordOutput("Orbit/xVelocity", xVelocity);
+                    Logger.recordOutput("Orbit/yVelocity", yVelocity);
+                    Logger.recordOutput("Orbit/angularVelocity", angularVelocity);
+
                     runVelocity(
                             ChassisSpeeds.fromFieldRelativeSpeeds(
                                     xVelocity, yVelocity, angularVelocity, getRotation()));
@@ -287,27 +283,60 @@ public class Drivetrain extends SubsystemBase {
                 this);
     }
 
-    public Command driveToNearestScoringSpot(double sidewaysOffset, double distanceOffset) {
-        return driveByAutoAimPids(
+    @AutoLogOutput(key = "AutoAlign/SelectedPose")
+    private Pose2d selectedPose = null;
+
+    @AutoLogOutput(key = "AutoAlign/AtGoal")
+    private boolean alignAtGoal() {
+        return xPid.atGoal() && yPid.atGoal() && anglePid.atGoal();
+    }
+
+    /** Drives to nearest scoring spot until all pids at goal */
+    public Command autoAlignToScoringSpot(AutoConstants.Side side) {
+        return Commands.sequence(
+                Commands.print("AutoDriving!"),
+                selectNearestScoringSpot(side),
+                alignSelectedSpot(side).until(() -> alignAtGoal()));
+    }
+
+    /**
+     * Choose the scoring spot based on nearest scoring spot. Will also reset the pids.
+     *
+     * @param side the side to score on
+     * @return an Instant Command
+     */
+    public Command selectNearestScoringSpot(AutoConstants.Side side) {
+        return Commands.runOnce(
                 () -> {
-                    final var tagPose = PhotonVision.getNearestReefTagPose(getPose());
-                    final var offset =
-                            tagPose.transformBy(
-                                    new Transform2d(
-                                            new Translation2d(distanceOffset, sidewaysOffset), Rotation2d.k180deg));
-                    Logger.recordOutput("AutoAim/Tag Pose", tagPose);
-                    return offset;
+                    selectedPose = AutoConstants.getNearestScoringSpot(getPose(), side);
+                    final var pose = getPose();
+                    anglePid.reset(pose.getRotation().getRadians());
+                    xPid.reset(pose.getX());
+                    yPid.reset(pose.getY());
+                },
+                this);
+    }
+
+    /**
+     * Drive by auto aim pids using an already chosen `selectedPose`
+     *
+     * @param backupSide the side to choose a spot from if no pose is already selected
+     * @return
+     */
+    public Command alignSelectedSpot(AutoConstants.Side backupSide) {
+        return alignByPids(
+                () -> {
+                    if (selectedPose == null) {
+                        System.err.printf(
+                                "SelectedPose was found to be null! Using backup side of %s\n",
+                                backupSide.toString());
+                        selectedPose = AutoConstants.getNearestScoringSpot(getPose(), backupSide);
+                    }
+                    return selectedPose;
                 });
     }
 
-    public Command autoDriveToScoringSpot(double sidewaysOffset, double distanceOffset) {
-        return Commands.print("AutoDriving!")
-                .andThen(
-                        driveToNearestScoringSpot(sidewaysOffset, distanceOffset)
-                                .until(() -> xPid.atGoal() && yPid.atGoal() && anglePid.atGoal()));
-    }
-
-    private Command driveByAutoAimPids(Supplier<Pose2d> goalSupplier) {
+    private Command alignByPids(Supplier<Pose2d> goalSupplier) {
         return Commands.runEnd(
                 () -> {
                     final var goalPose = goalSupplier.get();
@@ -318,11 +347,11 @@ public class Drivetrain extends SubsystemBase {
                     final var xVelocity = xPid.calculate(pose.getX(), goalPose.getX());
                     final var yVelocity = yPid.calculate(pose.getY(), goalPose.getY());
 
-                    Logger.recordOutput("AutoAim/xVelocity", xVelocity);
-                    Logger.recordOutput("AutoAim/yVelocity", yVelocity);
-                    Logger.recordOutput("AutoAim/omega", omega);
+                    Logger.recordOutput("AutoAlign/xVelocity", xVelocity);
+                    Logger.recordOutput("AutoAlign/yVelocity", yVelocity);
+                    Logger.recordOutput("AutoAlign/Omega", omega);
                     Logger.recordOutput(
-                            "AutoAim/Goal",
+                            "AutoAlign/GoalPose",
                             new Pose2d(
                                     new Translation2d(xPid.getGoal().position, yPid.getGoal().position),
                                     new Rotation2d(anglePid.getGoal().position)));
