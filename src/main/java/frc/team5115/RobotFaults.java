@@ -131,7 +131,7 @@ public class RobotFaults {
         }
         return new RobotFaults(
                 sparkFaults.toString(),
-                vision == null ? true : !vision.isAnyCameraConnected(),
+                vision == null ? true : vision.isAnyCameraConnected(),
                 !joysticksConnected,
                 drivetrain == null ? true : !drivetrain.isGyroConnected(),
                 drivetrain == null,

@@ -2,19 +2,15 @@ package frc.team5115.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.team5115.Constants.VisionConstants;
-import java.util.HashMap;
+import frc.team5115.subsystems.vision.PhotonVision.Camera;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class PhotonVisionIOReal implements PhotonVisionIO {
-    public Map<String, PhotonCamera> cameras = new HashMap<String, PhotonCamera>();
     private final PhotonPoseEstimator poseEstimator;
 
     public PhotonVisionIOReal() {
@@ -26,13 +22,15 @@ public class PhotonVisionIOReal implements PhotonVisionIO {
     }
 
     @Override
-    public boolean isConnected(String name) {
-        return cameras.get(name).isConnected();
+    public void updateInputs(PhotonVisionIOInputs inputs) {
+        for (Camera camera : Camera.values()) {
+            inputs.isConnected[camera.ordinal()] = camera.cameraSim.getCamera().isConnected();
+        }
     }
 
     @Override
     public List<PhotonPipelineResult> getAllUnreadResults() {
-        return cameras.get(VisionConstants.CAMERA_NAME).getAllUnreadResults();
+        return Camera.values()[0].cameraSim.getCamera().getAllUnreadResults();
     }
 
     @Override
@@ -47,18 +45,7 @@ public class PhotonVisionIOReal implements PhotonVisionIO {
     }
 
     @Override
-    public void addCamera(String name, SimCameraProperties properties) {
-        PhotonCamera camera = new PhotonCamera(name);
-        cameras.put(name, camera);
-    }
-
-    @Override
-    public void removeCamera(String name) {
-        cameras.remove(name);
-    }
-
-    @Override
-    public boolean isAnyCameraConnected() {
-        return cameras.size() > 0 ? true : false;
+    public boolean isCameraConnected(PhotonVisionIOInputs inputs, Camera camera) {
+        return inputs.isConnected[camera.ordinal()];
     }
 }
