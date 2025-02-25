@@ -176,3 +176,6 @@ src/main/java/frc/team5115/BuildConstants.java
 
 # IDK man
 .factorypath
+
+# include photon config zip
+!photon_calibration/*.zip

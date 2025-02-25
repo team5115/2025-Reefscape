@@ -195,7 +195,7 @@ public final class Constants {
         public static final AprilTagFieldLayout FIELD_LAYOUT =
                 AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
         public static final String CAMERA_NAME = "USB_GS_Camera (1)";
-        private static final double camYaw = Math.toRadians(41);
+        private static final double camYaw = Math.toRadians(32);
         private static final double camPitch = Math.toRadians(13);
         private static final double camRoll = Math.toRadians(0);
         private static final double camZ = +0.21d;
