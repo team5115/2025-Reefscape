@@ -33,12 +33,16 @@ public class Dispenser extends SubsystemBase {
         return setSpeed(+1);
     }
 
+    public Command dispenseWhileCoral() {
+        return Commands.sequence(dispense(), waitForDetectionState(false, 1), stop());
+    }
+
     public Command reverse() {
         return setSpeed(-1);
     }
 
     public Command stop() {
-        return setSpeed(0);
+        return setSpeed(-0.1);
     }
 
     public boolean coralDetected() {

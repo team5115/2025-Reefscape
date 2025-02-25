@@ -66,7 +66,6 @@ public class RobotContainer {
     private final Dispenser dispenser;
     private final Indexer indexer;
     private final Dealgaefacationinator5000 dealgaefacationinator5000;
-    // private final Bling bling;
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
@@ -75,27 +74,28 @@ public class RobotContainer {
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
 
+    // Setings
     private boolean robotRelative = false;
     private boolean slowMode = false;
     private boolean hasFaults = true;
     private double faultPrintTimeout = 0;
     private final boolean constantlyCheckFaults = true;
 
+    // Works with faults
     private final GenericEntry clearForMatchEntry;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        AutoConstants.precomputeAlignmentPoses();
+        AutoConstants.precomputeAlignmentPoses(); // Computes robot starting pose with vision
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
-                final PneumaticHub hub = new PneumaticHub(Constants.PNEUMATIC_HUB_ID);
+                final PneumaticHub hub = new PneumaticHub(Constants.PNEUMATIC_HUB_ID); 
                 gyro = new GyroIONavx();
                 climber = new Climber(new ClimberIORev(hub));
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser = new Dispenser(new DispenserIOSparkMax());
                 indexer = new Indexer(new IndexerIOSparkMax(), elevator);
-                // bling = new Bling(new BlingIOReal());
                 dealgaefacationinator5000 =
                         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax(hub));
                 drivetrain =
@@ -115,7 +115,6 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIOSim());
                 elevator = new Elevator(new ElevatorIOSim());
                 dispenser = new Dispenser(new DispenserIOSim());
-                // bling = new Bling(new BlingIOSim());
                 indexer = new Indexer(new IndexerIOSim(), elevator);
                 dealgaefacationinator5000 =
                         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
@@ -133,7 +132,6 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIO() {});
                 dispenser = new Dispenser(new DispenserIO() {});
                 indexer = new Indexer(new IndexerIO() {}, elevator);
-                // bling = new Bling(new BlingIO() {});
                 dealgaefacationinator5000 =
                         new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
                 drivetrain =
@@ -179,6 +177,13 @@ public class RobotContainer {
                         () -> -joyDrive.getLeftX(),
                         () -> -joyDrive.getRightX()));
 
+        /* Drive button bindings -
+         * x: Forces the robot to stop moving
+         * LeftBumper: Sets robot relative to true while held down
+         * rightBumper: 
+         * 
+        */
+
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
@@ -212,7 +217,7 @@ public class RobotContainer {
                 .x()
                 .onTrue(dealgaefacationinator5000.extend())
                 .onFalse(dealgaefacationinator5000.retract());
-        joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
+        joyManip.rightTrigger().whileTrue(dispenser.dispenseWhileCoral());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
         joyManip.rightStick().onTrue(climber.stopCommand());
         joyManip.leftBumper().onTrue(climber.retract());

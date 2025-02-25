@@ -57,7 +57,7 @@ public class PhotonVision extends SubsystemBase {
         this.drivetrain = drivetrain;
         this.io = io;
     }
-
+  
     @Override
     public void periodic() {
         io.updateInputs(inputs);
