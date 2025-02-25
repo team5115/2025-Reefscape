@@ -17,7 +17,7 @@ public class PhotonVision extends SubsystemBase {
     private final PhotonVisionIO io;
 
     public enum Camera {
-        USB_GS_Camera("USB_GS_Camera", 1080, 720, 90, 0, 0, 30, 15, 50);
+        USB_GS_Camera("USB_GS_Camera", 1080, 720, 90, 0, 0, 30, 15, 15);
 
         public PhotonCameraSim cameraSim;
 
