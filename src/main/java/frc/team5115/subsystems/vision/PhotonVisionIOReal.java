@@ -1,25 +1,14 @@
 package frc.team5115.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.team5115.Constants.VisionConstants;
 import frc.team5115.subsystems.vision.PhotonVision.Camera;
 import java.util.List;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class PhotonVisionIOReal implements PhotonVisionIO {
-    private final PhotonPoseEstimator poseEstimator;
-
-    public PhotonVisionIOReal() {
-        poseEstimator =
-                new PhotonPoseEstimator(
-                        VisionConstants.FIELD_LAYOUT,
-                        PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
-                        VisionConstants.ROBOT_TO_CAM);
-    }
+    public PhotonVisionIOReal() {}
 
     @Override
     public void updateInputs(PhotonVisionIOInputs inputs) {
@@ -29,19 +18,14 @@ public class PhotonVisionIOReal implements PhotonVisionIO {
     }
 
     @Override
-    public List<PhotonPipelineResult> getAllUnreadResults() {
-        return Camera.values()[0].cameraSim.getCamera().getAllUnreadResults();
+    public List<PhotonPipelineResult> getAllUnreadResults(Camera camera) {
+        return camera.cameraSim.getCamera().getAllUnreadResults();
     }
 
     @Override
-    public Optional<EstimatedRobotPose> updatePose(PhotonPipelineResult result) {
-        var pose = poseEstimator.update(result);
+    public Optional<EstimatedRobotPose> updatePose(Camera camera, PhotonPipelineResult result) {
+        var pose = camera.poseEstimator.update(result);
         return pose;
-    }
-
-    @Override
-    public void setReferencePose(Pose2d pose) {
-        poseEstimator.setReferencePose(pose);
     }
 
     @Override

@@ -3,28 +3,16 @@ package frc.team5115.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.team5115.Constants.VisionConstants;
 import frc.team5115.subsystems.vision.PhotonVision.Camera;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class PhotonVisionIOSim implements PhotonVisionIO {
-    public final Map<String, PhotonCameraSim> cameras = new HashMap<String, PhotonCameraSim>();
-    private final PhotonPoseEstimator poseEstimator;
     private final VisionSystemSim visionSim;
 
     public PhotonVisionIOSim() {
-        poseEstimator =
-                new PhotonPoseEstimator(
-                        VisionConstants.FIELD_LAYOUT,
-                        PoseStrategy.CLOSEST_TO_REFERENCE_POSE,
-                        VisionConstants.ROBOT_TO_CAM);
         visionSim = new VisionSystemSim("main");
         visionSim.addAprilTags(VisionConstants.FIELD_LAYOUT);
         for (Camera camera : Camera.values()) {
@@ -43,19 +31,14 @@ public class PhotonVisionIOSim implements PhotonVisionIO {
     }
 
     @Override
-    public List<PhotonPipelineResult> getAllUnreadResults() {
-        return Camera.values()[0].cameraSim.getCamera().getAllUnreadResults();
+    public List<PhotonPipelineResult> getAllUnreadResults(Camera camera) {
+        return camera.cameraSim.getCamera().getAllUnreadResults();
     }
 
     @Override
-    public Optional<EstimatedRobotPose> updatePose(PhotonPipelineResult result) {
-        var pose = poseEstimator.update(result);
+    public Optional<EstimatedRobotPose> updatePose(Camera camera, PhotonPipelineResult result) {
+        var pose = camera.poseEstimator.update(result);
         return pose;
-    }
-
-    @Override
-    public void setReferencePose(Pose2d pose) {
-        poseEstimator.setReferencePose(pose);
     }
 
     @Override
