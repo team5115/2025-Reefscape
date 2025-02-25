@@ -77,9 +77,9 @@ public class PhotonVision extends SubsystemBase {
         }
     }
 
-    public boolean isAnyCameraConnected() {
+    public boolean areAnyCamerasDisconnected() {
         for (Camera camera : Camera.values()) {
-            if (io.isCameraConnected(inputs, camera)) {
+            if (!io.isCameraConnected(inputs, camera)) {
                 return true;
             }
         }

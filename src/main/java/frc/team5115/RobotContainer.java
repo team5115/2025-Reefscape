@@ -339,7 +339,7 @@ public class RobotContainer {
                         dispenser,
                         indexer,
                         null,
-                        joyDrive.isConnected() && true); // joyManip.isConnected());
+                        joyDrive.isConnected() && joyManip.isConnected());
         hasFaults = faults.hasFaults();
         if (hasFaults) {
             System.err.println(faults.toString());
