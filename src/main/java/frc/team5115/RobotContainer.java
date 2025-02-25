@@ -215,7 +215,7 @@ public class RobotContainer {
                 .x()
                 .onTrue(dealgaefacationinator5000.extend())
                 .onFalse(dealgaefacationinator5000.retract());
-        joyManip.rightTrigger().onTrue(dispenser.dispenseWhileCoral());
+        joyManip.rightTrigger().whileTrue(dispenser.dispenseWhileCoral());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
         joyManip.rightStick().onTrue(climber.stopCommand());
         joyManip.leftBumper().onTrue(climber.retract());

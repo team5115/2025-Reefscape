@@ -34,7 +34,7 @@ public class Dispenser extends SubsystemBase {
     }
 
     public Command dispenseWhileCoral() {
-        return Commands.sequence(setSpeed(+1), waitForDetectionState(false, 1), stop());
+        return Commands.sequence(dispense(), waitForDetectionState(false, 1), stop());
     }
 
     public Command reverse() {
