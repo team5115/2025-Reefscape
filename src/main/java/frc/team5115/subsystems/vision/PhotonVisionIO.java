@@ -27,6 +27,8 @@ public interface PhotonVisionIO {
         return null;
     }
 
+    public default void updateVisionSimPose(Pose2d pose) {}
+
     public default void setReferencePose(Pose2d pose) {}
 
     public default boolean isCameraConnected(PhotonVisionIOInputs inputs, Camera camera) {

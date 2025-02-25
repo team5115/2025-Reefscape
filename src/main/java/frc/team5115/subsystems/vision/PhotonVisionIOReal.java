@@ -48,4 +48,7 @@ public class PhotonVisionIOReal implements PhotonVisionIO {
     public boolean isCameraConnected(PhotonVisionIOInputs inputs, Camera camera) {
         return inputs.isConnected[camera.ordinal()];
     }
+
+    @Override
+    public void updateVisionSimPose(Pose2d pose) {}
 }

@@ -28,10 +28,10 @@ public class PhotonVisionIOSim implements PhotonVisionIO {
         visionSim = new VisionSystemSim("main");
         visionSim.addAprilTags(VisionConstants.FIELD_LAYOUT);
         for (Camera camera : Camera.values()) {
-            visionSim.addCamera(camera.cameraSim, VisionConstants.ROBOT_TO_CAM);
             camera.cameraSim.enableRawStream(true);
             camera.cameraSim.enableProcessedStream(true);
-            camera.cameraSim.enableProcessedStream(true);
+            camera.cameraSim.enableDrawWireframe(true);
+            visionSim.addCamera(camera.cameraSim, VisionConstants.ROBOT_TO_CAM);
         }
     }
 
@@ -56,6 +56,11 @@ public class PhotonVisionIOSim implements PhotonVisionIO {
     @Override
     public void setReferencePose(Pose2d pose) {
         poseEstimator.setReferencePose(pose);
+    }
+
+    @Override
+    public void updateVisionSimPose(Pose2d pose) {
+        visionSim.update(pose);
     }
 
     //     @Override

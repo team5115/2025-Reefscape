@@ -45,8 +45,6 @@ public class PhotonVision extends SubsystemBase {
     public PhotonVision(PhotonVisionIO io, Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
         this.io = io;
-        // ! Note: This switch statement would be better off separated into the constructors of each
-        // PhotonVisionIO class
         switch (Constants.currentMode) {
             case REAL:
                 break;
@@ -61,6 +59,7 @@ public class PhotonVision extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         io.setReferencePose(drivetrain.getPose());
+        io.updateVisionSimPose(drivetrain.getPose());
         final var unread = io.getAllUnreadResults();
         EstimatedRobotPose pose = null;
         for (final var result : unread) {
