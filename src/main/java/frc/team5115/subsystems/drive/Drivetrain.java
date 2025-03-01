@@ -31,6 +31,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants.AutoConstants;
 import frc.team5115.Constants.SwerveConstants;
 import frc.team5115.util.LocalADStarAK;
+
+import static edu.wpi.first.units.Units.Rotation;
+
 import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -42,6 +45,7 @@ public class Drivetrain extends SubsystemBase {
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
     private final Module[] modules = new Module[4]; // FL, FR, BL, BR
     private final SysIdRoutine sysId;
+    private final SysIdRoutine spinningSysId;
 
     // TODO tune drive pids
     private final double linear_kp = 1.9;
@@ -145,6 +149,7 @@ public class Drivetrain extends SubsystemBase {
                 });
 
         // Configure SysId
+        Rotation2d[] 
         sysId =
                 new SysIdRoutine(
                         new SysIdRoutine.Config(
@@ -160,6 +165,19 @@ public class Drivetrain extends SubsystemBase {
                                 },
                                 null,
                                 this));
+
+        spinningSysId = new SysIdRoutine(new SysIdRoutine.Config(
+            null,
+            null,
+            null,
+            (state) -> Logger.recordOutput("Drive/SpinningSysIdState", state.toString())), 
+            new SysIdRoutine.Mechanism((voltage) -> {
+                // FL, FR, BL, BR
+                for (int i = 0; i <4; i++) {
+                    modules[i].runCharacterization(voltage.baseUnitMagnitude(), );
+                }
+            }, null, this
+            ));
     }
 
     @Override

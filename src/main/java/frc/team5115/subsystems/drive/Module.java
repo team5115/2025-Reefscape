@@ -106,6 +106,16 @@ public class Module {
         speedSetpoint = null;
     }
 
+    /** Runs the module with the specified voltage while controlling to the given angle */
+    public void runCharacterization(double volts, Rotation2d angle) {
+        // Closed loop turn loop control
+        angleSetpoint = angle;
+
+        // Open loop drive control
+        io.setDriveVoltage(volts);
+        speedSetpoint = null;
+    }
+
     /** Disables all outputs to motors. */
     public void stop() {
         io.setTurnVoltage(0.0);
