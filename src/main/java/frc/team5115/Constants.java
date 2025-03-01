@@ -42,7 +42,7 @@ public final class Constants {
     public static final byte DEALGAE_REVERSE_CHANNEL = 3;
 
     public static final byte ELEVATOR_MOTOR_ID = 11;
-    public static final byte INDEXER_MOTOR_ID = 12;
+    public static final byte INTAKE_MOTOR_ID = 12;
     public static final byte DISPENSER_MOTOR_ID = 13;
     public static final byte DEALGAE_MOTOR_ID = 14;
 

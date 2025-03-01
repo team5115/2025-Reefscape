@@ -7,7 +7,7 @@ import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator50
 import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.drive.Drivetrain;
 import frc.team5115.subsystems.elevator.Elevator;
-import frc.team5115.subsystems.indexer.Indexer;
+import frc.team5115.subsystems.intake.Intake;
 import frc.team5115.subsystems.vision.PhotonVision;
 import java.util.ArrayList;
 
@@ -22,7 +22,7 @@ public class RobotFaults {
     public final boolean climberNull;
     public final boolean elevatorNull;
     public final boolean dispenserNull;
-    public final boolean indexerNull;
+    public final boolean intakeNull;
     private final String cachedToString;
 
     public RobotFaults(
@@ -35,7 +35,7 @@ public class RobotFaults {
             boolean climberNull,
             boolean elevatorNull,
             boolean dispenserNull,
-            boolean indexerNull) {
+            boolean intakeNull) {
         this.sparkFaults = sparkFaults;
         this.cameraDisconnected = cameraDisconnected;
         this.joysticksDisconnected = joysticksDisconnected;
@@ -45,7 +45,7 @@ public class RobotFaults {
         this.climberNull = climberNull;
         this.elevatorNull = elevatorNull;
         this.dispenserNull = dispenserNull;
-        this.indexerNull = indexerNull;
+        this.intakeNull = intakeNull;
         cachedToString = cacheString();
     }
 
@@ -80,8 +80,8 @@ public class RobotFaults {
         if (dispenserNull) {
             builder.append("DispenserNull; ");
         }
-        if (indexerNull) {
-            builder.append("IndexerNull; ");
+        if (intakeNull) {
+            builder.append("IntakeNull; ");
         }
         if (builder.isEmpty()) {
             return NO_FAULTS;
@@ -105,7 +105,7 @@ public class RobotFaults {
             Climber climber,
             Elevator elevator,
             Dispenser dispenser,
-            Indexer indexer,
+            Intake intake,
             Dealgaefacationinator5000 dealgaefacationinator5000,
             boolean joysticksConnected) {
 
@@ -119,8 +119,8 @@ public class RobotFaults {
         if (dispenser != null) {
             dispenser.getSparks(sparks);
         }
-        if (indexer != null) {
-            indexer.getSparks(sparks);
+        if (intake != null) {
+            intake.getSparks(sparks);
         }
         if (dealgaefacationinator5000 != null) {
             dealgaefacationinator5000.getSparks(sparks);
@@ -139,7 +139,7 @@ public class RobotFaults {
                 climber == null,
                 elevator == null,
                 dispenser == null,
-                indexer == null);
+                intake == null);
     }
 
     private static void appendSparkFaults(StringBuilder mainBuilder, Faults faults, int id) {

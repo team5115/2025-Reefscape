@@ -36,10 +36,10 @@ import frc.team5115.subsystems.elevator.Elevator.Height;
 import frc.team5115.subsystems.elevator.ElevatorIO;
 import frc.team5115.subsystems.elevator.ElevatorIOSim;
 import frc.team5115.subsystems.elevator.ElevatorIOSparkMax;
-import frc.team5115.subsystems.indexer.Indexer;
-import frc.team5115.subsystems.indexer.IndexerIO;
-import frc.team5115.subsystems.indexer.IndexerIOSim;
-import frc.team5115.subsystems.indexer.IndexerIOSparkMax;
+import frc.team5115.subsystems.intake.Intake;
+import frc.team5115.subsystems.intake.IntakeIO;
+import frc.team5115.subsystems.intake.IntakeIOSim;
+import frc.team5115.subsystems.intake.IntakeIOSparkMax;
 import frc.team5115.subsystems.vision.PhotonVision;
 import frc.team5115.subsystems.vision.PhotonVisionIO;
 import frc.team5115.subsystems.vision.PhotonVisionIOReal;
@@ -61,7 +61,7 @@ public class RobotContainer {
     private final Climber climber;
     private final Elevator elevator;
     private final Dispenser dispenser;
-    private final Indexer indexer;
+    private final Intake intake;
     // private final Dealgaefacationinator5000 dealgaefacationinator5000;
 
     // Controllers
@@ -92,7 +92,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIORev(hub));
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser = new Dispenser(new DispenserIOSparkMax());
-                indexer = new Indexer(new IndexerIOSparkMax(), elevator);
+                intake = new Intake(new IntakeIOSparkMax(), elevator);
                 // dealgaefacationinator5000 =
                 //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax(hub));
                 drivetrain =
@@ -112,7 +112,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIOSim());
                 elevator = new Elevator(new ElevatorIOSim());
                 dispenser = new Dispenser(new DispenserIOSim());
-                indexer = new Indexer(new IndexerIOSim(), elevator);
+                intake = new Intake(new IntakeIOSim(), elevator);
                 // dealgaefacationinator5000 =
                 //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
                 drivetrain =
@@ -128,7 +128,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIO() {});
                 elevator = new Elevator(new ElevatorIO() {});
                 dispenser = new Dispenser(new DispenserIO() {});
-                indexer = new Indexer(new IndexerIO() {}, elevator);
+                intake = new Intake(new IntakeIO() {}, elevator);
                 // dealgaefacationinator5000 =
                 //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
                 drivetrain =
@@ -140,8 +140,7 @@ public class RobotContainer {
         }
 
         // Register auto commands for pathplanner
-        registerCommands(
-                drivetrain, vision, elevator, dispenser, indexer, null, climber);
+        registerCommands(drivetrain, vision, elevator, dispenser, intake, null, climber);
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -178,9 +177,9 @@ public class RobotContainer {
          * x: Forces the robot to stop moving
          * LeftBumper: Sets robot relative to true while held down
          * rightBumper: Sets slow mode while held down
-         * left and right triggers align to score respectively 
+         * left and right triggers align to score respectively
          * Y does reef orbit controlled drive
-         * start resets field orientation 
+         * start resets field orientation
          */
 
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
@@ -211,8 +210,8 @@ public class RobotContainer {
         joyManip.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.MINIMUM));
         joyManip.y().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.MINIMUM));
         joyManip.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
-        
-        joyManip.rightStick().onTrue(indexer.vomit()).onFalse(indexer.stop());
+
+        joyManip.rightStick().onTrue(intake.vomit()).onFalse(intake.stop());
         // joyManip
         //         .x()
         //         .onTrue(dealgaefacationinator5000.extend())
@@ -240,7 +239,7 @@ public class RobotContainer {
      * @param vision
      * @param elevator
      * @param dispenser
-     * @param indexer
+     * @param intake
      * @param dealgaefacationinator5000
      * @param climber
      */
@@ -249,7 +248,7 @@ public class RobotContainer {
             PhotonVision vision,
             Elevator elevator,
             Dispenser dispenser,
-            Indexer indexer,
+            Intake intake,
             Dealgaefacationinator5000 dealgaefacationinator5000,
             Climber climber) {
         // Register commands for pathplanner
@@ -336,7 +335,7 @@ public class RobotContainer {
                         climber,
                         elevator,
                         dispenser,
-                        indexer,
+                        intake,
                         null,
                         joyDrive.isConnected() && joyManip.isConnected());
         hasFaults = faults.hasFaults();

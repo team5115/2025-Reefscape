@@ -134,6 +134,7 @@ public class Elevator extends SubsystemBase {
 
     /**
      * Move the elevator down until it reaches the bottom sensor, then zero offset
+     *
      * @return a command that does so
      */
     public Command zero() {

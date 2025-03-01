@@ -1,4 +1,4 @@
-package frc.team5115.subsystems.indexer;
+package frc.team5115.subsystems.intake;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -6,17 +6,17 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.team5115.Constants;
 
-public class IndexerIOSim implements IndexerIO {
+public class IntakeIOSim implements IntakeIO {
     private final DCMotorSim sim;
     private double appliedVolts;
 
-    public IndexerIOSim() {
+    public IntakeIOSim() {
         final DCMotor motor = DCMotor.getNEO(1);
         sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, 0.0002, 1.0), motor);
     }
 
     @Override
-    public void updateInputs(IndexerIOInputs inputs) {
+    public void updateInputs(IntakeIOInputs inputs) {
         sim.update(Constants.LOOP_PERIOD_SECS);
         inputs.velocityRPM = sim.getAngularVelocityRPM();
         inputs.appliedVolts = appliedVolts;

@@ -1,4 +1,4 @@
-package frc.team5115.subsystems.indexer;
+package frc.team5115.subsystems.intake;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -10,12 +10,12 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.team5115.Constants;
 import java.util.ArrayList;
 
-public class IndexerIOSparkMax implements IndexerIO {
+public class IntakeIOSparkMax implements IntakeIO {
     private final SparkMax motor;
     private final RelativeEncoder encoder;
 
-    public IndexerIOSparkMax() {
-        motor = new SparkMax(Constants.INDEXER_MOTOR_ID, MotorType.kBrushless);
+    public IntakeIOSparkMax() {
+        motor = new SparkMax(Constants.INTAKE_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
 
         final SparkMaxConfig motorConfig = new SparkMaxConfig();
@@ -24,7 +24,7 @@ public class IndexerIOSparkMax implements IndexerIO {
     }
 
     @Override
-    public void updateInputs(IndexerIOInputs inputs) {
+    public void updateInputs(IntakeIOInputs inputs) {
         inputs.velocityRPM = encoder.getVelocity();
         inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
         inputs.currentAmps = motor.getOutputCurrent();
