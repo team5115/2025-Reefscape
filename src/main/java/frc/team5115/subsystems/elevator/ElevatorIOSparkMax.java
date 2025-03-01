@@ -23,12 +23,14 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     private final DigitalInput firstSensor;
     private final DigitalInput secondSensor;
     private final DigitalInput thirdSensor;
+    private final DigitalInput fourthSensor;
 
     public ElevatorIOSparkMax() {
         backSensor = new DigitalInput(Constants.INTAKE_SENSOR_ID);
-        firstSensor = new DigitalInput(Constants.ELEVATOR_BOTTOM_SENSOR_ID);
-        secondSensor = new DigitalInput(Constants.ELEVATOR_MIDDLE_SENSOR_ID);
-        thirdSensor = new DigitalInput(Constants.ELEVATOR_TOP_SENSOR_ID);
+        firstSensor = new DigitalInput(Constants.ELEVATOR_FIRST_SENSOR_ID);
+        secondSensor = new DigitalInput(Constants.ELEVATOR_SECOND_SENSOR_ID);
+        thirdSensor = new DigitalInput(Constants.ELEVATOR_THIRD_SENSOR_ID);
+        fourthSensor = new DigitalInput(Constants.ELEVATOR_FOURTH_SENSOR_ID);
         motor = new SparkMax(Constants.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
         velocityCLC = motor.getClosedLoopController();
@@ -59,9 +61,10 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
         inputs.currentAmps = motor.getOutputCurrent();
         inputs.backCoralDetected = !backSensor.get();
-        inputs.firstMagnetDetected = !firstSensor.get();
-        inputs.secondMagnetDetected = !secondSensor.get();
-        inputs.thirdMagnetDetected = !thirdSensor.get();
+        inputs.magnet1detected = !firstSensor.get();
+        inputs.magnet2detected = !secondSensor.get();
+        inputs.magnet3detected = !thirdSensor.get();
+        inputs.magnet4detected = !fourthSensor.get();
     }
 
     @Override

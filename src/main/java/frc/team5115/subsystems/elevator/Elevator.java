@@ -29,6 +29,7 @@ public class Elevator extends SubsystemBase {
     private static final double firstHeight = 0;
     private static final double secondHeight = 0;
     private static final double thirdHeight = 0;
+    private static final double fourthHeight = 0;
 
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
@@ -96,7 +97,7 @@ public class Elevator extends SubsystemBase {
                         new SysIdRoutine.Mechanism(
                                 (voltage) -> io.setElevatorVoltage(voltage.magnitude()), null, this));
 
-        zero().schedule(); // ! auto zero on startup
+        offset = -inputs.positionMeters; // ! auto zero on startup
         height = Height.MINIMUM;
         positionPID.setTolerance(0.05);
         positionPID.setGoal(height.position);
@@ -111,15 +112,18 @@ public class Elevator extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs(getName(), inputs);
         recordOutputs();
-        if (inputs.firstMagnetDetected == true) {
-            offset = firstHeight - inputs.positionMeters;
-        }
-        if (inputs.secondMagnetDetected == true) {
-            offset = secondHeight - inputs.positionMeters;
-        }
-        if (inputs.thirdMagnetDetected == true) {
-            offset = thirdHeight - inputs.positionMeters;
-        }
+        // if (inputs.magnet1detected) {
+        //     offset = firstHeight - inputs.positionMeters;
+        // }
+        // if (inputs.magnet2detected) {
+        //     offset = secondHeight - inputs.positionMeters;
+        // }
+        // if (inputs.magnet3detected) {
+        //     offset = thirdHeight - inputs.positionMeters;
+        // }
+        // if (inputs.magnet4detected) {
+        //     offset = fourthHeight - inputs.positionMeters;
+        // }
         if (inputs.backCoralDetected) {
             // Force the elvator to stay at the intake position when there is a coral in the intake
             height = Height.INTAKE;
@@ -129,11 +133,17 @@ public class Elevator extends SubsystemBase {
     }
 
     public Command zero() {
-        return Commands.runOnce(
-                () -> {
-                    offset = -inputs.positionMeters;
-                },
-                this);
+        return Commands.sequence(
+                Commands.runOnce(
+                        () -> {
+                            velocitySetpoint = -0.01;
+                        }),
+                Commands.waitUntil(() -> inputs.magnet1detected == true),
+                Commands.runOnce(
+                        () -> {
+                            velocitySetpoint = 0;
+                            offset = -inputs.positionMeters;
+                        }));
     }
 
     private void recordOutputs() {
@@ -203,6 +213,18 @@ public class Elevator extends SubsystemBase {
                     velocitySetpoint =
                             MathUtil.clamp(
                                     positionPID.calculate(getActualHeight(), height.position), -maxSpeed, +maxSpeed);
+                },
+                this);
+    }
+
+    public Command positionControl(DoubleSupplier supplier) {
+        return Commands.run(
+                () -> {
+                    velocitySetpoint =
+                            MathUtil.clamp(
+                                    positionPID.calculate(getActualHeight(), supplier.getAsDouble()),
+                                    -maxSpeed,
+                                    +maxSpeed);
                 },
                 this);
     }

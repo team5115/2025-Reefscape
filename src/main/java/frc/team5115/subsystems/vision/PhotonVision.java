@@ -21,7 +21,8 @@ public class PhotonVision extends SubsystemBase {
 
     public enum Camera {
         USB_GS_Camera("USB_GS_Camera", 1280, 720, 90, 1, 0, 30, 30, 10, VisionConstants.ROBOT_TO_CAM);
-        // USB_GS_Camera2("USB_GS_Camera2", 640, 360, 360, 1, 1, 30, 30, 10, VisionConstants.ROBOT_TO_CAM);
+        // USB_GS_Camera2("USB_GS_Camera2", 640, 360, 360, 1, 1, 30, 30, 10,
+        // VisionConstants.ROBOT_TO_CAM);
 
         public final PhotonCameraSim cameraSim;
         public final PhotonPoseEstimator poseEstimator;
@@ -57,7 +58,7 @@ public class PhotonVision extends SubsystemBase {
         this.drivetrain = drivetrain;
         this.io = io;
     }
-  
+
     @Override
     public void periodic() {
         io.updateInputs(inputs);

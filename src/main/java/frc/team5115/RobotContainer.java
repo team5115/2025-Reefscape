@@ -90,7 +90,7 @@ public class RobotContainer {
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
-                final PneumaticHub hub = new PneumaticHub(Constants.PNEUMATIC_HUB_ID); 
+                final PneumaticHub hub = new PneumaticHub(Constants.PNEUMATIC_HUB_ID);
                 gyro = new GyroIONavx();
                 climber = new Climber(new ClimberIORev(hub));
                 elevator = new Elevator(new ElevatorIOSparkMax());
@@ -180,9 +180,9 @@ public class RobotContainer {
         /* Drive button bindings -
          * x: Forces the robot to stop moving
          * LeftBumper: Sets robot relative to true while held down
-         * rightBumper: 
-         * 
-        */
+         * rightBumper:
+         *
+         */
 
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
@@ -202,7 +202,7 @@ public class RobotContainer {
                 .whileTrue(
                         drivetrain.reefOrbitDrive(() -> -joyDrive.getLeftX(), () -> -joyDrive.getLeftY()));
 
-        joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 10.0));
+        joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 20.0));
         elevator.setDefaultCommand(elevator.positionControl());
         joyManip.start().onTrue(elevator.setHeight(Height.MINIMUM));
         joyManip
