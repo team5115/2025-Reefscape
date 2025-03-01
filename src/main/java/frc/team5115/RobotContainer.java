@@ -21,9 +21,6 @@ import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIORev;
 import frc.team5115.subsystems.climber.ClimberIOSim;
 import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000;
-import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IO;
-import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IOSim;
-import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IOSparkMax;
 import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.dispenser.DispenserIO;
 import frc.team5115.subsystems.dispenser.DispenserIOSim;
@@ -65,7 +62,7 @@ public class RobotContainer {
     private final Elevator elevator;
     private final Dispenser dispenser;
     private final Indexer indexer;
-    private final Dealgaefacationinator5000 dealgaefacationinator5000;
+    // private final Dealgaefacationinator5000 dealgaefacationinator5000;
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
@@ -96,8 +93,8 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser = new Dispenser(new DispenserIOSparkMax());
                 indexer = new Indexer(new IndexerIOSparkMax(), elevator);
-                dealgaefacationinator5000 =
-                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax(hub));
+                // dealgaefacationinator5000 =
+                //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax(hub));
                 drivetrain =
                         new Drivetrain(
                                 gyro,
@@ -116,8 +113,8 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIOSim());
                 dispenser = new Dispenser(new DispenserIOSim());
                 indexer = new Indexer(new IndexerIOSim(), elevator);
-                dealgaefacationinator5000 =
-                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
+                // dealgaefacationinator5000 =
+                //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
@@ -132,8 +129,8 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIO() {});
                 dispenser = new Dispenser(new DispenserIO() {});
                 indexer = new Indexer(new IndexerIO() {}, elevator);
-                dealgaefacationinator5000 =
-                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
+                // dealgaefacationinator5000 =
+                //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
@@ -144,7 +141,7 @@ public class RobotContainer {
 
         // Register auto commands for pathplanner
         registerCommands(
-                drivetrain, vision, elevator, dispenser, indexer, dealgaefacationinator5000, climber);
+                drivetrain, vision, elevator, dispenser, indexer, null, climber);
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -180,8 +177,10 @@ public class RobotContainer {
         /* Drive button bindings -
          * x: Forces the robot to stop moving
          * LeftBumper: Sets robot relative to true while held down
-         * rightBumper:
-         *
+         * rightBumper: Sets slow mode while held down
+         * left and right triggers align to score respectively 
+         * Y does reef orbit controlled drive
+         * start resets field orientation 
          */
 
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
@@ -211,15 +210,15 @@ public class RobotContainer {
                 .onFalse(elevator.setHeight(Height.MINIMUM));
         joyManip.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.MINIMUM));
         joyManip.y().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.MINIMUM));
-        joyManip.back().onTrue(elevator.zero()).onTrue(elevator.setHeight(Height.MINIMUM));
-
-        joyManip
-                .x()
-                .onTrue(dealgaefacationinator5000.extend())
-                .onFalse(dealgaefacationinator5000.retract());
+        joyManip.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
+        
+        joyManip.rightStick().onTrue(indexer.vomit()).onFalse(indexer.stop());
+        // joyManip
+        //         .x()
+        //         .onTrue(dealgaefacationinator5000.extend())
+        //         .onFalse(dealgaefacationinator5000.retract());
         joyManip.rightTrigger().whileTrue(dispenser.dispenseWhileCoral());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        joyManip.rightStick().onTrue(climber.stopCommand());
         joyManip.leftBumper().onTrue(climber.retract());
         joyManip.rightBumper().onTrue(climber.extend());
     }

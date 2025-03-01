@@ -132,6 +132,10 @@ public class Elevator extends SubsystemBase {
         elevatorMechanismLigament2d.setLength(getActualHeight() * 8);
     }
 
+    /**
+     * Move the elevator down until it reaches the bottom sensor, then zero offset
+     * @return a command that does so
+     */
     public Command zero() {
         return Commands.sequence(
                 Commands.runOnce(

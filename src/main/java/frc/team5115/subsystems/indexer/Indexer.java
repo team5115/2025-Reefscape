@@ -39,6 +39,10 @@ public class Indexer extends SubsystemBase {
         return setSpeed(INDEXING_SPEED);
     }
 
+    public Command vomit() {
+        return setSpeed(-0.5);
+    }
+
     public Command stop() {
         return setSpeed(0);
     }
