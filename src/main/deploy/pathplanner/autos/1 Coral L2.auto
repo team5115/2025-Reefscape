@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Right"
+                  "name": "L2Right"
                 }
               }
             ]
@@ -27,6 +27,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "L4 Autos",
+  "folder": "L2 Autos",
   "choreoAuto": true
 }

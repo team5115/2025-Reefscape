@@ -5,7 +5,7 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -17,14 +17,20 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L2Right"
+                  "name": "RaiseElevator"
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "named",
+          "data": {
+            "name": "DispenseRight"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -43,7 +49,7 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -55,20 +61,26 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L2Right"
+                  "name": "RaiseElevator"
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "named",
+          "data": {
+            "name": "DispenseRight"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "L2Intake(1).0"
+                  "pathName": "L2Intake(1)"
                 }
               },
               {
@@ -81,7 +93,7 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -93,22 +105,22 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L2Left"
+                  "name": "RaiseElevator"
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "named",
+          "data": {
+            "name": "DispenseLeft"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": []
-                }
-              },
               {
                 "type": "path",
                 "data": {
@@ -125,7 +137,7 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -137,10 +149,16 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L2Right"
+                  "name": "RaiseElevator"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DispenseRight"
           }
         }
       ]

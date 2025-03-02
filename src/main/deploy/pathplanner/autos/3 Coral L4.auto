@@ -103,6 +103,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "L4 Autos",
   "choreoAuto": true
 }

@@ -44,6 +44,26 @@ public class AutoCommands {
                 dispense(dispenser, elevator, height));
     }
 
+    public static Command raiseElevator(Elevator elevator, Height height) {
+            return Commands.sequence(
+                elevator.setHeightAndWait(height, 2.0));
+    }
+
+    public static Command scoreSequence(
+            Drivetrain drivetrain, Elevator elevator, Dispenser dispenser, Side side) {
+                return Commands.sequence(
+                    drivetrain.autoAlignToScoringSpot(side),
+                    dispenser.dispense(),
+                    dispenser.waitForDetectionState(false, 3.0),
+                    Commands.waitSeconds(2), // TODO: tune this value
+                    dispenser.stop(),
+                    elevator.setHeight(Elevator.Height.INTAKE)
+                );
+            }
+
+
+
+
     public static Command testingGetReefAlignCommand(
             Drivetrain drivetrain, Elevator elevator, Dispenser dispenser, Height height) {
         return Commands.sequence(

@@ -5,32 +5,38 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score (1)"
+                  "pathName": "TScore(1)"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L2Right"
+                  "name": "RaiseElevator"
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "named",
+          "data": {
+            "name": "DispenseRight"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Intake(1)"
+                  "pathName": "TIntake(1)"
                 }
               },
               {
@@ -43,32 +49,38 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "L2(1)"
+                  "pathName": "TL2 Score (1)"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L2Right"
+                  "name": "RaiseElevator"
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "named",
+          "data": {
+            "name": "DispenseRight"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "L2Intake(1).0"
+                  "pathName": "TL2 Intake (1).0"
                 }
               },
               {
@@ -81,38 +93,38 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "L2(2)"
+                  "pathName": "TL2 Score (2)"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L2Left"
+                  "name": "RaiseElevator"
                 }
               }
             ]
           }
         },
         {
-          "type": "sequential",
+          "type": "named",
+          "data": {
+            "name": "DispenseLeft"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "sequential",
-                "data": {
-                  "commands": []
-                }
-              },
-              {
                 "type": "path",
                 "data": {
-                  "pathName": "L2Intake(2)"
+                  "pathName": "TL2 Intake (2).0"
                 }
               },
               {
@@ -125,22 +137,28 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score(4)"
+                  "pathName": "TScore(4)"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L2Right"
+                  "name": "RaiseElevator"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DispenseRight"
           }
         }
       ]

@@ -147,6 +147,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "L2 Autos",
   "choreoAuto": true
 }
