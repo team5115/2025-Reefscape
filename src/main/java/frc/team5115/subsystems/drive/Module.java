@@ -156,6 +156,10 @@ public class Module {
         return inputs.driveVelocityRadPerSec;
     }
 
+    public void setDriveCurrentLimit(int amps) {
+        io.setDriveCurrentLimit(amps);
+    }
+
     /**
      * Get the drive and turn sparks into a list
      *

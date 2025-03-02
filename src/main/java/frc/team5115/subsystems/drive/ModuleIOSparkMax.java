@@ -81,7 +81,7 @@ public class ModuleIOSparkMax implements ModuleIO {
         driveConfig
                 .inverted(false)
                 .idleMode(IdleMode.kBrake)
-                .smartCurrentLimit(SwerveConstants.DrivingMotorCurrentLimit)
+                .smartCurrentLimit(SwerveConstants.DrivingMotorAutoCurrentLimit)
                 .voltageCompensation(12.0);
 
         turnEncoderConfig.averageDepth(2).inverted(false);
@@ -127,5 +127,13 @@ public class ModuleIOSparkMax implements ModuleIO {
     public void getSparks(ArrayList<SparkMax> sparks) {
         sparks.add(driveSparkMax);
         sparks.add(turnSparkMax);
+    }
+
+    @Override
+    public void setDriveCurrentLimit(int amps) {
+        final SparkMaxConfig driveConfig = new SparkMaxConfig();
+        driveConfig.smartCurrentLimit(amps);
+        driveSparkMax.configure(
+                driveConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 }

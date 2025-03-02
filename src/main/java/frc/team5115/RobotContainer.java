@@ -336,6 +336,14 @@ public class RobotContainer {
                 .ignoringDisable(true);
     }
 
+    public void teleopInit() {
+        drivetrain.setTeleopCurrentLimit();
+    }
+
+    public void autoInit() {
+        drivetrain.setAutoCurrentLimit();
+    }
+
     public void disabledPeriodic() {
         if (Constants.currentMode == Mode.REAL) {
             if (hasFaults || constantlyCheckFaults) {

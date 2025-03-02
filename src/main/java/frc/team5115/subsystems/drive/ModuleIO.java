@@ -28,6 +28,9 @@ public interface ModuleIO {
     /** Run the turn motor at the specified voltage. */
     public default void setTurnVoltage(double volts) {}
 
+    /** Set the drive motor current limit. Only for real robot */
+    public default void setDriveCurrentLimit(int amps) {}
+
     /** This should not really be here but it must be */
     public default void getSparks(ArrayList<SparkMax> sparks) {}
 }

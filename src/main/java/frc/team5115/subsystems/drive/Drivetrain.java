@@ -130,7 +130,7 @@ public class Drivetrain extends SubsystemBase {
                                 SwerveConstants.WHEEL_COF,
                                 DCMotor.getNEO(1),
                                 SwerveConstants.DrivingMotorReduction,
-                                SwerveConstants.DrivingMotorCurrentLimit, // less than the real current limit
+                                SwerveConstants.DrivingMotorAutoCurrentLimit, // less than the real current limit
                                 1),
                         SwerveConstants.MODULE_TRANSLATIONS),
                 () -> isRedAlliance(),
@@ -565,6 +565,22 @@ public class Drivetrain extends SubsystemBase {
         for (var module : modules) {
             module.getAllSparks(sparks);
         }
+    }
+
+    private void setDriveCurrentLimits(int amps) {
+        for (var module : modules) {
+            module.setDriveCurrentLimit(amps);
+        }
+    }
+
+    /** Set the module drive current limits to the auto current limit */
+    public void setTeleopCurrentLimit() {
+        setDriveCurrentLimits(SwerveConstants.DrivingMotorTeleopCurrentLimit);
+    }
+
+    /** Set the module drive current limits to the auto current limit */
+    public void setAutoCurrentLimit() {
+        setDriveCurrentLimits(SwerveConstants.DrivingMotorAutoCurrentLimit);
     }
 
     public boolean isGyroConnected() {

@@ -115,10 +115,11 @@ public class Robot extends LoggedRobot {
     public void autonomousInit() {
         autonomousCommand = robotContainer.getAutonomousCommand();
 
-        // schedule the autonomous command (example)
+        // schedule the autonomous command
         if (autonomousCommand != null) {
             autonomousCommand.schedule();
         }
+        robotContainer.autoInit();
     }
 
     /** This function is called periodically during autonomous. */
@@ -135,6 +136,7 @@ public class Robot extends LoggedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
+        robotContainer.teleopInit();
     }
 
     /** This function is called periodically during operator control. */

@@ -105,7 +105,8 @@ public final class Constants {
         // 15 teeth on the bevel pinion, 13 teeth on the driving motor
         public static final double DrivingMotorReduction = (45.0 * 22.0) / (13.0 * 15.0);
 
-        public static final int DrivingMotorCurrentLimit = 60; // amp
+        public static final int DrivingMotorAutoCurrentLimit = 60; // amp
+        public static final int DrivingMotorTeleopCurrentLimit = 50; // amps, lower than in auto
         public static final int TurningMotorCurrentLimit = 20; // amps
     }
 
