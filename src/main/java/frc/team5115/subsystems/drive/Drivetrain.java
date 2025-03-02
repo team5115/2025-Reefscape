@@ -24,6 +24,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,9 +32,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants.AutoConstants;
 import frc.team5115.Constants.SwerveConstants;
 import frc.team5115.util.LocalADStarAK;
-
-import static edu.wpi.first.units.Units.Rotation;
-
 import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -45,7 +43,7 @@ public class Drivetrain extends SubsystemBase {
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
     private final Module[] modules = new Module[4]; // FL, FR, BL, BR
     private final SysIdRoutine sysId;
-    private final SysIdRoutine spinningSysId;
+    private final SysIdRoutine spinSysId;
 
     // TODO tune drive pids
     private final double linear_kp = 1.9;
@@ -149,16 +147,16 @@ public class Drivetrain extends SubsystemBase {
                 });
 
         // Configure SysId
-        Rotation2d[] 
         sysId =
                 new SysIdRoutine(
                         new SysIdRoutine.Config(
                                 null,
                                 null,
                                 null,
-                                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
+                                (state) -> Logger.recordOutput("Drive/StraightSysIdState", state.toString())),
                         new SysIdRoutine.Mechanism(
                                 (voltage) -> {
+                                    Logger.recordOutput("Drive/SysIdVoltage", voltage);
                                     for (int i = 0; i < 4; i++) {
                                         modules[i].runCharacterization(voltage.baseUnitMagnitude());
                                     }
@@ -166,18 +164,74 @@ public class Drivetrain extends SubsystemBase {
                                 null,
                                 this));
 
-        spinningSysId = new SysIdRoutine(new SysIdRoutine.Config(
-            null,
-            null,
-            null,
-            (state) -> Logger.recordOutput("Drive/SpinningSysIdState", state.toString())), 
-            new SysIdRoutine.Mechanism((voltage) -> {
-                // FL, FR, BL, BR
-                for (int i = 0; i <4; i++) {
-                    modules[i].runCharacterization(voltage.baseUnitMagnitude(), );
-                }
-            }, null, this
-            ));
+        // Configure spinning sysid to spin ccw
+        final Rotation2d[] moduleRotations =
+                new Rotation2d[] {
+                    Rotation2d.fromDegrees(135), // front left
+                    Rotation2d.fromDegrees(45), // front right
+                    Rotation2d.fromDegrees(225), // back left
+                    Rotation2d.fromDegrees(315) // back right
+                };
+        spinSysId =
+                new SysIdRoutine(
+                        new SysIdRoutine.Config(
+                                null,
+                                null,
+                                null,
+                                (state) -> Logger.recordOutput("Drive/SpinSysIdState", state.toString())),
+                        new SysIdRoutine.Mechanism(
+                                (voltage) -> {
+                                    updateAngularLogging();
+                                    Logger.recordOutput("Drive/SysIdVoltage", voltage);
+                                    for (int i = 0; i < 4; i++) {
+                                        modules[i].runCharacterization(voltage.baseUnitMagnitude(), moduleRotations[i]);
+                                    }
+                                },
+                                null,
+                                this));
+    }
+
+    Rotation2d previousRotation = null;
+    Double previousFPGATime = null;
+
+    public void resetAngularPreviousMeasures() {
+        previousRotation = null;
+        previousFPGATime = null;
+    }
+
+    private void updateAngularLogging() {
+        if (previousFPGATime != null && previousRotation != null) {
+            final double rotationDelta = getGyroRotation().minus(previousRotation).getRadians();
+            final double timeDelta = Timer.getFPGATimestamp() - previousFPGATime;
+            Logger.recordOutput("Drive/AngularVelocityRadPerSec", rotationDelta / timeDelta);
+            Logger.recordOutput("Drive/RotationRadians", getGyroRotation().getRadians());
+        }
+        previousFPGATime = Timer.getFPGATimestamp();
+        previousRotation = getGyroRotation();
+    }
+
+    public Command driveAllSysIds() {
+        return Commands.sequence(
+                sysIdQuasistatic(SysIdRoutine.Direction.kForward),
+                resetBetweenSysIdRoutines(),
+                sysIdQuasistatic(SysIdRoutine.Direction.kReverse),
+                resetBetweenSysIdRoutines(),
+                sysIdDynamic(SysIdRoutine.Direction.kForward),
+                resetBetweenSysIdRoutines(),
+                sysIdDynamic(SysIdRoutine.Direction.kReverse),
+                resetBetweenSysIdRoutines(),
+                sysIdSpinQuasistatic(SysIdRoutine.Direction.kForward),
+                resetBetweenSysIdRoutines(),
+                sysIdSpinQuasistatic(SysIdRoutine.Direction.kReverse),
+                resetBetweenSysIdRoutines(),
+                sysIdSpinDynamic(SysIdRoutine.Direction.kForward),
+                resetBetweenSysIdRoutines(),
+                sysIdSpinDynamic(SysIdRoutine.Direction.kReverse));
+    }
+
+    private Command resetBetweenSysIdRoutines() {
+        return Commands.waitSeconds(1.5)
+                .andThen(Commands.runOnce(this::resetAngularPreviousMeasures, this));
     }
 
     @Override
@@ -226,7 +280,7 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator.update(rawGyroRotation, modulePositions);
     }
 
-    @AutoLogOutput
+    @AutoLogOutput(key = "Drive/IsRedAlliance")
     public boolean isRedAlliance() {
         return DriverStation.getAlliance().orElseGet(() -> Alliance.Blue) == Alliance.Red;
     }
@@ -431,6 +485,21 @@ public class Drivetrain extends SubsystemBase {
     /** Returns a command to run a dynamic test in the specified direction. */
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return sysId.dynamic(direction);
+    }
+
+    /**
+     * Returns a command to run a quasistatic spinning test in the specified direction,forward being
+     * ccw
+     */
+    public Command sysIdSpinQuasistatic(SysIdRoutine.Direction direction) {
+        return spinSysId.quasistatic(direction);
+    }
+
+    /**
+     * Returns a command to run a dynamic test spinning in the specified direction, forward being ccw
+     */
+    public Command sysIdSpinDynamic(SysIdRoutine.Direction direction) {
+        return spinSysId.dynamic(direction);
     }
 
     /** Returns the module states (turn angles and drive velocities) for all of the modules. */

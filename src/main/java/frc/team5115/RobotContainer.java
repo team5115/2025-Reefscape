@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants.AutoConstants;
 import frc.team5115.Constants.AutoConstants.Side;
 import frc.team5115.Constants.Mode;
@@ -146,18 +147,31 @@ public class RobotContainer {
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
         // Set up SysId routines
-        // autoChooser.addOption(
-        //         "Drive SysId (Quasistatic Forward)",
-        //         drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        // autoChooser.addOption(
-        //         "Drive SysId (Quasistatic Reverse)",
-        //         drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        // autoChooser.addOption(
-        //         "Drive SysId (Dynamic Forward)",
-        //         drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        // autoChooser.addOption(
-        //         "Drive SysId (Dynamic Reverse)",
-        //         drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption(
+                "Drive SysId (Quasistatic Forward)",
+                drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Drive SysId (Quasistatic Reverse)",
+                drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption(
+                "Drive SysId (Dynamic Forward)", drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Drive SysId (Dynamic Reverse)", drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+        autoChooser.addOption(
+                "Drive Spin SysId (Quasistatic Forward)",
+                drivetrain.sysIdSpinQuasistatic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Drive Spin SysId (Quasistatic Reverse)",
+                drivetrain.sysIdSpinQuasistatic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption(
+                "Drive Spin SysId (Dynamic Forward)",
+                drivetrain.sysIdSpinDynamic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Drive Spin SysId (Dynamic Reverse)",
+                drivetrain.sysIdSpinDynamic(SysIdRoutine.Direction.kReverse));
+
+        autoChooser.addOption("Drive All SysIds", drivetrain.driveAllSysIds());
 
         configureButtonBindings();
     }
