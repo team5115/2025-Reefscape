@@ -1,6 +1,7 @@
 package frc.team5115.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team5115.Constants.VisionConstants;
@@ -20,24 +21,54 @@ public class PhotonVision extends SubsystemBase {
     private final PhotonVisionIO io;
 
     public enum Camera {
-        USB_GS_Camera("USB_GS_Camera", 1280, 720, 90, 1, 0, 30, 30, 10, VisionConstants.ROBOT_TO_CAM);
-        // USB_GS_Camera2("USB_GS_Camera2", 640, 360, 360, 1, 1, 30, 30, 10,
-        // VisionConstants.ROBOT_TO_CAM);
+        FRONT_LEFT(
+                "USB_GS_Camera", +((75d / 2d) - 6d) / 100d, -((75d / 2d) - 4d) / 100d, +0.21, 0, 13, 32);
 
         public final PhotonCameraSim cameraSim;
         public final PhotonPoseEstimator poseEstimator;
+        public final Transform3d robotToCamera;
+
+        /** Measured robot center to camera lens center, i.e. robot to cam */
+        Camera(
+                String name,
+                double xMeters,
+                double yMeters,
+                double zMeters,
+                double rollDegrees,
+                double pitchDegrees,
+                double yawDegrees) {
+            this(
+                    name,
+                    VisionConstants.WIDTH_PX,
+                    VisionConstants.HEIGHT_PX,
+                    VisionConstants.DIAG_FOV_DEGREES,
+                    VisionConstants.AVG_ERR_PX,
+                    VisionConstants.STD_DEV_ERR_PX,
+                    VisionConstants.FPS,
+                    VisionConstants.AVG_LATENCY_MS,
+                    VisionConstants.STD_DEV_LATENCY_MS,
+                    new Transform3d(
+                            xMeters,
+                            yMeters,
+                            zMeters,
+                            new Rotation3d(
+                                    Math.toRadians(rollDegrees),
+                                    Math.toRadians(pitchDegrees),
+                                    Math.toRadians(yawDegrees))));
+        }
 
         Camera(
                 String name,
                 int width,
                 int height,
-                int fovDeg,
-                int avgErrPx,
-                int stdDevErrPx,
-                int fps,
-                int avgLatencyMs,
-                int stdDevLatencyMs,
+                double fovDeg,
+                double avgErrPx,
+                double stdDevErrPx,
+                double fps,
+                double avgLatencyMs,
+                double stdDevLatencyMs,
                 Transform3d robotToCamera) {
+            this.robotToCamera = robotToCamera;
             SimCameraProperties cameraProp = new SimCameraProperties();
             PhotonCamera camera = new PhotonCamera(name);
             cameraProp.setCalibration(width, height, Rotation2d.fromDegrees(fovDeg));
