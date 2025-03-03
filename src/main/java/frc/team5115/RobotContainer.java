@@ -222,7 +222,8 @@ public class RobotContainer {
                 .onTrue(elevator.setHeight(Height.INTAKE))
                 .onFalse(elevator.setHeight(Height.MINIMUM));
         joyManip.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.MINIMUM));
-        joyManip.y().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.MINIMUM));
+        joyManip.x().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.MINIMUM));
+        joyManip.y().onTrue(elevator.setHeight(Height.L4)).onFalse(elevator.setHeight(Height.MINIMUM));
         joyManip.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
 
         joyManip.rightStick().onTrue(intake.vomit()).onFalse(intake.stop());
@@ -230,7 +231,7 @@ public class RobotContainer {
         //         .x()
         //         .onTrue(dealgaefacationinator5000.extend())
         //         .onFalse(dealgaefacationinator5000.retract());
-        joyManip.rightTrigger().whileTrue(dispenser.dispenseWhileCoral());
+        joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
         joyManip.leftBumper().onTrue(climber.retract());
         joyManip.rightBumper().onTrue(climber.extend());
@@ -338,6 +339,7 @@ public class RobotContainer {
 
     public void teleopInit() {
         drivetrain.setTeleopCurrentLimit();
+        elevator.zero().schedule();
     }
 
     public void autoInit() {

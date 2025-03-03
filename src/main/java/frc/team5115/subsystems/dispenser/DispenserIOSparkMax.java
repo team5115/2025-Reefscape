@@ -20,7 +20,7 @@ public class DispenserIOSparkMax implements DispenserIO {
         motor = new SparkMax(Constants.DISPENSER_MOTOR_ID, MotorType.kBrushless);
 
         final SparkMaxConfig motorConfig = new SparkMaxConfig();
-        motorConfig.smartCurrentLimit(35, 35).idleMode(IdleMode.kCoast);
+        motorConfig.smartCurrentLimit(35, 35).idleMode(IdleMode.kCoast).inverted(true);
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 

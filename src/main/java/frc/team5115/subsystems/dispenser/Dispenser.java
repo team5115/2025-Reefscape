@@ -30,7 +30,7 @@ public class Dispenser extends SubsystemBase {
     }
 
     public Command dispense() {
-        return setSpeed(+1);
+        return setSpeed(+0.8);
     }
 
     public Command dispenseWhileCoral() {
@@ -38,11 +38,11 @@ public class Dispenser extends SubsystemBase {
     }
 
     public Command reverse() {
-        return setSpeed(-1);
+        return setSpeed(-0.8);
     }
 
     public Command stop() {
-        return setSpeed(-0.1);
+        return setSpeed(0);
     }
 
     public boolean coralDetected() {

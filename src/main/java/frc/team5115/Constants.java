@@ -117,7 +117,7 @@ public final class Constants {
         public static final double CARRIAGE_MASS_KG = 9.072; // 20 lbs
         public static final double GEARING = 20.0; // numbers greater than 1 represent reductions
         // Below conversion factor found empirically, adjusted from old gear ratio to new one
-        public static final double METERS_PER_ROTATION = 0.0035181942 * 36.0 / 20.0;
+        public static final double METERS_PER_ROTATION = 0.0035181942 * 36.0 / 20.0 * 64.25 / 56.0;
 
         public static final int STALL_CURRENT_AMPS = 40;
         public static final int FREE_CURRENT_AMPS = 40;

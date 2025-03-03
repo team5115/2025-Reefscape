@@ -60,7 +60,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
                 encoder.getVelocity() * ElevatorConstants.METERS_PER_ROTATION / 60.0;
         inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
         inputs.currentAmps = motor.getOutputCurrent();
-        inputs.backCoralDetected = !backSensor.get();
+        inputs.backCoralDetected = false; // !backSensor.get();
         inputs.magnet1detected = !firstSensor.get();
         inputs.magnet2detected = false; // !secondSensor.get();
         inputs.magnet3detected = false; // !thirdSensor.get();
