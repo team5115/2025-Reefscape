@@ -62,9 +62,9 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         inputs.currentAmps = motor.getOutputCurrent();
         inputs.backCoralDetected = !backSensor.get();
         inputs.magnet1detected = !firstSensor.get();
-        inputs.magnet2detected = false;//!secondSensor.get();
-        inputs.magnet3detected = false;//!thirdSensor.get();
-        inputs.magnet4detected = false;//!fourthSensor.get();
+        inputs.magnet2detected = false; // !secondSensor.get();
+        inputs.magnet3detected = false; // !thirdSensor.get();
+        inputs.magnet4detected = false; // !fourthSensor.get();
     }
 
     @Override

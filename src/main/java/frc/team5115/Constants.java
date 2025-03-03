@@ -44,14 +44,14 @@ public final class Constants {
     public static final byte DISPENSER_MOTOR_ID = 13;
     public static final byte DEALGAE_MOTOR_ID = 14;
 
-    public static final byte CLIMBER_SENSOR_ID = 0;
+    public static final byte CLIMBER_SENSOR_ID = 3;
     public static final byte INTAKE_SENSOR_ID = 1;
-    public static final byte DISPENSER_SENSOR_ID = 2;
+    public static final byte DISPENSER_SENSOR_ID = 0;
 
-    public static final byte ELEVATOR_FIRST_SENSOR_ID = 3;
-    public static final byte ELEVATOR_SECOND_SENSOR_ID = 4;
-    public static final byte ELEVATOR_THIRD_SENSOR_ID = 5;
-    public static final byte ELEVATOR_FOURTH_SENSOR_ID = 6;
+    public static final byte ELEVATOR_FIRST_SENSOR_ID = 2;
+    // public static final byte ELEVATOR_SECOND_SENSOR_ID = 4;
+    // public static final byte ELEVATOR_THIRD_SENSOR_ID = 5;
+    // public static final byte ELEVATOR_FOURTH_SENSOR_ID = 6;
 
     public static final byte LED_STRIP_PWM_ID = 0;
 
