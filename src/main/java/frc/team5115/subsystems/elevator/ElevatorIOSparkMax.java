@@ -21,16 +21,16 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     private final SparkClosedLoopController velocityCLC;
     private final DigitalInput backSensor;
     private final DigitalInput firstSensor;
-    private final DigitalInput secondSensor;
-    private final DigitalInput thirdSensor;
-    private final DigitalInput fourthSensor;
+    // private final DigitalInput secondSensor;
+    // private final DigitalInput thirdSensor;
+    // private final DigitalInput fourthSensor;
 
     public ElevatorIOSparkMax() {
         backSensor = new DigitalInput(Constants.INTAKE_SENSOR_ID);
         firstSensor = new DigitalInput(Constants.ELEVATOR_FIRST_SENSOR_ID);
-        secondSensor = new DigitalInput(Constants.ELEVATOR_SECOND_SENSOR_ID);
-        thirdSensor = new DigitalInput(Constants.ELEVATOR_THIRD_SENSOR_ID);
-        fourthSensor = new DigitalInput(Constants.ELEVATOR_FOURTH_SENSOR_ID);
+        // secondSensor = new DigitalInput(Constants.ELEVATOR_SECOND_SENSOR_ID);
+        // thirdSensor = new DigitalInput(Constants.ELEVATOR_THIRD_SENSOR_ID);
+        // fourthSensor = new DigitalInput(Constants.ELEVATOR_FOURTH_SENSOR_ID);
         motor = new SparkMax(Constants.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
         velocityCLC = motor.getClosedLoopController();
@@ -38,7 +38,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
         final SparkMaxConfig config = new SparkMaxConfig();
         config
-                .inverted(false)
+                .inverted(true)
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(
                         ElevatorConstants.STALL_CURRENT_AMPS, ElevatorConstants.FREE_CURRENT_AMPS);
@@ -62,9 +62,9 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         inputs.currentAmps = motor.getOutputCurrent();
         inputs.backCoralDetected = !backSensor.get();
         inputs.magnet1detected = !firstSensor.get();
-        inputs.magnet2detected = !secondSensor.get();
-        inputs.magnet3detected = !thirdSensor.get();
-        inputs.magnet4detected = !fourthSensor.get();
+        inputs.magnet2detected = false;//!secondSensor.get();
+        inputs.magnet3detected = false;//!thirdSensor.get();
+        inputs.magnet4detected = false;//!fourthSensor.get();
     }
 
     @Override
