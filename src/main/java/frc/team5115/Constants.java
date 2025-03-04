@@ -108,7 +108,6 @@ public final class Constants {
         public static final int TurningMotorCurrentLimit = 20; // amps
     }
 
-    // TODO determine elevator constants
     public static class ElevatorConstants {
         // Heights and radius in meters
         public static final double MAX_HEIGHT = 0.3746;
@@ -117,7 +116,8 @@ public final class Constants {
         public static final double CARRIAGE_MASS_KG = 9.072; // 20 lbs
         public static final double GEARING = 20.0; // numbers greater than 1 represent reductions
         // Below conversion factor found empirically, adjusted from old gear ratio to new one
-        public static final double METERS_PER_ROTATION = 0.0035181942 * 36.0 / 20.0 * 64.25 / 56.0;
+        public static final double METERS_PER_ROTATION =
+                0.0035181942 * 36.0 / 20.0 * 64.25 / 56.0 * 38.0 / 32.0;
 
         public static final int STALL_CURRENT_AMPS = 40;
         public static final int FREE_CURRENT_AMPS = 40;
@@ -148,9 +148,9 @@ public final class Constants {
 
         private static final double forwardOffset = 0.40; // distance from the april tag
         private static final Transform2d transformLeft =
-                new Transform2d(new Translation2d(forwardOffset, -0.53), Rotation2d.k180deg);
+                new Transform2d(new Translation2d(forwardOffset, -0.45), Rotation2d.k180deg);
         private static final Transform2d transformRight =
-                new Transform2d(new Translation2d(forwardOffset, -0.16), Rotation2d.k180deg);
+                new Transform2d(new Translation2d(forwardOffset, -0.08), Rotation2d.k180deg);
 
         public static Pose2d getNearestScoringSpot(final Pose2d robot, final Side side) {
             double shortestDistance = Double.MAX_VALUE;
