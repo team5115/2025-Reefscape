@@ -135,7 +135,7 @@ public class Elevator extends SubsystemBase {
                 Commands.sequence(
                         Commands.runOnce(
                                 () -> {
-                                    velocitySetpoint = -0.01;
+                                    velocitySetpoint = -0.10;
                                 }),
                         Commands.waitUntil(() -> inputs.magnet1detected == true),
                         Commands.runOnce(
