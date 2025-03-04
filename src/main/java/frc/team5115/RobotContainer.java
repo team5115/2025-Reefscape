@@ -214,7 +214,8 @@ public class RobotContainer {
                 .whileTrue(
                         drivetrain.reefOrbitDrive(() -> -joyDrive.getLeftX(), () -> -joyDrive.getLeftY()));
 
-        joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() / 20.0));
+        // divide by 100 to achieve 3 cm/s max speed
+        joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
         elevator.setDefaultCommand(elevator.positionControl());
         joyManip.start().onTrue(elevator.setHeight(Height.MINIMUM));
         joyManip
