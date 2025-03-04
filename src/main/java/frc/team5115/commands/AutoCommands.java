@@ -30,8 +30,8 @@ public class AutoCommands {
                 Commands.print("Dispensing"),
                 elevator.setHeightAndWait(state, 3.0),
                 dispenser.dispense(),
-                dispenser.waitForDetectionState(false, 3.0),
-                Commands.waitSeconds(2), // TODO: tune this value
+                dispenser.waitForDetectionState(false, 0.75),
+                Commands.waitSeconds(0.75),
                 dispenser.stop(),
                 elevator.setHeight(Elevator.Height.INTAKE));
     }
