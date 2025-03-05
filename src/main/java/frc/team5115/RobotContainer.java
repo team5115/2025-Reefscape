@@ -218,13 +218,12 @@ public class RobotContainer {
         joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
         elevator.setDefaultCommand(elevator.positionControl());
         joyManip.start().onTrue(elevator.setHeight(Height.MINIMUM));
-        joyManip
-                .a()
-                .onTrue(elevator.setHeight(Height.INTAKE))
-                .onFalse(elevator.setHeight(Height.MINIMUM));
-        joyManip.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.MINIMUM));
-        joyManip.x().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.MINIMUM));
-        joyManip.y().onTrue(elevator.setHeight(Height.L4)).onFalse(elevator.setHeight(Height.MINIMUM));
+
+        joyManip.a().onTrue(dispenser.slowDispense()).onFalse(dispenser.stop());
+        
+        joyManip.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip.x().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip.y().onTrue(elevator.setHeight(Height.L4)).onFalse(elevator.setHeight(Height.INTAKE));
         joyManip.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
 
         joyManip.rightStick().onTrue(intake.vomit()).onFalse(intake.stop());

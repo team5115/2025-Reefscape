@@ -52,4 +52,8 @@ public class Dispenser extends SubsystemBase {
     public void getSparks(ArrayList<SparkMax> sparks) {
         io.getSparks(sparks);
     }
+
+    public Command slowDispense() {
+        return setSpeed(+0.2); // TODO determine slow dispense
+    }
 }
