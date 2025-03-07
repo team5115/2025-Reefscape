@@ -21,8 +21,8 @@ public class PhotonVision extends SubsystemBase {
     private final PhotonVisionIO io;
 
     public enum Camera {
-        FRONT_LEFT("FrontLeft", 0.36,0.30,0.21, 0, 13.0, 22.86),
-        FRONT_RIGHT("FrontRight", 0.355,0.365,0.21, 0, 13.0, -47.55);
+        FRONT_LEFT("FrontLeft", 0.36, 0.30, 0.21, 0, 13.0, 22.86),
+        FRONT_RIGHT("FrontRight", 0.355, 0.365, 0.21, 0, 13.0, -47.55);
 
         public final PhotonCameraSim cameraSim;
         public final PhotonPoseEstimator poseEstimator;
