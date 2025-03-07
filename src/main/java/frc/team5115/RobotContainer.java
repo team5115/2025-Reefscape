@@ -217,16 +217,16 @@ public class RobotContainer {
         // divide by 100 to achieve 3 cm/s max speed
         joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
         elevator.setDefaultCommand(elevator.positionControl());
-        joyManip.start().onTrue(elevator.setHeight(Height.MINIMUM));
+        // joyManip.a().onTrue(elevator.setHeight(Height.MINIMUM));
 
-        joyManip.a().onTrue(dispenser.slowDispense()).onFalse(dispenser.stop());
-        
+        joyManip.start().onTrue(dispenser.slowDispense()).onFalse(dispenser.stop());
+
         joyManip.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.INTAKE));
         joyManip.x().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.INTAKE));
         joyManip.y().onTrue(elevator.setHeight(Height.L4)).onFalse(elevator.setHeight(Height.INTAKE));
         joyManip.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
 
-        joyManip.rightStick().onTrue(intake.vomit()).onFalse(intake.stop());
+        joyManip.a().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
         // joyManip
         //         .x()
         //         .onTrue(dealgaefacationinator5000.extend())

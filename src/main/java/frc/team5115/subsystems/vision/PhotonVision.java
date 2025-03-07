@@ -23,6 +23,8 @@ public class PhotonVision extends SubsystemBase {
     public enum Camera {
         FRONT_RIGHT(
                 "FrontRight", +((75d / 2d) - 6d) / 100d, -((75d / 2d) - 4d) / 100d, +0.21, 0, 13, 32);
+        // FRONT_LEFT("FrontLeft", +((75d / 2d) - 6d) / 100d + 4.0/100.0, -((75d / 2d) - 4d) / 100d +
+        // 15.0/100.0, +0.26, 47.5, -15.88, -23)
 
         public final PhotonCameraSim cameraSim;
         public final PhotonPoseEstimator poseEstimator;
