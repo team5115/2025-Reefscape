@@ -231,10 +231,11 @@ public class RobotContainer {
         //         .onFalse(dealgaefacationinator5000.retract());
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        // joyManip.leftBumper().onTrue(climber.retract());
-        // joyManip.rightBumper().onTrue(climber.extend());
+        // joyManip.leftBumper().onTrue();
+        joyManip.rightBumper().onTrue(climber.extend());
+        joyManip.pov(90).onTrue(climber.retract());
         joyManip
-                .rightBumper()
+                .leftBumper()
                 .onTrue(elevator.setHeight(Height.L1))
                 .onFalse(elevator.setHeight(Height.INTAKE));
     }
