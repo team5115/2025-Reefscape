@@ -2,9 +2,7 @@ package frc.team5115;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -199,7 +197,7 @@ public class RobotContainer {
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
-        joyDrive.start().onTrue(resetFieldOrientation());
+        joyDrive.start().onTrue(offsetGyro());
         joyDrive
                 .leftTrigger()
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.LEFT))
@@ -319,24 +317,8 @@ public class RobotContainer {
         return autoChooser.get();
     }
 
-    private Command resetFieldOrientation() {
-        return Commands.runOnce(
-                        () -> {
-                            drivetrain.setPose(
-                                    new Pose2d(drivetrain.getPose().getTranslation(), new Rotation2d()));
-                            drivetrain.offsetGyro();
-                        },
-                        drivetrain)
-                .ignoringDisable(true);
-    }
-
-    private Command resetRobotPose() {
-        return Commands.runOnce(
-                        () -> {
-                            drivetrain.setPose(new Pose2d(new Translation2d(8.5, 6.0), new Rotation2d()));
-                        },
-                        drivetrain)
-                .ignoringDisable(true);
+    private Command offsetGyro() {
+        return Commands.runOnce(() -> drivetrain.offsetGyro(), drivetrain).ignoringDisable(true);
     }
 
     public void teleopInit() {
