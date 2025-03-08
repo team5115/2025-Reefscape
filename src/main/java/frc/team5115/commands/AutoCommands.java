@@ -17,9 +17,7 @@ public class AutoCommands {
         return Commands.sequence(
                 Commands.print("Intaking"),
                 elevator.setHeight(Elevator.Height.INTAKE),
-                dispenser
-                        .waitForDetectionState(true, 5.0)
-                        .alongWith(elevator.waitForDetectionState(false, 5.0)));
+                dispenser.waitForDetectionState(true, 5.0));
     }
 
     // Move elevator to state parameter and then dispense until coral fully exits
