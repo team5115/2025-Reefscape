@@ -54,6 +54,6 @@ public class Dispenser extends SubsystemBase {
     }
 
     public Command slowDispense() {
-        return setSpeed(+0.2); // TODO determine slow dispense
+        return setSpeed(+0.5); // ? TODO determine slow dispense
     }
 }
