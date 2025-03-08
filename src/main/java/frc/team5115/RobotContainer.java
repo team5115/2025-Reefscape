@@ -233,7 +233,10 @@ public class RobotContainer {
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
         // joyManip.leftBumper().onTrue(climber.retract());
         // joyManip.rightBumper().onTrue(climber.extend());
-        joyManip.rightBumper().onTrue(elevator.setHeight(Height.L1)).onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip
+                .rightBumper()
+                .onTrue(elevator.setHeight(Height.L1))
+                .onFalse(elevator.setHeight(Height.INTAKE));
     }
 
     private Command setRobotRelative(boolean state) {
