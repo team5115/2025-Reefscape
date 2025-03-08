@@ -3,7 +3,15 @@
  "version":1,
  "type":"Swerve",
  "variables":{
-  "expressions":{},
+  "expressions":{
+   "Topintake":{
+    "dimension":"Number",
+    "var":{
+     "exp":"0",
+     "val":0.0
+    }
+   }
+  },
   "poses":{
    "FinalScore":{
     "x":{
@@ -100,6 +108,34 @@
     },
     "heading":{
      "exp":"0 deg",
+     "val":0.0
+    }
+   },
+   "TI":{
+    "x":{
+     "exp":"1.23 m",
+     "val":1.23
+    },
+    "y":{
+     "exp":"7.76 m",
+     "val":7.76
+    },
+    "heading":{
+     "exp":"-53.5 deg",
+     "val":-0.9337511498169664
+    }
+   },
+   "TopIntake":{
+    "x":{
+     "exp":"0 m",
+     "val":0.0
+    },
+    "y":{
+     "exp":"0 m",
+     "val":0.0
+    },
+    "heading":{
+     "exp":"0 rad",
      "val":0.0
     }
    },
