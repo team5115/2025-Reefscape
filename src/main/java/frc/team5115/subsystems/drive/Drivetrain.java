@@ -561,7 +561,7 @@ public class Drivetrain extends SubsystemBase {
         gyroOffset = rawGyroRotation;
     }
 
-    public void offsetGyro(Rotation2d offset) { 
+    public void offsetGyro(Rotation2d offset) {
         gyroOffset = rawGyroRotation.plus(offset);
     }
 
