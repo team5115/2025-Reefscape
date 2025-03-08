@@ -106,7 +106,7 @@ public class Elevator extends SubsystemBase {
         Logger.processInputs(getName(), inputs);
         recordOutputs();
         if (inputs.magnet1detected) {
-            // offset = firstHeight - inputs.positionMeters;
+            offset = firstHeight - inputs.positionMeters;
         }
         // if (inputs.magnet2detected) {
         //     offset = secondHeight - inputs.positionMeters;
