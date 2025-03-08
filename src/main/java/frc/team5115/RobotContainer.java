@@ -73,7 +73,7 @@ public class RobotContainer {
     private final LoggedDashboardChooser<Command> autoChooser;
 
     // Setings
-    private boolean robotRelative = false;
+    private boolean robotRelative = true;
     private boolean slowMode = false;
     private boolean hasFaults = true;
     private double faultPrintTimeout = 0;
@@ -197,7 +197,7 @@ public class RobotContainer {
          */
 
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
-        joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
+        joyDrive.leftBumper().onTrue(setRobotRelative(false)).onFalse(setRobotRelative(true));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
         joyDrive.start().onTrue(resetFieldOrientation());
         joyDrive
