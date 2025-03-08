@@ -342,6 +342,7 @@ public class RobotContainer {
     public void teleopInit() {
         drivetrain.setTeleopCurrentLimit();
         elevator.zero().schedule();
+        drivetrain.offsetGyro(Rotation2d.fromDegrees(-90));
     }
 
     public void autoInit() {
