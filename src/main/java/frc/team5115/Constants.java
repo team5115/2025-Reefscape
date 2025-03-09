@@ -148,9 +148,9 @@ public final class Constants {
 
         private static final double forwardOffset = 0.40; // distance from the april tag
         private static final Transform2d transformLeft =
-                new Transform2d(new Translation2d(forwardOffset, -0.37), Rotation2d.k180deg);
+                new Transform2d(new Translation2d(forwardOffset, -0.51 + 0.06), Rotation2d.k180deg);
         private static final Transform2d transformRight =
-                new Transform2d(new Translation2d(forwardOffset, -0.02), Rotation2d.k180deg);
+                new Transform2d(new Translation2d(forwardOffset, -0.04), Rotation2d.k180deg);
 
         public static Pose2d getNearestScoringSpot(final Pose2d robot, final Side side) {
             double shortestDistance = Double.MAX_VALUE;
