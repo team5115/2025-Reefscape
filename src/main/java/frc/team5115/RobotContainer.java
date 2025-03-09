@@ -232,10 +232,10 @@ public class RobotContainer {
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
         // joyManip.leftBumper().onTrue();
-        joyManip.rightBumper().onTrue(climber.extend());
-        joyManip.pov(90).onTrue(climber.retract());
+        joyManip.pov(90).onTrue(climber.extend());
+        joyManip.pov(270).onTrue(climber.retract());
         joyManip
-                .leftBumper()
+                .rightBumper()
                 .onTrue(elevator.setHeight(Height.L1))
                 .onFalse(elevator.setHeight(Height.INTAKE));
     }
