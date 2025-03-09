@@ -12,7 +12,7 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"Intake.x", "val":1.2}, "y":{"exp":"Intake.y", "val":0.91}, "heading":{"exp":"Intake.heading", "val":0.9337511498169664}, "intervals":35, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"Intake.x", "val":1.55}, "y":{"exp":"Intake.y", "val":0.75}, "heading":{"exp":"Intake.heading", "val":0.9337511498169664}, "intervals":35, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"ScorePose2.x", "val":3.69751288694}, "y":{"exp":"ScorePose2.y", "val":2.94}, "heading":{"exp":"ScorePose2.heading", "val":1.0471975511965976}, "intervals":43, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},

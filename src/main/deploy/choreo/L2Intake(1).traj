@@ -15,7 +15,7 @@
   "waypoints":[
     {"x":{"exp":"ScorePose4.x", "val":3.175}, "y":{"exp":"ScorePose4.y", "val":4.13}, "heading":{"exp":"ScorePose4.heading", "val":0.0}, "intervals":42, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"1.71261727809906 m", "val":1.71261727809906}, "y":{"exp":"1.5016436576843262 m", "val":1.5016436576843262}, "heading":{"exp":"Intake.heading()", "val":0.9337511498169664}, "intervals":16, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"Intake.x", "val":1.2}, "y":{"exp":"Intake.y", "val":0.91}, "heading":{"exp":"Intake.heading", "val":0.9337511498169664}, "intervals":38, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+    {"x":{"exp":"Intake.x", "val":1.55}, "y":{"exp":"Intake.y", "val":0.75}, "heading":{"exp":"Intake.heading", "val":0.9337511498169664}, "intervals":38, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true}],

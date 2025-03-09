@@ -13,7 +13,7 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"TI.x", "val":1.17}, "y":{"exp":"TI.y", "val":7.14}, "heading":{"exp":"TI.heading", "val":-0.9337511498169664}, "intervals":46, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"TI.x", "val":1.48}, "y":{"exp":"TI.y", "val":7.31}, "heading":{"exp":"TI.heading", "val":-0.9337511498169664}, "intervals":46, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"4.9566330909729 m", "val":4.9566330909729}, "y":{"exp":"5.663224697113037 m", "val":5.663224697113037}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":34, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"TopScore3.x", "val":5.49248711306}, "y":{"exp":"TopScore3.y", "val":4.94}, "heading":{"exp":"TopScore3.heading", "val":-2.0943951023931953}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[

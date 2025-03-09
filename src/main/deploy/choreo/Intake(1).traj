@@ -17,7 +17,7 @@
     {"x":{"exp":"ScorePose1.x", "val":5.05751288694}, "y":{"exp":"ScorePose1.y", "val":2.79}, "heading":{"exp":"ScorePose1.heading", "val":2.0943951023931953}, "intervals":33, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"4.455453872680664 m", "val":4.455453872680664}, "y":{"exp":"2.2965104579925537 m", "val":2.2965104579925537}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":37, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"2.4038355350494385 m", "val":2.4038355350494385}, "y":{"exp":"1.454781413078308 m", "val":1.454781413078308}, "heading":{"exp":"Intake.heading()", "val":0.9337511498169664}, "intervals":20, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"Intake.x", "val":1.2}, "y":{"exp":"Intake.y", "val":0.91}, "heading":{"exp":"Intake.heading", "val":0.9337511498169664}, "intervals":17, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+    {"x":{"exp":"Intake.x", "val":1.55}, "y":{"exp":"Intake.y", "val":0.75}, "heading":{"exp":"Intake.heading", "val":0.9337511498169664}, "intervals":17, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true}],
