@@ -82,6 +82,15 @@ public class Robot extends LoggedRobot {
 
         // Start AdvantageKit logger
         Logger.start();
+        // Log build constants
+        Logger.recordOutput("BuildConstants/MavenName", BuildConstants.MAVEN_NAME);
+        Logger.recordOutput("BuildConstants/GitRevision", BuildConstants.GIT_REVISION);
+        Logger.recordOutput("BuildConstants/GitSHA", BuildConstants.GIT_SHA);
+        Logger.recordOutput("BuildConstants/GitDate", BuildConstants.GIT_DATE);
+        Logger.recordOutput("BuildConstants/GitBranch", BuildConstants.GIT_BRANCH);
+        Logger.recordOutput("BuildConstants/BuildDate", BuildConstants.BUILD_DATE);
+        Logger.recordOutput("BuildConstants/BuildUnixTime", BuildConstants.BUILD_UNIX_TIME);
+        Logger.recordOutput("BuildConstants/Dirty", BuildConstants.DIRTY);
 
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
