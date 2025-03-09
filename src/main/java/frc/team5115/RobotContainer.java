@@ -325,7 +325,7 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "DispenseLeft", AutoCommands.scoreSequence(drivetrain, elevator, dispenser, Side.LEFT));
 
-        NamedCommands.registerCommand("L1", AutoCommands.dispense(dispenser, elevator, Height.INTAKE));
+        NamedCommands.registerCommand("L1", AutoCommands.dispense(dispenser, elevator, Height.L1));
 
         System.out.println("Registered Commands");
     }
