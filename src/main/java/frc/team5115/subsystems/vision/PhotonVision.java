@@ -21,7 +21,7 @@ public class PhotonVision extends SubsystemBase {
     private final PhotonVisionIO io;
 
     public enum Camera {
-        FRONT_LEFT("LEFT_CAMERA", 0.36, -0.30, 0.20828, 0, 13.0, 41.7 - Math.toDegrees(0.098)),
+        FRONT_LEFT("LEFT_CAMERA", 0.36, -0.30, 0.20828, 0, 13.0, 36.085),
         ; // FRONT_RIGHT("RIGHT_CAMERA", 0.385, -0.37 - 0.2 - 0.07 - 0.02, 0.21, 0, 13.0, 41.5 - 116 +
         // 7);
 
