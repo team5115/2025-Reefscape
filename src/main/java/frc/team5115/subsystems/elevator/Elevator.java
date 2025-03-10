@@ -48,8 +48,9 @@ public class Elevator extends SubsystemBase {
     public enum Height {
         MINIMUM(minHeightInches),
         INTAKE(minHeightInches),
-        L2(minHeightInches + 14.85),
-        L3(52),
+        L1(minHeightInches + 7.0),
+        L2(minHeightInches + 14.85 + 1),
+        L3(52 + 1),
         L4(60);
 
         public final double position; // meters

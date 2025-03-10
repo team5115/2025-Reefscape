@@ -2,9 +2,7 @@ package frc.team5115;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -199,7 +197,7 @@ public class RobotContainer {
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
-        joyDrive.start().onTrue(resetFieldOrientation());
+        joyDrive.start().onTrue(offsetGyro());
         joyDrive
                 .leftTrigger()
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.LEFT))
@@ -233,8 +231,30 @@ public class RobotContainer {
         //         .onFalse(dealgaefacationinator5000.retract());
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        joyManip.leftBumper().onTrue(climber.retract());
+
         joyManip.rightBumper().onTrue(climber.extend());
+        joyManip.leftBumper().onTrue(climber.retract());
+
+        joyManip
+                .pov(0)
+                .onTrue(elevator.setHeight(Height.L1))
+                .onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip
+                .pov(45)
+                .onTrue(elevator.setHeight(Height.L1))
+                .onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip
+                .pov(90)
+                .onTrue(elevator.setHeight(Height.L1))
+                .onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip
+                .pov(315)
+                .onTrue(elevator.setHeight(Height.L1))
+                .onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip
+                .pov(270)
+                .onTrue(elevator.setHeight(Height.L1))
+                .onFalse(elevator.setHeight(Height.INTAKE));
     }
 
     private Command setRobotRelative(boolean state) {
@@ -305,6 +325,10 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "DispenseLeft", AutoCommands.scoreSequence(drivetrain, elevator, dispenser, Side.LEFT));
 
+        NamedCommands.registerCommand(
+                "L1",
+                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.RIGHT, Height.L1));
+
         System.out.println("Registered Commands");
     }
 
@@ -317,29 +341,14 @@ public class RobotContainer {
         return autoChooser.get();
     }
 
-    private Command resetFieldOrientation() {
-        return Commands.runOnce(
-                        () -> {
-                            drivetrain.setPose(
-                                    new Pose2d(drivetrain.getPose().getTranslation(), new Rotation2d()));
-                            drivetrain.offsetGyro();
-                        },
-                        drivetrain)
-                .ignoringDisable(true);
-    }
-
-    private Command resetRobotPose() {
-        return Commands.runOnce(
-                        () -> {
-                            drivetrain.setPose(new Pose2d(new Translation2d(8.5, 6.0), new Rotation2d()));
-                        },
-                        drivetrain)
-                .ignoringDisable(true);
+    private Command offsetGyro() {
+        return Commands.runOnce(() -> drivetrain.offsetGyro(), drivetrain).ignoringDisable(true);
     }
 
     public void teleopInit() {
         drivetrain.setTeleopCurrentLimit();
         elevator.zero().schedule();
+        drivetrain.offsetGyro(Rotation2d.fromDegrees(-90));
     }
 
     public void autoInit() {
