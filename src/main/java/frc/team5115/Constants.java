@@ -36,8 +36,8 @@ public final class Constants {
     public static final byte PNEUMATIC_HUB_ID = 2;
     public static final byte CLIMB_FORWARD_CHANNEL = 0;
     public static final byte CLIMB_REVERSE_CHANNEL = 1;
-    public static final byte DEALGAE_FORWARD_CHANNEL = 2;
-    public static final byte DEALGAE_REVERSE_CHANNEL = 3;
+    public static final byte DEALGAE_FORWARD_CHANNEL = 3;
+    public static final byte DEALGAE_REVERSE_CHANNEL = 2;
 
     public static final byte ELEVATOR_MOTOR_ID = 11;
     public static final byte INTAKE_MOTOR_ID = 12;

@@ -24,6 +24,7 @@ public class Dealgaefacationinator5000IOSparkMax implements Dealgaefacationinato
 
         final SparkMaxConfig motorConfig = new SparkMaxConfig();
         motorConfig.smartCurrentLimit(20, 40).idleMode(IdleMode.kCoast);
+        motorConfig.inverted(true);
         motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
