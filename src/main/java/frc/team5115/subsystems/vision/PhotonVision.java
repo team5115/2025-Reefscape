@@ -21,9 +21,8 @@ public class PhotonVision extends SubsystemBase {
     private final PhotonVisionIO io;
 
     public enum Camera {
-        FRONT_LEFT("LEFT_CAMERA", 0.36, -0.30, 0.20828, 0, 13.0, 36.085),
-        ; // FRONT_RIGHT("RIGHT_CAMERA", 0.385, -0.37 - 0.2 - 0.07 - 0.02, 0.21, 0, 13.0, 41.5 - 116 +
-        // 7);
+        LEFT_POINTING("LEFT_CAMERA", 0.75/2.0 - 2.5, -(0.75/2.0 - 8.5), 0.205, 0, -13.0, 42.545),
+        RIGHT_POINTING("RIGHT_CAMERA", 0.75/2.0 - 3.5, -(0.75/2.0 - 2.0), 0.205, 0, 13.0, -67.141);
 
         public final PhotonCameraSim cameraSim;
         public final PhotonPoseEstimator poseEstimator;
