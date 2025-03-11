@@ -134,10 +134,12 @@ public final class Constants {
     public static class AutoConstants {
         private static final List<Pose2d> leftScoringPoses = new ArrayList<Pose2d>();
         private static final List<Pose2d> rightScoringPoses = new ArrayList<Pose2d>();
+        private static final List<Pose2d> centerScoringPoses = new ArrayList<Pose2d>();
 
         public enum Side {
             LEFT(leftScoringPoses),
-            RIGHT(rightScoringPoses);
+            RIGHT(rightScoringPoses),
+            CENTER(centerScoringPoses);
 
             public final List<Pose2d> poses;
 
@@ -148,10 +150,11 @@ public final class Constants {
 
         private static final double forwardOffset = 0.40; // distance from the april tag
         private static final Transform2d transformLeft =
-                new Transform2d(
-                        new Translation2d(forwardOffset, -0.04 - 0.3287 - 0.1143), Rotation2d.k180deg);
+                new Transform2d(new Translation2d(forwardOffset, -0.35), Rotation2d.k180deg);
         private static final Transform2d transformRight =
-                new Transform2d(new Translation2d(forwardOffset, -0.04 - 0.1143), Rotation2d.k180deg);
+                new Transform2d(new Translation2d(forwardOffset, -0.04), Rotation2d.k180deg);
+        private static final Transform2d transformCenter =
+                new Transform2d(new Translation2d(forwardOffset, -0.20), Rotation2d.k180deg);
 
         public static Pose2d getNearestScoringSpot(final Pose2d robot, final Side side) {
             double shortestDistance = Double.MAX_VALUE;
@@ -172,6 +175,7 @@ public final class Constants {
                     final Pose2d tagPose = tag.pose.toPose2d();
                     leftScoringPoses.add(tagPose.transformBy(transformLeft));
                     rightScoringPoses.add(tagPose.transformBy(transformRight));
+                    centerScoringPoses.add(tagPose.transformBy(transformCenter));
                 }
             }
         }

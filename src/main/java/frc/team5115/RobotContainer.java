@@ -204,19 +204,30 @@ public class RobotContainer {
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
         joyDrive.start().onTrue(offsetGyro());
+
+        // joyDrive
+        //         .y()
+        //         .onTrue(drivetrain.setRadius())
+        //         .whileTrue(
+        //                 drivetrain.reefOrbitDrive(() -> -joyDrive.getLeftX(), () ->
+        // -joyDrive.getLeftY()));
+
         joyDrive
                 .leftTrigger()
+                .and(joyDrive.rightTrigger().negate())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.LEFT))
                 .whileTrue(drivetrain.alignSelectedSpot(Side.LEFT));
         joyDrive
                 .rightTrigger()
+                .and(joyDrive.leftTrigger().negate())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.RIGHT))
                 .whileTrue(drivetrain.alignSelectedSpot(Side.RIGHT));
+
         joyDrive
-                .y()
-                .onTrue(drivetrain.setRadius())
-                .whileTrue(
-                        drivetrain.reefOrbitDrive(() -> -joyDrive.getLeftX(), () -> -joyDrive.getLeftY()));
+                .leftTrigger()
+                .and(joyDrive.rightTrigger())
+                .onTrue(drivetrain.selectNearestScoringSpot(Side.CENTER))
+                .whileTrue(drivetrain.alignSelectedSpot(Side.CENTER));
 
         // divide by 100 to achieve 3 cm/s max speed
         joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
