@@ -89,11 +89,12 @@ public class RobotContainer {
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
+                final GenericEntry dispenseSpeedEntry = Shuffleboard.getTab("SmartDashboard").add("Dispenser Speed", 0).getEntry();
                 final PneumaticHub hub = new PneumaticHub(Constants.PNEUMATIC_HUB_ID);
                 gyro = new GyroIONavx();
                 climber = new Climber(new ClimberIORev(hub));
                 elevator = new Elevator(new ElevatorIOSparkMax());
-                dispenser = new Dispenser(new DispenserIOSparkMax(), elevator :: getDispenserSpeeds);
+                dispenser = new Dispenser(new DispenserIOSparkMax(), () -> dispenseSpeedEntry.getDouble(0.1));
                 intake = new Intake(new IntakeIOSparkMax(), elevator);
                 dealgaefacationinator5000 =
                         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax(hub));
@@ -113,7 +114,7 @@ public class RobotContainer {
                 gyro = new GyroIO() {};
                 climber = new Climber(new ClimberIOSim());
                 elevator = new Elevator(new ElevatorIOSim());
-                dispenser = new Dispenser(new DispenserIOSim(), elevator :: getDispenserSpeeds);
+                dispenser = new Dispenser(new DispenserIOSim(), elevator::getDispenserSpeeds);
                 intake = new Intake(new IntakeIOSim(), elevator);
                 dealgaefacationinator5000 =
                         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
@@ -129,7 +130,7 @@ public class RobotContainer {
                 gyro = new GyroIO() {};
                 climber = new Climber(new ClimberIO() {});
                 elevator = new Elevator(new ElevatorIO() {});
-                dispenser = new Dispenser(new DispenserIO() {}, elevator :: getDispenserSpeeds);
+                dispenser = new Dispenser(new DispenserIO() {}, elevator::getDispenserSpeeds);
                 intake = new Intake(new IntakeIO() {}, elevator);
                 dealgaefacationinator5000 =
                         new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
