@@ -5,14 +5,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.ArrayList;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Dispenser extends SubsystemBase {
     private final DispenserIO io;
     private final DispenserIOInputsAutoLogged inputs = new DispenserIOInputsAutoLogged();
+    private final DoubleSupplier speedSupplier;
 
-    public Dispenser(DispenserIO io) {
+    public Dispenser(DispenserIO io, DoubleSupplier speedSupplier) {
         this.io = io;
+        this.speedSupplier = speedSupplier;
     }
 
     @Override
@@ -30,7 +33,7 @@ public class Dispenser extends SubsystemBase {
     }
 
     public Command dispense() {
-        return setSpeed(+0.8);
+        return Commands.run(() -> io.setPercent(speedSupplier.getAsDouble()), this);
     }
 
     public Command dispenseWhileCoral() {

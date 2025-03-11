@@ -220,4 +220,13 @@ public class Elevator extends SubsystemBase {
     public void getSparks(ArrayList<SparkMax> sparks) {
         io.getSparks(sparks);
     }
+
+    public double getDispenserSpeeds() { 
+        if (height.position <= 10.925) {
+            return 0.45; //TODO find correct speed 
+        }
+        else { 
+            return 0.65; 
+        }
+    }
 }
