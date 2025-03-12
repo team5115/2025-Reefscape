@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants.AutoConstants;
 import frc.team5115.Constants.AutoConstants.Side;
@@ -153,7 +154,8 @@ public class RobotContainer {
         }
 
         // Register auto commands for pathplanner
-        registerCommands(drivetrain, vision, elevator, dispenser, intake, null, climber);
+        registerCommands(
+                drivetrain, vision, elevator, dispenser, intake, dealgaefacationinator5000, climber);
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -186,6 +188,16 @@ public class RobotContainer {
         autoChooser.addOption("Drive All SysIds", drivetrain.driveAllSysIds());
 
         configureButtonBindings();
+        configureBlingBindings();
+    }
+
+    private void configureBlingBindings() {
+        bling.setDefaultCommand(bling.redKITT());
+        dispenser.coralDetected().whileTrue(bling.greenKITT());
+        drivetrain.aligningToGoal().whileTrue(bling.yellowScrollIn());
+        drivetrain.alignedAtGoalTrigger().whileTrue(bling.greenScrollIn());
+        climber.extended().whileTrue(bling.purpleSolid());
+        new Trigger(() -> hasFaults).whileTrue(bling.faultFlash());
     }
 
     private void configureButtonBindings() {
@@ -299,7 +311,30 @@ public class RobotContainer {
         return Commands.runOnce(() -> slowMode = state);
     }
 
-    public void robotPeriodic() {}
+    public void robotPeriodic() {
+        if (Constants.currentMode == Mode.REAL) {
+            if (faultPrintTimeout <= 0) {
+                final var faults =
+                        RobotFaults.fromSubsystems(
+                                drivetrain,
+                                vision,
+                                climber,
+                                elevator,
+                                dispenser,
+                                intake,
+                                dealgaefacationinator5000,
+                                joyDrive.isConnected() && joyManip.isConnected());
+                hasFaults = faults.hasFaults();
+                if (hasFaults) {
+                    System.err.println(faults.toString());
+                }
+                faultPrintTimeout = 50;
+            }
+            faultPrintTimeout -= 1;
+            Logger.recordOutput("HasFaults", hasFaults);
+            clearForMatchEntry.setBoolean(!hasFaults);
+        }
+    }
 
     /**
      * Register commands for pathplanner to use in autos
@@ -380,7 +415,6 @@ public class RobotContainer {
     }
 
     public void teleopInit() {
-        bling.redKITT().schedule();
         drivetrain.setTeleopCurrentLimit();
         elevator.zero().schedule();
         drivetrain.offsetGyro(Rotation2d.fromDegrees(-90));
@@ -390,36 +424,5 @@ public class RobotContainer {
         drivetrain.setAutoCurrentLimit();
     }
 
-    public void disabledPeriodic() {
-        if (Constants.currentMode == Mode.REAL) {
-            if (hasFaults || constantlyCheckFaults) {
-                if (faultPrintTimeout <= 0) {
-                    preMatchCheck();
-                    faultPrintTimeout = 50;
-                }
-                faultPrintTimeout -= 1;
-            }
-            Logger.recordOutput("HasFaults", hasFaults);
-            clearForMatchEntry.setBoolean(!hasFaults);
-        }
-    }
-
-    private void preMatchCheck() {
-        final var faults =
-                RobotFaults.fromSubsystems(
-                        drivetrain,
-                        vision,
-                        climber,
-                        elevator,
-                        dispenser,
-                        intake,
-                        null,
-                        joyDrive.isConnected() && joyManip.isConnected());
-        hasFaults = faults.hasFaults();
-        if (hasFaults) {
-            System.err.println(faults.toString());
-        } else {
-            System.out.println(faults.toString());
-        }
-    }
+    public void disabledPeriodic() {}
 }

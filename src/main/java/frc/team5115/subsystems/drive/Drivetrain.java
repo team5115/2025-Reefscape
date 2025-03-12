@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants.AutoConstants;
 import frc.team5115.Constants.SwerveConstants;
@@ -358,9 +359,19 @@ public class Drivetrain extends SubsystemBase {
     @AutoLogOutput(key = "AutoAlign/SelectedPose")
     private Pose2d selectedPose = null;
 
+    private boolean aligning = false;
+
     @AutoLogOutput(key = "AutoAlign/AtGoal")
-    private boolean alignAtGoal() {
+    private boolean alignedAtGoal() {
         return xPid.atGoal() && yPid.atGoal() && anglePid.atGoal();
+    }
+
+    public Trigger alignedAtGoalTrigger() {
+        return new Trigger(() -> alignedAtGoal());
+    }
+
+    public Trigger aligningToGoal() {
+        return new Trigger(() -> aligning);
     }
 
     /** Drives to nearest scoring spot until all pids at goal */
@@ -368,7 +379,7 @@ public class Drivetrain extends SubsystemBase {
         return Commands.sequence(
                 Commands.print("AutoDriving!"),
                 selectNearestScoringSpot(side),
-                alignSelectedSpot(side).until(() -> alignAtGoal()));
+                alignSelectedSpot(side).until(() -> alignedAtGoal()));
     }
 
     /**
@@ -411,6 +422,7 @@ public class Drivetrain extends SubsystemBase {
     private Command alignByPids(Supplier<Pose2d> goalSupplier) {
         return Commands.runEnd(
                 () -> {
+                    aligning = true;
                     final var goalPose = goalSupplier.get();
                     final var pose = getPose();
                     final var omega =
@@ -431,7 +443,10 @@ public class Drivetrain extends SubsystemBase {
                     runVelocity(
                             ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getRotation()));
                 },
-                this::stop,
+                () -> {
+                    stop();
+                    aligning = false;
+                },
                 this);
     }
 
