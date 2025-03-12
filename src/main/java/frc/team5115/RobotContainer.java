@@ -15,6 +15,10 @@ import frc.team5115.Constants.AutoConstants.Side;
 import frc.team5115.Constants.Mode;
 import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.DriveCommands;
+import frc.team5115.subsystems.bling.Bling;
+import frc.team5115.subsystems.bling.BlingIO;
+import frc.team5115.subsystems.bling.BlingIOReal;
+import frc.team5115.subsystems.bling.BlingIOSim;
 import frc.team5115.subsystems.climber.Climber;
 import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIORev;
@@ -65,6 +69,7 @@ public class RobotContainer {
     private final Dispenser dispenser;
     private final Intake intake;
     private final Dealgaefacationinator5000 dealgaefacationinator5000;
+    private final Bling bling;
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
@@ -108,6 +113,7 @@ public class RobotContainer {
                                 new ModuleIOSparkMax(2),
                                 new ModuleIOSparkMax(3));
                 vision = new PhotonVision(new PhotonVisionIOReal(), drivetrain);
+                bling = new Bling(new BlingIOReal());
                 clearForMatchEntry =
                         Shuffleboard.getTab("SmartDashboard").add("ClearForMatch", false).getEntry();
                 break;
@@ -124,6 +130,7 @@ public class RobotContainer {
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
                 vision = new PhotonVision(new PhotonVisionIOSim(), drivetrain);
+                bling = new Bling(new BlingIOSim());
                 clearForMatchEntry = null;
                 break;
 
@@ -140,6 +147,7 @@ public class RobotContainer {
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
                 vision = new PhotonVision(new PhotonVisionIO() {}, drivetrain);
+                bling = new Bling(new BlingIO() {});
                 clearForMatchEntry = null;
                 break;
         }
@@ -367,6 +375,7 @@ public class RobotContainer {
     }
 
     public void teleopInit() {
+        bling.redKITT().schedule();
         drivetrain.setTeleopCurrentLimit();
         elevator.zero().schedule();
         drivetrain.offsetGyro(Rotation2d.fromDegrees(-90));
