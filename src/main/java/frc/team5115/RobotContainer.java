@@ -200,11 +200,11 @@ public class RobotContainer {
                         () -> -joyDrive.getRightX()));
 
         /* Drive button bindings -
-         * x: Forces the robot to stop moving
-         * LeftBumper: Sets robot relative to true while held down
-         * rightBumper: Sets slow mode while held down
+         * x: forces the robot to stop moving
+         * left bumper: Sets robot relative to true while held down
+         * right bumper: Sets slow mode while held down
          * left and right triggers align to score respectively
-         * Y does reef orbit controlled drive
+         * both triggers aligns to the middle
          * start resets field orientation
          */
 
@@ -237,23 +237,41 @@ public class RobotContainer {
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.CENTER))
                 .whileTrue(drivetrain.alignSelectedSpot(Side.CENTER));
 
+        /*
+         * Manipulator button bindings:
+         * hold left stick and move it for elevator manual control
+         * hold a for L1
+         * hold b for L2
+         * hold x for L3
+         * press back to rezero elevator
+         * hold y to vomit
+         * hold right trigger to dispense
+         * hold left trigger to reverse dispense
+         * press right bumper to extend climb piston
+         * press left bumper to retract climb piston
+         * point down on dpad and press B (L2) or X (L3) to clean algae, release to stow
+         */
+
         // divide by 100 to achieve 3 cm/s max speed
-        joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
         elevator.setDefaultCommand(elevator.positionControl());
-        // joyManip.a().onTrue(elevator.setHeight(Height.MINIMUM));
+        joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
 
-        // joyManip.start().onTrue(dispenser.slowDispense()).onFalse(dispenser.stop());
+        joyManip.a().onTrue(elevator.setHeight(Height.L1)).onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip
+                .b()
+                .and(joyManip.pov(180).negate())
+                .onTrue(elevator.setHeight(Height.L2))
+                .onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip
+                .x()
+                .and(joyManip.pov(180).negate())
+                .onTrue(elevator.setHeight(Height.L3))
+                .onFalse(elevator.setHeight(Height.INTAKE));
 
-        joyManip.b().and(joyManip.pov(180).negate()).onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip.x().and(joyManip.pov(180).negate()).onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.INTAKE));
-        // joyManip.y().onTrue(elevator.setHeight(Height.L4)).onFalse(elevator.setHeight(Height.INTAKE));
         joyManip.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
 
-        joyManip.a().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
-        // joyManip
-        //         .x()
-        //         .onTrue(dealgaefacationinator5000.extend())
-        //         .onFalse(dealgaefacationinator5000.retract());
+        joyManip.y().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
+
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
 
@@ -262,36 +280,15 @@ public class RobotContainer {
 
         // dealgae
         joyManip
-                .pov(180)
-                .and(joyManip.b())
+                .b()
+                .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
                 .onTrue(DriveCommands.cleanStart(Height.L2, elevator, dealgaefacationinator5000))
                 .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
         joyManip
-                .pov(180)
-                .and(joyManip.x())
+                .x()
+                .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
                 .onTrue(DriveCommands.cleanStart(Height.L3, elevator, dealgaefacationinator5000))
                 .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
-
-        joyManip
-                .pov(0)
-                .onTrue(elevator.setHeight(Height.L1))
-                .onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip
-                .pov(45)
-                .onTrue(elevator.setHeight(Height.L1))
-                .onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip
-                .pov(90)
-                .onTrue(elevator.setHeight(Height.L1))
-                .onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip
-                .pov(315)
-                .onTrue(elevator.setHeight(Height.L1))
-                .onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip
-                .pov(270)
-                .onTrue(elevator.setHeight(Height.L1))
-                .onFalse(elevator.setHeight(Height.INTAKE));
     }
 
     private Command setRobotRelative(boolean state) {
