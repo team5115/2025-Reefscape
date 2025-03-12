@@ -21,6 +21,16 @@ public class PhotonVision extends SubsystemBase {
     private final PhotonVisionIO io;
 
     public enum Camera {
+        /*
+	The coordinate system for the camera to robot transforms is somewhat confusing.
+	All lengths are in meters, and angles are in degrees.
+	Positions are relative to the center of the robot.
+	Positive X means that the camera is towards the front of the robot.
+	Positive Y is directed to the left of the robot.
+	Positive yaw points to the left, i.e. 90 degrees in yaw is directly pointed left.
+	Positive pitch is actually pointed down, which is VERY important to remember.
+	We still don't know which way roll is tbh.	
+	*/
         LEFT_POINTING(
                 "LEFT_CAMERA", 0.75 / 2.0 - 0.025, -(0.75 / 2.0 - 0.085), +0.205, +0, -13.0, +42.545),
         RIGHT_POINTING(
