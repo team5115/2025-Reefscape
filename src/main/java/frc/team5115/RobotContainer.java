@@ -242,11 +242,11 @@ public class RobotContainer {
         elevator.setDefaultCommand(elevator.positionControl());
         // joyManip.a().onTrue(elevator.setHeight(Height.MINIMUM));
 
-        joyManip.start().onTrue(dispenser.slowDispense()).onFalse(dispenser.stop());
+        // joyManip.start().onTrue(dispenser.slowDispense()).onFalse(dispenser.stop());
 
-        joyManip.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip.x().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip.y().onTrue(elevator.setHeight(Height.L4)).onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip.b().and(joyManip.pov(180).negate()).onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip.x().and(joyManip.pov(180).negate()).onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.INTAKE));
+        // joyManip.y().onTrue(elevator.setHeight(Height.L4)).onFalse(elevator.setHeight(Height.INTAKE));
         joyManip.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
 
         joyManip.a().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
@@ -261,8 +261,16 @@ public class RobotContainer {
         joyManip.leftBumper().onTrue(climber.retract());
 
         // dealgae
-        joyManip.pov(135).onTrue(dealgaefacationinator5000.extend());
-        joyManip.pov(225).onTrue(dealgaefacationinator5000.retract());
+        joyManip
+                .pov(180)
+                .and(joyManip.b())
+                .onTrue(DriveCommands.cleanStart(Height.L2, elevator, dealgaefacationinator5000))
+                .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
+        joyManip
+                .pov(180)
+                .and(joyManip.x())
+                .onTrue(DriveCommands.cleanStart(Height.L3, elevator, dealgaefacationinator5000))
+                .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
 
         joyManip
                 .pov(0)
