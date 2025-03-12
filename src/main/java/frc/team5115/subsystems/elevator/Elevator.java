@@ -49,8 +49,10 @@ public class Elevator extends SubsystemBase {
         MINIMUM(minHeightInches),
         INTAKE(minHeightInches),
         L1(minHeightInches + 7.0),
-        L2(minHeightInches + 14.85 + 1),
-        L3(52 + 1),
+        L2(minHeightInches + 14.85),
+        CLEAN2(minHeightInches + 14.85 + 6),
+        L3(52),
+        CLEAN3(52 + 6),
         L4(60);
 
         public final double position; // meters

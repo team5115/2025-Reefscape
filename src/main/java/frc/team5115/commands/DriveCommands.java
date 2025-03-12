@@ -9,7 +9,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.team5115.Constants.SwerveConstants;
+import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000;
 import frc.team5115.subsystems.drive.Drivetrain;
+import frc.team5115.subsystems.elevator.Elevator;
+import frc.team5115.subsystems.elevator.Elevator.Height;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -66,5 +70,15 @@ public class DriveCommands {
                                             vx, vy, omega, drivetrain.getGyroRotation()));
                 },
                 drivetrain);
+    }
+
+    public static Command cleanStart(Height height, Elevator elevator, Dealgaefacationinator5000 dealgae){
+        return Commands.sequence(elevator.setHeightAndWait(height, 5), 
+        dealgae.extend(), 
+        elevator.setHeightAndWait((height==Height.L2 ? Height.CLEAN2 : Height.CLEAN3), 5));
+    }
+
+    public static Command cleanEnd(Elevator elevator, Dealgaefacationinator5000 dealgae){
+        return null;
     }
 }
