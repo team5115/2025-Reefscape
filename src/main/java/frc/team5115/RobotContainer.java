@@ -25,9 +25,6 @@ import frc.team5115.subsystems.climber.ClimberIO;
 import frc.team5115.subsystems.climber.ClimberIORev;
 import frc.team5115.subsystems.climber.ClimberIOSim;
 import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000;
-import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IO;
-import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IOSim;
-import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IOSparkMax;
 import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.dispenser.DispenserIO;
 import frc.team5115.subsystems.dispenser.DispenserIOSim;
@@ -102,7 +99,7 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIOSparkMax());
                 dispenser =
                         new Dispenser(new DispenserIOSparkMax(), () -> dispenseSpeedEntry.getDouble(0.1));
-                intake = new Intake(new IntakeIOSparkMax(), elevator);
+                intake = new Intake(new IntakeIOSparkMax());
                 // dealgaefacationinator5000 =
                 //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax(hub));
                 drivetrain =
@@ -123,7 +120,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIOSim());
                 elevator = new Elevator(new ElevatorIOSim());
                 dispenser = new Dispenser(new DispenserIOSim(), elevator::getDispenserSpeeds);
-                intake = new Intake(new IntakeIOSim(), elevator);
+                intake = new Intake(new IntakeIOSim());
                 // dealgaefacationinator5000 =
                 //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
                 drivetrain =
@@ -140,7 +137,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIO() {});
                 elevator = new Elevator(new ElevatorIO() {});
                 dispenser = new Dispenser(new DispenserIO() {}, elevator::getDispenserSpeeds);
-                intake = new Intake(new IntakeIO() {}, elevator);
+                intake = new Intake(new IntakeIO() {});
                 // dealgaefacationinator5000 =
                 //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
                 drivetrain =
@@ -153,8 +150,7 @@ public class RobotContainer {
         }
 
         // Register auto commands for pathplanner
-        registerCommands(
-                drivetrain, vision, elevator, dispenser, intake, null, climber);
+        registerCommands(drivetrain, vision, elevator, dispenser, intake, null, climber);
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -191,7 +187,7 @@ public class RobotContainer {
     }
 
     private void configureBlingBindings() {
-        bling.setDefaultCommand(bling.redKITT());
+        bling.setDefaultCommand(bling.redKITT().ignoringDisable(true));
         dispenser.coralDetected().whileTrue(bling.greenKITT());
         drivetrain.aligningToGoal().whileTrue(bling.yellowScrollIn());
         drivetrain.alignedAtGoalTrigger().whileTrue(bling.greenScrollIn());
@@ -260,12 +256,15 @@ public class RobotContainer {
          * hold left trigger to reverse dispense
          * press right bumper to extend climb piston
          * press left bumper to retract climb piston
-         * point down on dpad and press B (L2) or X (L3) to clean algae, release to stow
+        //  * point down on dpad and press B (L2) or X (L3) to clean algae, release to stow
          */
 
         // divide by 100 to achieve 3 cm/s max speed
         elevator.setDefaultCommand(elevator.positionControl());
         joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
+
+        intake.setDefaultCommand(intake.intakeIf(elevator::atIntake));
+        joyManip.a().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
 
         joyManip
                 .start()
@@ -283,8 +282,6 @@ public class RobotContainer {
                 .onFalse(elevator.setHeight(Height.INTAKE));
 
         joyManip.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
-
-        joyManip.a().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
 
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
