@@ -4,39 +4,31 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.team5115.subsystems.elevator.Elevator;
 import java.util.ArrayList;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-    private static final double INDEXING_SPEED = 0.15;
+    private static final double INTAKE_SPEED = 0.15;
     private final IntakeIO io;
-    private final Elevator elevator;
     private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-    public Intake(IntakeIO io, Elevator elevator) {
+    public Intake(IntakeIO io) {
         this.io = io;
-        this.elevator = elevator;
     }
 
     @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Intake", inputs);
-
-        if (elevator.atIntake()) {
-            io.setPercent(INDEXING_SPEED);
-        } else {
-            io.setPercent(+0);
-        }
     }
 
     public Command setSpeed(double speed) {
         return Commands.runOnce(() -> io.setPercent(speed));
     }
 
-    public Command index() {
-        return setSpeed(INDEXING_SPEED);
+    public Command intake() {
+        return setSpeed(INTAKE_SPEED);
     }
 
     public Command vomit() {
@@ -49,5 +41,17 @@ public class Intake extends SubsystemBase {
 
     public void getSparks(ArrayList<SparkMax> sparks) {
         io.getSparks(sparks);
+    }
+
+    public Command intakeIf(BooleanSupplier supplier) {
+        return Commands.run(
+                () -> {
+                    if (supplier.getAsBoolean()) {
+                        io.setPercent(INTAKE_SPEED);
+                    } else {
+                        io.setPercent(0);
+                    }
+                },
+                this);
     }
 }

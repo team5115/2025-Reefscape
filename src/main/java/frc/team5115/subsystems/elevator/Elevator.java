@@ -120,10 +120,10 @@ public class Elevator extends SubsystemBase {
         // if (inputs.magnet4detected) {
         //     offset = fourthHeight - inputs.positionMeters;
         // }
-        if (inputs.backCoralDetected) {
-            // Force the elvator to stay at the intake position when there is a coral in the intake
-            height = Height.INTAKE;
-        }
+        // if (inputs.backCoralDetected) {
+        //     // Force the elvator to stay at the intake position when there is a coral in the intake
+        //     height = Height.INTAKE;
+        // }
         io.setElevatorVelocity(velocitySetpoint, 0);
         elevatorMechanismLigament2d.setLength(getActualHeight() * 8);
     }
@@ -140,7 +140,7 @@ public class Elevator extends SubsystemBase {
                                 () -> {
                                     velocitySetpoint = -0.10;
                                 }),
-                        Commands.waitUntil(() -> inputs.magnet1detected == true),
+                        Commands.waitUntil(() -> inputs.magnet1detected == true).withTimeout(3.0),
                         Commands.runOnce(
                                 () -> {
                                     velocitySetpoint = 0;
