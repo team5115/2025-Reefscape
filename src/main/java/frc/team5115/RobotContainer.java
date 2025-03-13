@@ -69,7 +69,7 @@ public class RobotContainer {
     private final Elevator elevator;
     private final Dispenser dispenser;
     private final Intake intake;
-    private final Dealgaefacationinator5000 dealgaefacationinator5000;
+    // private final Dealgaefacationinator5000 dealgaefacationinator5000;
     private final Bling bling;
 
     // Controllers
@@ -84,7 +84,6 @@ public class RobotContainer {
     private boolean slowMode = false;
     private boolean hasFaults = true;
     private double faultPrintTimeout = 0;
-    private final boolean constantlyCheckFaults = true;
 
     // Works with faults
     private final GenericEntry clearForMatchEntry;
@@ -104,8 +103,8 @@ public class RobotContainer {
                 dispenser =
                         new Dispenser(new DispenserIOSparkMax(), () -> dispenseSpeedEntry.getDouble(0.1));
                 intake = new Intake(new IntakeIOSparkMax(), elevator);
-                dealgaefacationinator5000 =
-                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax(hub));
+                // dealgaefacationinator5000 =
+                //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax(hub));
                 drivetrain =
                         new Drivetrain(
                                 gyro,
@@ -125,8 +124,8 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIOSim());
                 dispenser = new Dispenser(new DispenserIOSim(), elevator::getDispenserSpeeds);
                 intake = new Intake(new IntakeIOSim(), elevator);
-                dealgaefacationinator5000 =
-                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
+                // dealgaefacationinator5000 =
+                //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
@@ -142,8 +141,8 @@ public class RobotContainer {
                 elevator = new Elevator(new ElevatorIO() {});
                 dispenser = new Dispenser(new DispenserIO() {}, elevator::getDispenserSpeeds);
                 intake = new Intake(new IntakeIO() {}, elevator);
-                dealgaefacationinator5000 =
-                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
+                // dealgaefacationinator5000 =
+                //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
@@ -155,7 +154,7 @@ public class RobotContainer {
 
         // Register auto commands for pathplanner
         registerCommands(
-                drivetrain, vision, elevator, dispenser, intake, dealgaefacationinator5000, climber);
+                drivetrain, vision, elevator, dispenser, intake, null, climber);
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -268,7 +267,10 @@ public class RobotContainer {
         elevator.setDefaultCommand(elevator.positionControl());
         joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
 
-        joyManip.start().onTrue(elevator.setHeight(Height.L1)).onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip
+                .start()
+                .onTrue(elevator.setHeight(Height.L1))
+                .onFalse(elevator.setHeight(Height.INTAKE));
         joyManip
                 .b()
                 .and(joyManip.pov(180).negate())
@@ -291,16 +293,16 @@ public class RobotContainer {
         joyManip.leftBumper().onTrue(climber.retract());
 
         // dealgae
-        joyManip
-                .b()
-                .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
-                .onTrue(DriveCommands.cleanStart(Height.L2, elevator, dealgaefacationinator5000))
-                .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
-        joyManip
-                .x()
-                .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
-                .onTrue(DriveCommands.cleanStart(Height.L3, elevator, dealgaefacationinator5000))
-                .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
+        // joyManip
+        //         .b()
+        //         .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
+        //         .onTrue(DriveCommands.cleanStart(Height.L2, elevator, dealgaefacationinator5000))
+        //         .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
+        // joyManip
+        //         .x()
+        //         .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
+        //         .onTrue(DriveCommands.cleanStart(Height.L3, elevator, dealgaefacationinator5000))
+        //         .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
     }
 
     private Command setRobotRelative(boolean state) {
@@ -322,7 +324,7 @@ public class RobotContainer {
                                 elevator,
                                 dispenser,
                                 intake,
-                                dealgaefacationinator5000,
+                                null,
                                 joyDrive.isConnected() && joyManip.isConnected());
                 hasFaults = faults.hasFaults();
                 if (hasFaults) {
