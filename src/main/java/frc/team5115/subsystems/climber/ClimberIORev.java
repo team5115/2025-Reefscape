@@ -12,7 +12,7 @@ public class ClimberIORev implements ClimberIO {
     private final DoubleSolenoid m_doubleSolenoid; // Declare as a class-level variable
 
     public ClimberIORev(PneumaticHub hub) {
-        climbSensor = new DigitalInput(Constants.CLIMBER_SENSOR_ID);
+        climbSensor = new DigitalInput(Constants.CLIMB_INAKE_SENSOR);
         m_doubleSolenoid =
                 hub.makeDoubleSolenoid(Constants.CLIMB_FORWARD_CHANNEL, Constants.CLIMB_REVERSE_CHANNEL);
     }

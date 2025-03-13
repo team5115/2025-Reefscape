@@ -26,7 +26,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     // private final DigitalInput fourthSensor;
 
     public ElevatorIOSparkMax() {
-        backSensor = new DigitalInput(Constants.INTAKE_SENSOR_ID);
+        backSensor = new DigitalInput(Constants.BACK_CORAL_SENSOR);
         firstSensor = new DigitalInput(Constants.ELEVATOR_FIRST_SENSOR_ID);
         // secondSensor = new DigitalInput(Constants.ELEVATOR_SECOND_SENSOR_ID);
         // thirdSensor = new DigitalInput(Constants.ELEVATOR_THIRD_SENSOR_ID);
