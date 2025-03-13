@@ -3,15 +3,7 @@
  "version":1,
  "type":"Swerve",
  "variables":{
-  "expressions":{
-   "Topintake":{
-    "dimension":"Number",
-    "var":{
-     "exp":"0",
-     "val":0.0
-    }
-   }
-  },
+  "expressions":{},
   "poses":{
    "FinalScore":{
     "x":{
@@ -29,12 +21,12 @@
    },
    "Intake":{
     "x":{
-     "exp":"1.55 m",
-     "val":1.55
+     "exp":"1.52 m",
+     "val":1.52
     },
     "y":{
-     "exp":"0.75 m",
-     "val":0.75
+     "exp":"0.69 m",
+     "val":0.69
     },
     "heading":{
      "exp":"53.5 deg",
@@ -200,22 +192,22 @@
  "config":{
   "frontLeft":{
    "x":{
-    "exp":"13 in",
-    "val":0.3302
+    "exp":"14 in",
+    "val":0.35559999999999997
    },
    "y":{
-    "exp":"13 in",
-    "val":0.3302
+    "exp":"14 in",
+    "val":0.35559999999999997
    }
   },
   "backLeft":{
    "x":{
-    "exp":"-13 in",
-    "val":-0.3302
+    "exp":"-14 in",
+    "val":-0.35559999999999997
    },
    "y":{
-    "exp":"13 in",
-    "val":0.3302
+    "exp":"14 in",
+    "val":0.35559999999999997
    }
   },
   "mass":{
@@ -235,12 +227,12 @@
    "val":0.038099999999999995
   },
   "vmax":{
-   "exp":"5000 RPM",
-   "val":523.5987755982989
+   "exp":"5600 RPM",
+   "val":586.4306286700947
   },
   "tmax":{
-   "exp":"0.65 N * m",
-   "val":0.65
+   "exp":"0.85 N * m",
+   "val":0.85
   },
   "cof":{
    "exp":"1.55",
