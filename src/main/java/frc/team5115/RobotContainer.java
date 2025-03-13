@@ -252,11 +252,11 @@ public class RobotContainer {
         /*
          * Manipulator button bindings:
          * hold left stick and move it for elevator manual control
-         * hold a for L1
+         * hold start for L1
          * hold b for L2
          * hold x for L3
          * press back to rezero elevator
-         * hold y to vomit
+         * hold a to vomit
          * hold right trigger to dispense
          * hold left trigger to reverse dispense
          * press right bumper to extend climb piston
@@ -268,7 +268,7 @@ public class RobotContainer {
         elevator.setDefaultCommand(elevator.positionControl());
         joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
 
-        joyManip.a().onTrue(elevator.setHeight(Height.L1)).onFalse(elevator.setHeight(Height.INTAKE));
+        joyManip.start().onTrue(elevator.setHeight(Height.L1)).onFalse(elevator.setHeight(Height.INTAKE));
         joyManip
                 .b()
                 .and(joyManip.pov(180).negate())
@@ -282,7 +282,7 @@ public class RobotContainer {
 
         joyManip.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
 
-        joyManip.y().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
+        joyManip.a().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
 
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
