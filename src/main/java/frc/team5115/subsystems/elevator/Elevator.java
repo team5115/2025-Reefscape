@@ -223,11 +223,11 @@ public class Elevator extends SubsystemBase {
         io.getSparks(sparks);
     }
 
-    public double getDispenserSpeeds() {
+    public double getDispenserSpeed() {
         if (getActualHeight() <= (Height.L2.position + Height.L1.position) / 2) {
-            return 0.45; // TODO find correct speed
+            return 0.45; // TODO find L1 height
         } else {
-            return 0.65;
+            return 0.70;
         }
     }
 }

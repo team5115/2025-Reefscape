@@ -2,7 +2,6 @@ package frc.team5115;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -91,14 +90,14 @@ public class RobotContainer {
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
-                final GenericEntry dispenseSpeedEntry =
-                        Shuffleboard.getTab("SmartDashboard").add("Dispenser Speed", 0).getEntry();
+                // final GenericEntry dispenseSpeedEntry =
+                //         Shuffleboard.getTab("SmartDashboard").add("Dispenser Speed", 0).getEntry();
+                //         () -> dispenseSpeedEntry.getDouble(0.1)
                 final PneumaticHub hub = new PneumaticHub(Constants.PNEUMATIC_HUB_ID);
                 gyro = new GyroIONavx();
                 climber = new Climber(new ClimberIORev(hub));
                 elevator = new Elevator(new ElevatorIOSparkMax());
-                dispenser =
-                        new Dispenser(new DispenserIOSparkMax(), () -> dispenseSpeedEntry.getDouble(0.1));
+                dispenser = new Dispenser(new DispenserIOSparkMax(), elevator::getDispenserSpeed);
                 intake = new Intake(new IntakeIOSparkMax());
                 // dealgaefacationinator5000 =
                 //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax(hub));
@@ -119,7 +118,7 @@ public class RobotContainer {
                 gyro = new GyroIO() {};
                 climber = new Climber(new ClimberIOSim());
                 elevator = new Elevator(new ElevatorIOSim());
-                dispenser = new Dispenser(new DispenserIOSim(), elevator::getDispenserSpeeds);
+                dispenser = new Dispenser(new DispenserIOSim(), elevator::getDispenserSpeed);
                 intake = new Intake(new IntakeIOSim());
                 // dealgaefacationinator5000 =
                 //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
@@ -136,7 +135,7 @@ public class RobotContainer {
                 gyro = new GyroIO() {};
                 climber = new Climber(new ClimberIO() {});
                 elevator = new Elevator(new ElevatorIO() {});
-                dispenser = new Dispenser(new DispenserIO() {}, elevator::getDispenserSpeeds);
+                dispenser = new Dispenser(new DispenserIO() {}, elevator::getDispenserSpeed);
                 intake = new Intake(new IntakeIO() {});
                 // dealgaefacationinator5000 =
                 //         new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
@@ -416,7 +415,7 @@ public class RobotContainer {
     public void teleopInit() {
         drivetrain.setTeleopCurrentLimit();
         elevator.zero().schedule();
-        drivetrain.offsetGyro(Rotation2d.fromDegrees(-90));
+        // drivetrain.offsetGyro(Rotation2d.fromDegrees(-90));
     }
 
     public void autoInit() {
