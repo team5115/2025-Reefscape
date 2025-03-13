@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "raiseElevator"
+                  "name": "RaiseElevator"
                 }
               }
             ]
@@ -61,7 +61,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "raiseElevator"
+                  "name": "RaiseElevator"
                 }
               }
             ]
@@ -105,7 +105,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "raiseElevator"
+                  "name": "RaiseElevator"
                 }
               }
             ]
@@ -149,7 +149,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "raiseElevator"
+                  "name": "RaiseElevator"
                 }
               }
             ]
