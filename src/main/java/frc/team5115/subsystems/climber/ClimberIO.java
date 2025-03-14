@@ -15,4 +15,6 @@ public interface ClimberIO {
     public default void retractSolenoid() {}
 
     public default void stopSolenoid() {}
+
+    public default void toggleBlock() {}
 }

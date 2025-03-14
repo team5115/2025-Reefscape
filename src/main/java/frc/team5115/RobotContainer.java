@@ -255,6 +255,7 @@ public class RobotContainer {
          * hold left trigger to reverse dispense
          * press right bumper to extend climb piston
          * press left bumper to retract climb piston
+         * point up on dpad to toggle climber block
         //  * point down on dpad and press B (L2) or X (L3) to clean algae, release to stow
          */
 
@@ -287,6 +288,7 @@ public class RobotContainer {
 
         joyManip.rightBumper().onTrue(climber.extend());
         joyManip.leftBumper().onTrue(climber.retract());
+        joyManip.pov(0).onTrue(climber.toggleBlock());
 
         // dealgae
         // joyManip

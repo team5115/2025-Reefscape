@@ -53,6 +53,8 @@ public final class Constants {
     // public static final byte ELEVATOR_THIRD_SENSOR_ID = 5;
     // public static final byte ELEVATOR_FOURTH_SENSOR_ID = 6;
 
+    public static final byte BLOCK_ACTUATOR_ID = 4; // TODO: FIND ID
+
     public static final byte LED_STRIP_PWM_ID = 0;
 
     public static final double LOOP_PERIOD_SECS = 0.02;
