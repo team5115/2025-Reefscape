@@ -27,9 +27,10 @@ public class AutoCommands {
         return Commands.sequence(
                 Commands.print("Dispensing"),
                 elevator.setHeightAndWait(state, 3.0),
-                dispenser.dispense(),
-                dispenser.waitForDetectionState(false, 0.75),
-                Commands.waitSeconds(0.75),
+                dispenser.dispense().withTimeout(0.75),
+                // dispenser.waitForDetectionState(false, 0.75),
+                // Commands.waitSeconds(0.75),
+                Commands.print("Stopping Dispenser after Dispense"),
                 dispenser.stop(),
                 elevator.setHeight(Elevator.Height.INTAKE));
     }
@@ -49,6 +50,7 @@ public class AutoCommands {
     public static Command scoreSequence(
             Drivetrain drivetrain, Elevator elevator, Dispenser dispenser, Side side) {
         return Commands.sequence(
+                Commands.print("ScoreSequence!"),
                 drivetrain.autoAlignToScoringSpot(side),
                 dispenser.dispense(),
                 dispenser.waitForDetectionState(false, 3.0),

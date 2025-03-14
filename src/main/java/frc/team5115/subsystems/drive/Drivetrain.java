@@ -113,6 +113,9 @@ public class Drivetrain extends SubsystemBase {
         modules[3] = new Module(brModuleIO, 3);
 
         anglePid.enableContinuousInput(-Math.PI, Math.PI);
+        // xPid.setTolerance(0.01);
+        // yPid.setTolerance(0.01);
+        // anglePid.setTolerance(Math.toRadians(3));
 
         AutoBuilder.configure(
                 this::getPose,
@@ -367,7 +370,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Trigger alignedAtGoalTrigger() {
-        return new Trigger(() -> alignedAtGoal());
+        return new Trigger(() -> alignedAtGoal() && aligning);
     }
 
     public Trigger aligningToGoal() {
