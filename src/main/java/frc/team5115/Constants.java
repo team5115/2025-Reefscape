@@ -15,7 +15,6 @@ import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.team5115.subsystems.elevator.Elevator;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,7 +118,7 @@ public final class Constants {
         public static final double DRUM_RADIUS = 0.05;
         public static final double CARRIAGE_MASS_KG = 9.072; // 20 lbs
         public static final double GEARING = 20.0; // numbers greater than 1 represent reductions
-        
+
         // Below conversion factor found empirically
         public static final double METERS_PER_ROTATION = 0.008628017885457591;
 

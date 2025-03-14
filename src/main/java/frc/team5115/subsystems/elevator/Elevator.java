@@ -154,7 +154,8 @@ public class Elevator extends SubsystemBase {
         Logger.recordOutput("Elevator/Goal Height", height.position);
         Logger.recordOutput("Elevator/Setpoint Velocity", velocitySetpoint);
         Logger.recordOutput("Elevator/Actual Height", getActualHeight());
-        Logger.recordOutput("Elevator/Inches From Ground", getActualHeight() * 100d / 2.54 + minHeightInches);
+        Logger.recordOutput(
+                "Elevator/Inches From Ground", getActualHeight() * 100d / 2.54 + minHeightInches);
         Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
         Logger.recordOutput("Elevator/At Goal?", atGoal());
         Logger.recordOutput("Elevator/State", getStateString());
