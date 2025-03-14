@@ -150,7 +150,7 @@ public final class Constants {
             }
         }
 
-        private static final double forwardOffset = 0.40; // distance from the april tag
+        private static final double forwardOffset = 0.425; // distance from the april tag
         private static final Transform2d transformLeft =
                 new Transform2d(new Translation2d(forwardOffset, -0.35 + 0.06), Rotation2d.k180deg);
         private static final Transform2d transformRight =
