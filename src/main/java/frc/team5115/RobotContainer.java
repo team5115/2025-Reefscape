@@ -383,7 +383,7 @@ public class RobotContainer {
                 "L4Right",
                 AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.RIGHT, Height.L4));
 
-        NamedCommands.registerCommand("Intake", AutoCommands.intakeUntilCoral(dispenser, elevator));
+        NamedCommands.registerCommand("Intake", AutoCommands.intakeUntilCoral(dispenser, elevator, intake));
         // Commands for raising while moving auto
 
         NamedCommands.registerCommand("RaiseElevator", AutoCommands.raiseElevator(elevator, Height.L2));

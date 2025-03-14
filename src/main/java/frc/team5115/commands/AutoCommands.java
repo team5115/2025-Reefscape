@@ -7,17 +7,20 @@ import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.drive.Drivetrain;
 import frc.team5115.subsystems.elevator.Elevator;
 import frc.team5115.subsystems.elevator.Elevator.Height;
+import frc.team5115.subsystems.intake.Intake;
 
 public class AutoCommands {
     private AutoCommands() {}
 
     // Move elevator to intake position, and then wait until the coral has been fully indexed
-    public static Command intakeUntilCoral(Dispenser dispenser, Elevator elevator) {
+    public static Command intakeUntilCoral(Dispenser dispenser, Elevator elevator, Intake intake) {
         // return Commands.print("Intaking").andThen(Commands.waitSeconds(1));
         return Commands.sequence(
                 Commands.print("Intaking"),
                 elevator.setHeight(Elevator.Height.INTAKE),
-                dispenser.waitForDetectionState(true, 5.0));
+                intake.intake(),
+                elevator.waitForDetectionState(true, 5.0),
+                dispenser.waitForDetectionState(true, 1.0));
     }
 
     // Move elevator to state parameter and then dispense until coral fully exits
