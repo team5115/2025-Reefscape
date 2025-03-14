@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command vomit() {
-        return setSpeed(-0.5);
+        return setSpeed(-0.22);
     }
 
     public Command stop() {

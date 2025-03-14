@@ -20,7 +20,7 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 public class Elevator extends SubsystemBase {
     private static final double maxAcceleration = 20.0;
     private static final double maxSpeed = 10.0; // m/s
-    private static final double minHeightInches = 22.25;
+    private static final double minHeightInches = 21.75;
     private static final double firstHeight = 0;
     // private static final double secondHeight = 0;
     // private static final double thirdHeight = 0;
@@ -140,7 +140,7 @@ public class Elevator extends SubsystemBase {
                                 () -> {
                                     velocitySetpoint = -0.10;
                                 }),
-                        Commands.waitUntil(() -> inputs.magnet1detected == true).withTimeout(3.0),
+                        Commands.waitUntil(() -> inputs.magnet1detected == true).withTimeout(2.0),
                         Commands.runOnce(
                                 () -> {
                                     velocitySetpoint = 0;
