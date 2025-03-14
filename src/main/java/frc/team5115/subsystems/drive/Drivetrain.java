@@ -242,6 +242,7 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         gyroIO.updateInputs(gyroInputs);
         Logger.processInputs("Drive/Gyro", gyroInputs);
+        Logger.recordOutput("Gyro/GForce", gyroInputs.xyAcceleration / 9.81);
         for (var module : modules) {
             module.periodic();
         }
