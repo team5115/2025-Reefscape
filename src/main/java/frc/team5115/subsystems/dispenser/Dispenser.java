@@ -42,7 +42,7 @@ public class Dispenser extends SubsystemBase {
     }
 
     public Command reverse() {
-        return setSpeed(-0.8);
+        return setSpeed(-0.25);
     }
 
     public Command stop() {
