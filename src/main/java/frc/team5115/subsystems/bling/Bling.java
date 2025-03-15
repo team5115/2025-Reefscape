@@ -81,6 +81,10 @@ public class Bling extends SubsystemBase {
         return scrollIn(0, 0, 1, 0);
     }
 
+    public Command whiteScrollIn() {
+        return scrollIn(0, 0, 0, 1);
+    }
+
     public Command faultFlash() {
         return seizure(333, 0.1, 0, 0, 0, 0.1, 0.05, 0, 0);
     }

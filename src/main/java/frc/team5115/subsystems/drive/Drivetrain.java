@@ -363,6 +363,7 @@ public class Drivetrain extends SubsystemBase {
     @AutoLogOutput(key = "AutoAlign/SelectedPose")
     private Pose2d selectedPose = null;
 
+    @AutoLogOutput(key = "AutoAlign/Aligning?")
     private boolean aligning = false;
 
     @AutoLogOutput(key = "AutoAlign/AtGoal")
