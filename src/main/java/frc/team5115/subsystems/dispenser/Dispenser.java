@@ -46,7 +46,7 @@ public class Dispenser extends SubsystemBase {
     }
 
     public Command stop() {
-        return setSpeed(0);
+        return setSpeed(-0.05);
     }
 
     public Trigger coralDetected() {
