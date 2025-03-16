@@ -14,7 +14,7 @@ public class Dispenser extends SubsystemBase {
     public static double normalSpeed = 0.5;
     public static double altSpeed = 0.6;
     public static double reverseSpeed = -0.25;
-    public static double stopSpeed = -0.05;
+    public static double stopSpeed = -0.025;
 
     private final DispenserIO io;
     private final DispenserIOInputsAutoLogged inputs = new DispenserIOInputsAutoLogged();
