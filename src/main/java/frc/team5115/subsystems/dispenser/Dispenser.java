@@ -10,6 +10,12 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Dispenser extends SubsystemBase {
+    public static double l1Speed = 0.45;
+    public static double normalSpeed = 0.7;
+    public static double slowSpeed = 0.6;
+    public static double reverseSpeed = -0.25;
+    public static double stopSpeed = -0.05;
+
     private final DispenserIO io;
     private final DispenserIOInputsAutoLogged inputs = new DispenserIOInputsAutoLogged();
     private final DoubleSupplier speedSupplier;
@@ -42,11 +48,11 @@ public class Dispenser extends SubsystemBase {
     }
 
     public Command reverse() {
-        return setSpeed(-0.25);
+        return setSpeed(reverseSpeed);
     }
 
     public Command stop() {
-        return setSpeed(-0.05);
+        return setSpeed(stopSpeed);
     }
 
     public Trigger coralDetected() {
@@ -58,6 +64,6 @@ public class Dispenser extends SubsystemBase {
     }
 
     public Command slowDispense() {
-        return setSpeed(+0.5); // ? TODO determine slow dispense
+        return setSpeed(slowSpeed);
     }
 }

@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants;
+import frc.team5115.subsystems.dispenser.Dispenser;
+
 import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -227,9 +229,9 @@ public class Elevator extends SubsystemBase {
 
     public double getDispenserSpeed() {
         if (getActualHeight() <= (Height.L2.position + Height.L1.position) / 2) {
-            return 0.45; // TODO find L1 height
+            return Dispenser.l1Speed;
         } else {
-            return 0.70;
+            return Dispenser.normalSpeed;
         }
     }
 }
