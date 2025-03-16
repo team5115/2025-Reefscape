@@ -11,8 +11,8 @@ import org.littletonrobotics.junction.Logger;
 
 public class Dispenser extends SubsystemBase {
     public static double l1Speed = 0.45;
-    public static double normalSpeed = 0.7;
-    public static double slowSpeed = 0.5;
+    public static double normalSpeed = 0.6;
+    public static double altSpeed = 0.7;
     public static double reverseSpeed = -0.25;
     public static double stopSpeed = -0.05;
 
@@ -43,8 +43,8 @@ public class Dispenser extends SubsystemBase {
         return Commands.run(() -> io.setPercent(speedSupplier.getAsDouble()), this);
     }
 
-    public Command slowDispense() {
-        return Commands.run(() -> io.setPercent(slowSpeed), this);
+    public Command altDispense() {
+        return Commands.run(() -> io.setPercent(altSpeed), this);
     }
 
     public Command dispenseWhileCoral() {

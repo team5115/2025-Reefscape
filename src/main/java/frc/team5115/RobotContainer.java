@@ -285,7 +285,7 @@ public class RobotContainer {
 
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        joyManip.pov(180).onTrue(dispenser.slowDispense()).onFalse(dispenser.stop());
+        joyManip.pov(180).onTrue(dispenser.altDispense()).onFalse(dispenser.stop());
 
         joyManip.rightBumper().onTrue(climber.extend());
         joyManip.leftBumper().onTrue(climber.retract());
