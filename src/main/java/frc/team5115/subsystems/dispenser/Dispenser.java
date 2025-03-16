@@ -43,6 +43,10 @@ public class Dispenser extends SubsystemBase {
         return Commands.run(() -> io.setPercent(speedSupplier.getAsDouble()), this);
     }
 
+    public Command slowDispense() {
+        return Commands.run(() -> io.setPercent(slowSpeed), this);
+    }
+
     public Command dispenseWhileCoral() {
         return Commands.sequence(dispense(), waitForDetectionState(false, 1), stop());
     }
@@ -61,9 +65,5 @@ public class Dispenser extends SubsystemBase {
 
     public void getSparks(ArrayList<SparkMax> sparks) {
         io.getSparks(sparks);
-    }
-
-    public Command slowDispense() {
-        return Commands.run(() -> io.setPercent(slowSpeed), this);
     }
 }

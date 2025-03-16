@@ -272,12 +272,12 @@ public class RobotContainer {
                 .onFalse(elevator.setHeight(Height.INTAKE));
         joyManip
                 .b()
-                .and(joyManip.pov(180).negate())
+                // .and(joyManip.pov(180).negate())
                 .onTrue(elevator.setHeight(Height.L2))
                 .onFalse(elevator.setHeight(Height.INTAKE));
         joyManip
                 .x()
-                .and(joyManip.pov(180).negate())
+                // .and(joyManip.pov(180).negate())
                 .onTrue(elevator.setHeight(Height.L3))
                 .onFalse(elevator.setHeight(Height.INTAKE));
 
@@ -285,11 +285,11 @@ public class RobotContainer {
 
         joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
         joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
+        joyManip.pov(180).onTrue(dispenser.slowDispense()).onFalse(dispenser.stop());
 
         joyManip.rightBumper().onTrue(climber.extend());
         joyManip.leftBumper().onTrue(climber.retract());
         joyManip.pov(0).onTrue(climber.toggleBlock());
-        joyManip.pov(180).onTrue(dispenser.slowDispense()).onFalse(dispenser.stop());
 
         // dealgae
         // joyManip
