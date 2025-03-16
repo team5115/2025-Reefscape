@@ -289,7 +289,7 @@ public class RobotContainer {
         joyManip.rightBumper().onTrue(climber.extend());
         joyManip.leftBumper().onTrue(climber.retract());
         joyManip.pov(0).onTrue(climber.toggleBlock());
-        joyManip.pov(180).onTrue(dispenser.slowDispense());
+        joyManip.pov(180).onTrue(dispenser.slowDispense()).onFalse(dispenser.stop());
 
         // dealgae
         // joyManip
