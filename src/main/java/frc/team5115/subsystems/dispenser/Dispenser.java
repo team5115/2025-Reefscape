@@ -64,6 +64,6 @@ public class Dispenser extends SubsystemBase {
     }
 
     public Command slowDispense() {
-        return setSpeed(slowSpeed);
+        return Commands.run(() -> io.setPercent(slowSpeed), this);
     }
 }
