@@ -1,8 +1,10 @@
 package frc.team5115.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team5115.Constants.VisionConstants;
 import frc.team5115.subsystems.drive.Drivetrain;
@@ -92,7 +94,7 @@ public class PhotonVision extends SubsystemBase {
             poseEstimator =
                     new PhotonPoseEstimator(
                             VisionConstants.FIELD_LAYOUT,
-                            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+                            PoseStrategy.LOWEST_AMBIGUITY,
                             robotToCamera);
         }
     }
@@ -109,13 +111,24 @@ public class PhotonVision extends SubsystemBase {
         io.updateVisionSimPose(drivetrain.getPose());
         for (Camera camera : Camera.values()) {
             final var unread = io.getAllUnreadResults(camera);
-            EstimatedRobotPose pose = null;
             for (final var result : unread) {
+                // update the camera's pose estimator 
                 final var option = io.updatePose(camera, result);
                 if (option.isPresent()) {
-                    pose = option.get();
-                    drivetrain.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+                    final EstimatedRobotPose pose = option.get();
+                    boolean tooFar = false;
+                    for(var target : pose.targetsUsed) {
+                        final double distanceToTag = target.getAlternateCameraToTarget().getTranslation().getDistance(Translation3d.kZero);
+                        if (distanceToTag > 2.5) {
+                            tooFar = true;
+                            break;
+                        }
+                    }
                     Logger.recordOutput("Vision/EstimatedPose", pose.estimatedPose);
+                    Logger.recordOutput("Vision/TooFar?", tooFar);
+                    if (!tooFar) {
+                        drivetrain.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+                    }
                 }
             }
         }
