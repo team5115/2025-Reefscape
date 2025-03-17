@@ -11,24 +11,32 @@ import edu.wpi.first.wpilibj.PWM;
 public class ClimberIORev implements ClimberIO {
 
     private final DigitalInput climbSensor;
-    private final DoubleSolenoid m_doubleSolenoid; // Declare as a class-level variable
-    private DigitalOutput actuator;
-    // private PWM linearActuator;
+    private final DoubleSolenoid m_doubleSolenoid; 
+    private PWM linearActuator;
     private boolean block = false;
 
     public ClimberIORev(PneumaticHub hub) {
-        actuator = new DigitalOutput(Constants.BLOCK_ACTUATOR_ID);
-        // linearActuator = new PWM(Constants.BLOCK_ACTUATOR_ID);
+        linearActuator = new PWM(Constants.BLOCK_ACTUATOR_ID);
+        linearActuator.setPosition(1.0); //set to block
+        block = true;
         climbSensor = new DigitalInput(Constants.CLIMB_INAKE_SENSOR);
         m_doubleSolenoid =
                 hub.makeDoubleSolenoid(Constants.CLIMB_FORWARD_CHANNEL, Constants.CLIMB_REVERSE_CHANNEL);
-        actuator.set(true);
-        block = true;
     }
 
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
         inputs.cageIntake = !climbSensor.get();
+    }
+
+    @Override
+    public void toggleShield() {
+        block = !block;
+        if (block) {
+            linearActuator.setPosition(1.0);
+        } else {
+            linearActuator.setPosition(0.0);
+        }
     }
 
     @Override
@@ -44,11 +52,5 @@ public class ClimberIORev implements ClimberIO {
     @Override
     public void stopSolenoid() {
         m_doubleSolenoid.set(Value.kOff);
-    }
-
-    @Override
-    public void toggleBlock() {
-        block = !block;
-        actuator.set(block);
     }
 }
