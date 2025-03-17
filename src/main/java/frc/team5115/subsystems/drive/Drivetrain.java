@@ -8,13 +8,14 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.revrobotics.spark.SparkMax;
+
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -61,20 +62,16 @@ public class Drivetrain extends SubsystemBase {
                     angular_kd,
                     new TrapezoidProfile.Constraints(
                             SwerveConstants.MAX_ANGULAR_SPEED, SwerveConstants.MAX_ANGULAR_SPEED * 2));
-    private final ProfiledPIDController xPid =
-            new ProfiledPIDController(
+    private final PIDController xPid =
+            new PIDController(
                     linear_kp,
                     linear_ki,
-                    linear_kd,
-                    new TrapezoidProfile.Constraints(
-                            SwerveConstants.MAX_LINEAR_SPEED, SwerveConstants.MAX_LINEAR_SPEED * 2));
-    private final ProfiledPIDController yPid =
-            new ProfiledPIDController(
+                    linear_kd);
+    private final PIDController yPid =
+            new PIDController(
                     linear_kp,
                     linear_ki,
-                    linear_kd,
-                    new TrapezoidProfile.Constraints(
-                            SwerveConstants.MAX_LINEAR_SPEED, SwerveConstants.MAX_LINEAR_SPEED * 2));
+                    linear_kd);
 
     // TODO: tune radius pid
     final PIDController radiusPID = new PIDController(3.0, 0.0, 0.0);
@@ -368,7 +365,7 @@ public class Drivetrain extends SubsystemBase {
 
     @AutoLogOutput(key = "AutoAlign/AtGoal")
     private boolean alignedAtGoal() {
-        return xPid.atGoal() && yPid.atGoal() && anglePid.atGoal();
+        return anglePid.atGoal();
     }
 
     public Trigger alignedAtGoalTrigger() {
@@ -399,8 +396,6 @@ public class Drivetrain extends SubsystemBase {
                     selectedPose = AutoConstants.getNearestScoringSpot(getPose(), side);
                     final var pose = getPose();
                     anglePid.reset(pose.getRotation().getRadians());
-                    xPid.reset(pose.getX());
-                    yPid.reset(pose.getY());
                 },
                 this);
     }
@@ -412,7 +407,7 @@ public class Drivetrain extends SubsystemBase {
      * @return
      */
     public Command alignSelectedSpot(AutoConstants.Side backupSide) {
-        return alignByPids(
+        return alignHolonomic(
                 () -> {
                     if (selectedPose == null) {
                         System.err.printf(
@@ -439,14 +434,39 @@ public class Drivetrain extends SubsystemBase {
                     Logger.recordOutput("AutoAlign/xVelocity", xVelocity);
                     Logger.recordOutput("AutoAlign/yVelocity", yVelocity);
                     Logger.recordOutput("AutoAlign/Omega", omega);
-                    Logger.recordOutput(
-                            "AutoAlign/GoalPose",
-                            new Pose2d(
-                                    new Translation2d(xPid.getGoal().position, yPid.getGoal().position),
-                                    new Rotation2d(anglePid.getGoal().position)));
+                    // Logger.recordOutput(
+                    //         "AutoAlign/GoalPose",
+                    //         new Pose2d(
+                    //                 new Translation2d(xPid.getGoal().position, yPid.getGoal().position),
+                    //                 new Rotation2d(anglePid.getGoal().position)));
 
                     runVelocity(
                             ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getRotation()));
+                },
+                () -> {
+                    stop();
+                    aligning = false;
+                },
+                this);
+    }
+
+    private Command alignHolonomic(Supplier<Pose2d> goalSupplier) {
+        return Commands.runEnd(
+                () -> {
+                    aligning = true;
+                    final var goalPose = goalSupplier.get();
+                    final var pose = getPose();
+                    final HolonomicDriveController controller = new HolonomicDriveController(xPid, yPid, anglePid);
+                    ChassisSpeeds adjustSpeeds = controller.calculate(pose, goalPose, 2, goalPose.getRotation());
+
+                    Logger.recordOutput("AutoAlign/xVelocity", adjustSpeeds.vxMetersPerSecond);
+                    Logger.recordOutput("AutoAlign/yVelocity", adjustSpeeds.vyMetersPerSecond);
+                    Logger.recordOutput("AutoAlign/Omega", adjustSpeeds.omegaRadiansPerSecond);
+                    Logger.recordOutput(
+                            "AutoAlign/GoalPose",
+                            adjustSpeeds);
+
+                    runVelocity(adjustSpeeds);
                 },
                 () -> {
                     stop();
