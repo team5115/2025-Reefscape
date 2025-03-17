@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.5501714619080849,
+        "y": 0.6837651801741265
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.0966032301700186,
+        "y": 1.2449596078110485
+      },
+      "isLocked": false,
+      "linkedName": "Bottom - Intake"
+    },
+    {
+      "anchor": {
+        "x": 3.834996032200725,
+        "y": 2.9243924855166528
+      },
+      "prevControl": {
+        "x": 3.657385402981812,
+        "y": 2.745401986314361
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Score Pose 2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 14.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 59.99999999999999
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 54.5
+  },
+  "useDefaultConstraints": true
+}

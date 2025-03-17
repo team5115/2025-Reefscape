@@ -8,18 +8,18 @@
     "L4 Autos"
   ],
   "defaultMaxVel": 5.0,
-  "defaultMaxAccel": 6.0,
+  "defaultMaxAccel": 14.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 49.0,
+  "robotMass": 60.0,
   "robotMOI": 6.0,
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.038,
   "driveGearing": 5.077,
-  "maxDriveSpeed": 5.45,
+  "maxDriveSpeed": 5.0,
   "driveMotorType": "NEO",
-  "driveCurrentLimit": 25.0,
+  "driveCurrentLimit": 34.0,
   "wheelCOF": 1.5,
   "flModuleX": 0.273,
   "flModuleY": 0.273,
@@ -31,5 +31,7 @@
   "brModuleY": -0.273,
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
-  "robotFeatures": []
+  "robotFeatures": [
+    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":0.0,\"y\":-0.175},\"end\":{\"x\":0.4,\"y\":-0.175},\"strokeWidth\":0.02}}"
+  ]
 }
