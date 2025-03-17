@@ -1,4 +1,4 @@
-{
+{ 
   "version": "2025.0",
   "command": {
     "type": "sequential",
@@ -11,7 +11,8 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score Pose 1-right"
+                  "pathName": "Score Pose 1-right",
+                  "replan": true
                 }
               },
               {
@@ -30,7 +31,8 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Intake From Score Pose 1"
+                  "pathName": "Intake From Score Pose 1",
+                  "replan": true
                 }
               },
               {
@@ -49,7 +51,8 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score Pose 3 -Right "
+                  "pathName": "Score Pose 3 -Right ",
+                  "replan": true
                 }
               },
               {
@@ -68,7 +71,8 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Intake from Score Pose 3 - Right"
+                  "pathName": "Intake from Score Pose 3 - Right",
+                  "replan": true
                 }
               },
               {
@@ -87,7 +91,8 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score Pose 3 - Left"
+                  "pathName": "Score Pose 3 - Left",
+                  "replan": true
                 }
               },
               {
@@ -106,7 +111,8 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Intake from Score Pose 3 - Left"
+                  "pathName": "Intake from Score Pose 3 - Left",
+                  "replan": true
                 }
               },
               {
@@ -125,7 +131,8 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score Pose 1 "
+                  "pathName": "Score Pose 1 ",
+                  "replan": true
                 }
               },
               {
