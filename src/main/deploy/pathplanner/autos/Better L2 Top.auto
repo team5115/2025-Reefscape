@@ -1,4 +1,4 @@
-{ 
+{
   "version": "2025.0",
   "command": {
     "type": "sequential",
@@ -11,8 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score Pose 1-right",
-                  "replan": true
+                  "pathName": "T1"
                 }
               },
               {
@@ -31,8 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Intake From Score Pose 1",
-                  "replan": true
+                  "pathName": "TIntake(1)"
                 }
               },
               {
@@ -51,8 +49,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score Pose 3 -Right ",
-                  "replan": true
+                  "pathName": "T3"
                 }
               },
               {
@@ -71,8 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Intake from Score Pose 3 - Right",
-                  "replan": true
+                  "pathName": "TL2 Intake (1).0"
                 }
               },
               {
@@ -91,8 +87,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score Pose 3 - Left",
-                  "replan": true
+                  "pathName": "T3"
                 }
               },
               {
@@ -109,10 +104,15 @@
           "data": {
             "commands": [
               {
+                "type": "sequential",
+                "data": {
+                  "commands": []
+                }
+              },
+              {
                 "type": "path",
                 "data": {
-                  "pathName": "Intake from Score Pose 3 - Left",
-                  "replan": true
+                  "pathName": "TL2 Intake (2).0"
                 }
               },
               {
@@ -131,14 +131,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Score Pose 1 ",
-                  "replan": true
+                  "pathName": "t4 end"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L2Left"
+                  "name": "L2Right"
                 }
               }
             ]
@@ -148,6 +147,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
-  "choreoAuto": false
+  "folder": "L2 Autos",
+  "choreoAuto": true
 }

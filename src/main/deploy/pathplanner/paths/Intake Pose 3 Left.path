@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.115,
-        "y": 4.033373091603052
+        "x": 3.200880681818182,
+        "y": 4.30919034090909
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.450764909330975,
-        "y": 4.520027319292945
+        "x": 3.0567804091815702,
+        "y": 4.010720740921645
       },
       "isLocked": false,
-      "linkedName": "Score Pose 3 - Right"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.5501714619080849,
-        "y": 0.6837651801741265
+        "x": 1.2559637404580153,
+        "y": 0.8683444656488553
       },
       "prevControl": {
-        "x": 1.378294579923775,
-        "y": 0.5022208675687695
+        "x": 1.557415327334899,
+        "y": 1.4991476088155955
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Bottom - Intake"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],

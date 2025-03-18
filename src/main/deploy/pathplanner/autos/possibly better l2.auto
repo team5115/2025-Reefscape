@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B1"
+                  "pathName": "Score Pose 1"
                 }
               },
               {
@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "b1 intake"
+                  "pathName": "Intake Pose 1 Right"
                 }
               },
               {
@@ -49,7 +49,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B3"
+                  "pathName": "Score Pose 3"
                 }
               },
               {
@@ -68,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B3 Intake.0"
+                  "pathName": " Intake Pose 3 - Right"
                 }
               },
               {
@@ -87,7 +87,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B3"
+                  "pathName": "Score Pose 3"
                 }
               },
               {
@@ -104,15 +104,9 @@
           "data": {
             "commands": [
               {
-                "type": "sequential",
-                "data": {
-                  "commands": []
-                }
-              },
-              {
                 "type": "path",
                 "data": {
-                  "pathName": "B3 Intake"
+                  "pathName": "Intake Pose 3 Left"
                 }
               },
               {
@@ -131,13 +125,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "b4 end"
+                  "pathName": "Score Pose 4 "
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L2Right"
+                  "name": "L2Left"
                 }
               }
             ]
@@ -147,6 +141,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "L2 Autos",
-  "choreoAuto": true
+  "folder": null,
+  "choreoAuto": false
 }
