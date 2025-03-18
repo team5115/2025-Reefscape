@@ -1,6 +1,5 @@
 package frc.team5115.subsystems.vision;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -23,20 +22,21 @@ public class PhotonVision extends SubsystemBase {
     private final PhotonVisionIO io;
 
     public enum Camera {
-        /*
-        The coordinate system for the camera to robot transforms is somewhat confusing.
-        All lengths are in meters, and angles are in degrees.
-        Positions are relative to the center of the robot.
-        Positive X means that the camera is towards the front of the robot.
-        Positive Y is directed to the left of the robot.
-        Positive yaw points to the left, i.e. 90 degrees in yaw is directly pointed left.
-        Positive pitch is actually pointed down, which is VERY important to remember.
-        We still don't know which way roll is tbh.
-        */
-        LEFT_POINTING(
-                "LEFT_CAMERA", 0.75 / 2.0 - 0.025, -(0.75 / 2.0 - 0.085), +0.205, +0, -13.0, +42.545),
-        RIGHT_POINTING(
-                "RIGHT_CAMERA", 0.75 / 2.0 - 0.035, -(0.75 / 2.0 - 0.02), +0.205, +0, -13.0, -67.141);
+    /*
+    The coordinate system for the camera to robot transforms is somewhat confusing.
+    All lengths are in meters, and angles are in degrees.
+    Positions are relative to the center of the robot.
+    Positive X means that the camera is towards the front of the robot.
+    Positive Y is directed to the left of the robot.
+    Positive yaw points to the left, i.e. 90 degrees in yaw is directly pointed left.
+    Positive pitch is actually pointed down, which is VERY important to remember.
+    We still don't know which way roll is tbh.
+    */
+    // LEFT_POINTING(
+    //         "LEFT_CAMERA", 0.75 / 2.0 - 0.025, -(0.75 / 2.0 - 0.085), +0.205, +0, -13.0, +42.545),
+    // RIGHT_POINTING(
+    //         "RIGHT_CAMERA", 0.75 / 2.0 - 0.035, -(0.75 / 2.0 - 0.02), +0.205, +0, -13.0, -67.141);
+    ;
 
         public final PhotonCameraSim cameraSim;
         public final PhotonPoseEstimator poseEstimator;
@@ -93,9 +93,7 @@ public class PhotonVision extends SubsystemBase {
             cameraSim = new PhotonCameraSim(camera, cameraProp);
             poseEstimator =
                     new PhotonPoseEstimator(
-                            VisionConstants.FIELD_LAYOUT,
-                            PoseStrategy.LOWEST_AMBIGUITY,
-                            robotToCamera);
+                            VisionConstants.FIELD_LAYOUT, PoseStrategy.LOWEST_AMBIGUITY, robotToCamera);
         }
     }
 
@@ -112,13 +110,17 @@ public class PhotonVision extends SubsystemBase {
         for (Camera camera : Camera.values()) {
             final var unread = io.getAllUnreadResults(camera);
             for (final var result : unread) {
-                // update the camera's pose estimator 
+                // update the camera's pose estimator
                 final var option = io.updatePose(camera, result);
                 if (option.isPresent()) {
                     final EstimatedRobotPose pose = option.get();
                     boolean tooFar = false;
-                    for(var target : pose.targetsUsed) {
-                        final double distanceToTag = target.getAlternateCameraToTarget().getTranslation().getDistance(Translation3d.kZero);
+                    for (var target : pose.targetsUsed) {
+                        final double distanceToTag =
+                                target
+                                        .getAlternateCameraToTarget()
+                                        .getTranslation()
+                                        .getDistance(Translation3d.kZero);
                         if (distanceToTag > 2.5) {
                             tooFar = true;
                             break;
