@@ -63,8 +63,8 @@ public class Climber extends SubsystemBase {
     public Trigger extended() {
         return new Trigger(() -> extended);
     }
-    
-    public Command toggleShield() { 
+
+    public Command toggleShield() {
         return Commands.runOnce(io::toggleShield, this);
     }
 }

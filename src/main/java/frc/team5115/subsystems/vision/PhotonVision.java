@@ -1,6 +1,5 @@
 package frc.team5115.subsystems.vision;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -93,9 +92,7 @@ public class PhotonVision extends SubsystemBase {
             cameraSim = new PhotonCameraSim(camera, cameraProp);
             poseEstimator =
                     new PhotonPoseEstimator(
-                            VisionConstants.FIELD_LAYOUT,
-                            PoseStrategy.LOWEST_AMBIGUITY,
-                            robotToCamera);
+                            VisionConstants.FIELD_LAYOUT, PoseStrategy.LOWEST_AMBIGUITY, robotToCamera);
         }
     }
 
@@ -112,13 +109,17 @@ public class PhotonVision extends SubsystemBase {
         for (Camera camera : Camera.values()) {
             final var unread = io.getAllUnreadResults(camera);
             for (final var result : unread) {
-                // update the camera's pose estimator 
+                // update the camera's pose estimator
                 final var option = io.updatePose(camera, result);
                 if (option.isPresent()) {
                     final EstimatedRobotPose pose = option.get();
                     boolean tooFar = false;
-                    for(var target : pose.targetsUsed) {
-                        final double distanceToTag = target.getAlternateCameraToTarget().getTranslation().getDistance(Translation3d.kZero);
+                    for (var target : pose.targetsUsed) {
+                        final double distanceToTag =
+                                target
+                                        .getAlternateCameraToTarget()
+                                        .getTranslation()
+                                        .getDistance(Translation3d.kZero);
                         if (distanceToTag > 2.5) {
                             tooFar = true;
                             break;

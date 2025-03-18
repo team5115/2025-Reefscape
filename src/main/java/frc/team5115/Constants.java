@@ -1,8 +1,6 @@
 package frc.team5115;
 
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static edu.wpi.first.units.Units.Pounds;
-
+import com.pathplanner.lib.config.RobotConfig;
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -11,8 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Mass;
-import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.team5115.subsystems.elevator.Elevator;
 import java.util.ArrayList;
@@ -54,7 +50,7 @@ public final class Constants {
     // public static final byte ELEVATOR_THIRD_SENSOR_ID = 5;
     // public static final byte ELEVATOR_FOURTH_SENSOR_ID = 6;
 
-    public static final byte BLOCK_ACTUATOR_ID = 9; 
+    public static final byte BLOCK_ACTUATOR_ID = 9;
 
     public static final byte LED_STRIP_PWM_ID = 0;
 
@@ -71,10 +67,19 @@ public final class Constants {
         public static final byte BACK_LEFT_TURN_ID = 9;
         public static final byte BACK_RIGHT_TURN_ID = 7;
 
-        // ! TODO determine mass and moi of robot
-        public static final Mass ROBOT_MASS = Pounds.of(115.0);
-        public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(4);
-        public static final double WHEEL_COF = 1.55;
+        private static RobotConfig ROBOT_CONFIG = null;
+
+        public static RobotConfig getRobotConfig() {
+            if (ROBOT_CONFIG == null) {
+                try {
+                    ROBOT_CONFIG = RobotConfig.fromGUISettings();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return ROBOT_CONFIG;
+        }
+
         public static final double MAX_LINEAR_SPEED = 5; // meters per second
 
         private static final double TRACK_WIDTH = Units.inchesToMeters(26.25);

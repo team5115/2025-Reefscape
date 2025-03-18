@@ -188,8 +188,8 @@ public class RobotContainer {
     private void configureBlingBindings() {
         bling.setDefaultCommand(bling.redKITT().ignoringDisable(true));
         // dispenser.coralDetected().whileTrue(bling.greenKITT());
-        drivetrain.aligningToGoal().whileTrue(bling.yellowScrollIn());
-        drivetrain.alignedAtGoalTrigger().whileTrue(bling.whiteScrollIn());
+        // drivetrain.aligningToGoal().whileTrue(bling.yellowScrollIn());
+        // drivetrain.alignedAtGoalTrigger().whileTrue(bling.whiteScrollIn());
         climber.extended().whileTrue(bling.purpleSolid());
         new Trigger(() -> hasFaults).whileTrue(bling.faultFlash().ignoringDisable(true));
     }
@@ -229,19 +229,16 @@ public class RobotContainer {
         joyDrive
                 .leftTrigger()
                 .and(joyDrive.rightTrigger().negate())
-                .onTrue(drivetrain.selectNearestScoringSpot(Side.LEFT))
-                .whileTrue(drivetrain.alignSelectedSpot(Side.LEFT));
+                .whileTrue(drivetrain.autoAlign(Side.LEFT));
         joyDrive
                 .rightTrigger()
                 .and(joyDrive.leftTrigger().negate())
-                .onTrue(drivetrain.selectNearestScoringSpot(Side.RIGHT))
-                .whileTrue(drivetrain.alignSelectedSpot(Side.RIGHT));
+                .whileTrue(drivetrain.autoAlign(Side.RIGHT));
 
         joyDrive
                 .leftTrigger()
                 .and(joyDrive.rightTrigger())
-                .onTrue(drivetrain.selectNearestScoringSpot(Side.CENTER))
-                .whileTrue(drivetrain.alignSelectedSpot(Side.CENTER));
+                .whileTrue(drivetrain.autoAlign(Side.CENTER));
 
         /*
          * Manipulator button bindings:

@@ -1,18 +1,13 @@
 package frc.team5115.subsystems.drive;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.revrobotics.spark.SparkMax;
-
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.HolonomicDriveController;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,22 +16,18 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants.AutoConstants;
+import frc.team5115.Constants.AutoConstants.Side;
 import frc.team5115.Constants.SwerveConstants;
 import frc.team5115.util.LocalADStarAK;
 import java.util.ArrayList;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -55,26 +46,12 @@ public class Drivetrain extends SubsystemBase {
     private final double angular_ki = 0.0;
     private final double angular_kd = 0.0;
 
-    private final ProfiledPIDController anglePid =
-            new ProfiledPIDController(
-                    angular_kp * SwerveConstants.MAX_ANGULAR_SPEED,
-                    angular_ki,
-                    angular_kd,
-                    new TrapezoidProfile.Constraints(
-                            SwerveConstants.MAX_ANGULAR_SPEED, SwerveConstants.MAX_ANGULAR_SPEED * 2));
-    private final PIDController xPid =
-            new PIDController(
-                    linear_kp,
-                    linear_ki,
-                    linear_kd);
-    private final PIDController yPid =
-            new PIDController(
-                    linear_kp,
-                    linear_ki,
-                    linear_kd);
-
-    // TODO: tune radius pid
-    final PIDController radiusPID = new PIDController(3.0, 0.0, 0.0);
+    private final PathConstraints autoConstraints =
+            new PathConstraints(
+                    SwerveConstants.MAX_LINEAR_SPEED / 2,
+                    SwerveConstants.MAX_LINEAR_SPEED,
+                    SwerveConstants.MAX_ANGULAR_SPEED / 2,
+                    SwerveConstants.MAX_ANGULAR_SPEED);
 
     private final SwerveDriveKinematics kinematics =
             new SwerveDriveKinematics(SwerveConstants.MODULE_TRANSLATIONS);
@@ -95,8 +72,6 @@ public class Drivetrain extends SubsystemBase {
                     VecBuilder.fill(0.1, 0.1, 0.1),
                     VecBuilder.fill(0.9, 0.9, 0.9));
 
-    private double desiredRadius = 0;
-
     public Drivetrain(
             GyroIO gyroIO,
             ModuleIO flModuleIO,
@@ -109,11 +84,6 @@ public class Drivetrain extends SubsystemBase {
         modules[2] = new Module(blModuleIO, 2);
         modules[3] = new Module(brModuleIO, 3);
 
-        anglePid.enableContinuousInput(-Math.PI, Math.PI);
-        // xPid.setTolerance(0.01);
-        // yPid.setTolerance(0.01);
-        // anglePid.setTolerance(Math.toRadians(3));
-
         AutoBuilder.configure(
                 this::getPose,
                 this::setPose,
@@ -122,18 +92,7 @@ public class Drivetrain extends SubsystemBase {
                 new PPHolonomicDriveController(
                         new PIDConstants(linear_kp, linear_ki, linear_kd),
                         new PIDConstants(angular_kp, angular_ki, angular_kd)),
-                new RobotConfig(
-                        SwerveConstants.ROBOT_MASS,
-                        SwerveConstants.ROBOT_MOI,
-                        new ModuleConfig(
-                                SwerveConstants.WHEEL_RADIUS_METERS,
-                                SwerveConstants.MAX_LINEAR_SPEED,
-                                SwerveConstants.WHEEL_COF,
-                                DCMotor.getNEO(1),
-                                SwerveConstants.DrivingMotorReduction,
-                                SwerveConstants.DrivingMotorAutoCurrentLimit, // less than the real current limit
-                                1),
-                        SwerveConstants.MODULE_TRANSLATIONS),
+                SwerveConstants.getRobotConfig(),
                 () -> isRedAlliance(),
                 this);
         Pathfinding.setPathfinder(new LocalADStarAK());
@@ -287,194 +246,6 @@ public class Drivetrain extends SubsystemBase {
         return DriverStation.getAlliance().orElseGet(() -> Alliance.Blue) == Alliance.Red;
     }
 
-    public Command setRadius() {
-        return Commands.runOnce(
-                () -> {
-                    final double robotX = getPose().getX() - AutoConstants.getReefX(isRedAlliance());
-                    final double robotY = getPose().getY() - AutoConstants.getReefY(isRedAlliance());
-                    desiredRadius = Math.sqrt(robotX * robotX + robotY * robotY);
-                    radiusPID.reset();
-                    anglePid.reset(getPose().getRotation().getRadians());
-                    radiusPID.setSetpoint(desiredRadius);
-                },
-                this);
-    }
-
-    public Command reefOrbitDrive(
-            DoubleSupplier omegaSupplier, DoubleSupplier radiusVelocitySupplier) {
-        return Commands.run(
-                () -> {
-                    // Omega is the desired angular velocity around the reef
-                    // Radius velocity is the speed we want to move to or from the reef
-                    final double omega = omegaSupplier.getAsDouble();
-                    final double radiusVelocity =
-                            -radiusVelocitySupplier.getAsDouble() * 0.5; // meters per second
-                    // modify the radius setpoint based on the radius velocity, clamped on the bottom
-                    final double minRadius = 1.62; // prevents robot from getting too close
-                    desiredRadius = Math.max(minRadius, desiredRadius + radiusVelocity * 0.02);
-
-                    // Gamma is the angle of the robot around the reef
-                    final double robotX = getPose().getX() - AutoConstants.getReefX(isRedAlliance());
-                    final double robotY = getPose().getY() - AutoConstants.getReefY(isRedAlliance());
-                    final double gamma = Math.atan2(robotY, robotX);
-
-                    // PID from the the current radius to the desired radius
-                    final double currentRadius = Math.sqrt(robotX * robotX + robotY * robotY);
-                    final double tau = -radiusPID.calculate(currentRadius, desiredRadius);
-
-                    // Scaling constants speeds in meters per second
-                    final double vConstantAngular = 2.0;
-                    final double vConstantForeBack = 2.0;
-
-                    // Calculate the desired x and y velocities
-                    final double xVelocity =
-                            +(vConstantAngular * omega * desiredRadius * Math.sin(gamma))
-                                    - (tau * vConstantForeBack * Math.cos(gamma));
-                    final double yVelocity =
-                            -(vConstantAngular * omega * desiredRadius * Math.cos(gamma))
-                                    - (tau * vConstantForeBack * Math.sin(gamma));
-
-                    // Compute angular velocity using PID
-                    // Measurement from odometry, setpoint is offset by pi
-                    final double angularVelocity =
-                            anglePid.calculate(getRotation().getRadians(), Math.PI + gamma);
-
-                    Logger.recordOutput("Orbit/gamma", gamma);
-                    Logger.recordOutput("Orbit/tau", tau);
-                    Logger.recordOutput("Orbit/omega", omega);
-
-                    Logger.recordOutput("Orbit/currentRadius", currentRadius);
-                    Logger.recordOutput("Orbit/desiredRadius", desiredRadius);
-
-                    Logger.recordOutput("Orbit/xVelocity", xVelocity);
-                    Logger.recordOutput("Orbit/yVelocity", yVelocity);
-                    Logger.recordOutput("Orbit/angularVelocity", angularVelocity);
-
-                    runVelocity(
-                            ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    xVelocity, yVelocity, angularVelocity, getRotation()));
-                },
-                this);
-    }
-
-    @AutoLogOutput(key = "AutoAlign/SelectedPose")
-    private Pose2d selectedPose = null;
-
-    @AutoLogOutput(key = "AutoAlign/Aligning?")
-    private boolean aligning = false;
-
-    @AutoLogOutput(key = "AutoAlign/AtGoal")
-    private boolean alignedAtGoal() {
-        return anglePid.atGoal();
-    }
-
-    public Trigger alignedAtGoalTrigger() {
-        return new Trigger(() -> alignedAtGoal() && aligning);
-    }
-
-    public Trigger aligningToGoal() {
-        return new Trigger(() -> aligning);
-    }
-
-    /** Drives to nearest scoring spot until all pids at goal */
-    public Command autoAlignToScoringSpot(AutoConstants.Side side) {
-        return Commands.sequence(
-                Commands.print("AutoDriving!"),
-                selectNearestScoringSpot(side),
-                alignSelectedSpot(side).until(() -> alignedAtGoal()));
-    }
-
-    /**
-     * Choose the scoring spot based on nearest scoring spot. Will also reset the pids.
-     *
-     * @param side the side to score on
-     * @return an Instant Command
-     */
-    public Command selectNearestScoringSpot(AutoConstants.Side side) {
-        return Commands.runOnce(
-                () -> {
-                    selectedPose = AutoConstants.getNearestScoringSpot(getPose(), side);
-                    final var pose = getPose();
-                    anglePid.reset(pose.getRotation().getRadians());
-                },
-                this);
-    }
-
-    /**
-     * Drive by auto aim pids using an already chosen `selectedPose`
-     *
-     * @param backupSide the side to choose a spot from if no pose is already selected
-     * @return
-     */
-    public Command alignSelectedSpot(AutoConstants.Side backupSide) {
-        return alignHolonomic(
-                () -> {
-                    if (selectedPose == null) {
-                        System.err.printf(
-                                "SelectedPose was found to be null! Using backup side of %s\n",
-                                backupSide.toString());
-                        selectedPose = AutoConstants.getNearestScoringSpot(getPose(), backupSide);
-                    }
-                    return selectedPose;
-                });
-    }
-
-    private Command alignByPids(Supplier<Pose2d> goalSupplier) {
-        return Commands.runEnd(
-                () -> {
-                    aligning = true;
-                    final var goalPose = goalSupplier.get();
-                    final var pose = getPose();
-                    final var omega =
-                            anglePid.calculate(
-                                    pose.getRotation().getRadians(), goalPose.getRotation().getRadians());
-                    final var xVelocity = xPid.calculate(pose.getX(), goalPose.getX());
-                    final var yVelocity = yPid.calculate(pose.getY(), goalPose.getY());
-
-                    Logger.recordOutput("AutoAlign/xVelocity", xVelocity);
-                    Logger.recordOutput("AutoAlign/yVelocity", yVelocity);
-                    Logger.recordOutput("AutoAlign/Omega", omega);
-                    // Logger.recordOutput(
-                    //         "AutoAlign/GoalPose",
-                    //         new Pose2d(
-                    //                 new Translation2d(xPid.getGoal().position, yPid.getGoal().position),
-                    //                 new Rotation2d(anglePid.getGoal().position)));
-
-                    runVelocity(
-                            ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getRotation()));
-                },
-                () -> {
-                    stop();
-                    aligning = false;
-                },
-                this);
-    }
-
-    private Command alignHolonomic(Supplier<Pose2d> goalSupplier) {
-        return Commands.runEnd(
-                () -> {
-                    aligning = true;
-                    final var goalPose = goalSupplier.get();
-                    final var pose = getPose();
-                    final HolonomicDriveController controller = new HolonomicDriveController(xPid, yPid, anglePid);
-                    ChassisSpeeds adjustSpeeds = controller.calculate(pose, goalPose, 2, goalPose.getRotation());
-
-                    Logger.recordOutput("AutoAlign/xVelocity", adjustSpeeds.vxMetersPerSecond);
-                    Logger.recordOutput("AutoAlign/yVelocity", adjustSpeeds.vyMetersPerSecond);
-                    Logger.recordOutput("AutoAlign/Omega", adjustSpeeds.omegaRadiansPerSecond);
-                    Logger.recordOutput(
-                            "AutoAlign/GoalPose",
-                            adjustSpeeds);
-
-                    runVelocity(adjustSpeeds);
-                },
-                () -> {
-                    stop();
-                    aligning = false;
-                },
-                this);
-    }
-
     /**
      * Runs the drive at the desired velocity.
      *
@@ -540,6 +311,11 @@ public class Drivetrain extends SubsystemBase {
      */
     public Command sysIdSpinDynamic(SysIdRoutine.Direction direction) {
         return spinSysId.dynamic(direction);
+    }
+
+    public Command autoAlign(Side side) {
+        return AutoBuilder.pathfindToPose(
+                AutoConstants.getNearestScoringSpot(getPose(), side), autoConstraints);
     }
 
     /** Returns the module states (turn angles and drive velocities) for all of the modules. */
