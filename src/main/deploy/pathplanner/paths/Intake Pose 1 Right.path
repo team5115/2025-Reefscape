@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.2122767857142858,
-        "y": 4.032122564935064
+        "x": 5.1553125,
+        "y": 2.9131676136363636
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5480416950452605,
-        "y": 4.518776792624957
+        "x": 4.909168373776902,
+        "y": 2.6602119385608294
       },
       "isLocked": false,
-      "linkedName": "Score Pose 3 - Right"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.5501714619080849,
-        "y": 0.6837651801741265
+        "x": 1.2559637404580153,
+        "y": 0.8683444656488553
       },
       "prevControl": {
-        "x": 1.378294579923775,
-        "y": 0.5022208675687695
+        "x": 1.9379198323687366,
+        "y": 1.4284037883222787
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Bottom - Intake"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -47,8 +47,8 @@
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 0.0,
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }

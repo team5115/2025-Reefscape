@@ -1,23 +1,22 @@
 package frc.team5115.subsystems.climber;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import frc.team5115.Constants;
-import edu.wpi.first.wpilibj.PWM;
 
 public class ClimberIORev implements ClimberIO {
 
     private final DigitalInput climbSensor;
-    private final DoubleSolenoid m_doubleSolenoid; 
+    private final DoubleSolenoid m_doubleSolenoid;
     private PWM linearActuator;
     private boolean block = false;
 
     public ClimberIORev(PneumaticHub hub) {
         linearActuator = new PWM(Constants.BLOCK_ACTUATOR_ID);
-        linearActuator.setPosition(1.0); //set to block
+        linearActuator.setPosition(1.0); // set to block
         block = true;
         climbSensor = new DigitalInput(Constants.CLIMB_INAKE_SENSOR);
         m_doubleSolenoid =

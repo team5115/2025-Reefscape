@@ -50,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
     private final double linear_kp = 1.9;
     private final double linear_ki = 0.0;
     private final double linear_kd = 0.0;
-    private final double angular_kp = 0.7;
+    private final double angular_kp = 1.0;
     private final double angular_ki = 0.0;
     private final double angular_kd = 0.0;
 

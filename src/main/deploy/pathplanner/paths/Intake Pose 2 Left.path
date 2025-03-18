@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.258301526717557,
-        "y": 2.618320610687023
+        "x": 3.5598579545454543,
+        "y": 3.0627414772727275
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.740323235728283,
-        "y": 2.6890791037481807
+        "x": 3.313713828322357,
+        "y": 2.8097858021971933
       },
       "isLocked": false,
-      "linkedName": "Bottom Scoring Pose 1"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,12 +20,12 @@
         "y": 0.8683444656488553
       },
       "prevControl": {
-        "x": 0.6119197209063256,
-        "y": 0.6206288149847228
+        "x": 1.9379198323687366,
+        "y": 1.4284037883222787
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Bottom - Intake"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -47,8 +47,8 @@
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 119.99999999999999
+    "velocity": 0.0,
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": true
 }

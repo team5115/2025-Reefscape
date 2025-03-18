@@ -37,9 +37,10 @@ public class AutoCommands {
                 dispenser.stop(),
                 elevator.setHeight(Elevator.Height.INTAKE));
     }
-    //without raising while aligning 
+    // without raising while aligning
     // public static Command getReefAlignCommand(
-    //         Drivetrain drivetrain, Elevator elevator, Dispenser dispenser, Side side, Height height) {
+    //         Drivetrain drivetrain, Elevator elevator, Dispenser dispenser, Side side, Height
+    // height) {
     //     return Commands.sequence(
     //             elevator.setHeight(height),
     //             drivetrain.autoAlignToScoringSpot(side),
@@ -50,10 +51,8 @@ public class AutoCommands {
     public static Command getReefAlignCommand(
             Drivetrain drivetrain, Elevator elevator, Dispenser dispenser, Side side, Height height) {
         return Commands.sequence(
-                Commands.parallel(
-                     elevator.setHeight(height),
-                     drivetrain.autoAlignToScoringSpot(side)),
-                     dispense(dispenser, elevator, height));
+                Commands.parallel(elevator.setHeight(height), drivetrain.autoAlignToScoringSpot(side)),
+                dispense(dispenser, elevator, height));
     }
 
     public static Command raiseElevator(Elevator elevator, Height height) {
