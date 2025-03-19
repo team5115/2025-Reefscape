@@ -214,5 +214,13 @@ public final class Constants {
         public static final double FPS = 30;
         public static final double AVG_LATENCY_MS = 30;
         public static final double STD_DEV_LATENCY_MS = 10;
+
+        // Pose filtering values
+        public static final double distanceThreshold = 2.5;
+        public static final double angleThreshold = 5.0;
+        public static final double zTranslationThreshold = 0.0;
+        public static final double ambiguityThreshold = 0.5;
+        public static final double yFactor = 2.0;
+
     }
 }
