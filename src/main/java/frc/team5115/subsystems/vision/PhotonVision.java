@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.team5115.Constants;
 import frc.team5115.Constants.VisionConstants;
 import frc.team5115.subsystems.drive.Drivetrain;
 import frc.team5115.subsystems.vision.PhotonVisionIO.PhotonVisionIOInputs;
@@ -92,7 +93,8 @@ public class PhotonVision extends SubsystemBase {
             cameraSim = new PhotonCameraSim(camera, cameraProp);
             poseEstimator =
                     new PhotonPoseEstimator(
-                            VisionConstants.FIELD_LAYOUT, PoseStrategy.LOWEST_AMBIGUITY, robotToCamera);
+                            VisionConstants.FIELD_LAYOUT, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
+            poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
         }
     }
 

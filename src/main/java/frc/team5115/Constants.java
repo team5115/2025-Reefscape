@@ -13,8 +13,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.team5115.subsystems.elevator.Elevator;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -202,8 +205,20 @@ public final class Constants {
     }
 
     public static class VisionConstants {
-        public static final AprilTagFieldLayout FIELD_LAYOUT =
-                AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+
+        private static AprilTagFieldLayout loadReefOnlyFieldLayout() {
+            try {
+                return new AprilTagFieldLayout(
+                        Filesystem.getDeployDirectory().getAbsolutePath()
+                                + File.separatorChar
+                                + "reef_only.json");
+            } catch (IOException e) {
+                e.printStackTrace();
+                return AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+            }
+        }
+
+        public static final AprilTagFieldLayout FIELD_LAYOUT = loadReefOnlyFieldLayout();
 
         // Camera sim values
         public static final int WIDTH_PX = 1280;
