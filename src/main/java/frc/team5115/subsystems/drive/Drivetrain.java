@@ -76,9 +76,6 @@ public class Drivetrain extends SubsystemBase {
                     new TrapezoidProfile.Constraints(
                             SwerveConstants.MAX_LINEAR_SPEED, SwerveConstants.MAX_LINEAR_SPEED * 2));
 
-    // TODO: tune radius pid
-    final PIDController radiusPID = new PIDController(3.0, 0.0, 0.0);
-
     private final SwerveDriveKinematics kinematics =
             new SwerveDriveKinematics(SwerveConstants.MODULE_TRANSLATIONS);
     private Rotation2d rawGyroRotation = new Rotation2d();
@@ -277,76 +274,6 @@ public class Drivetrain extends SubsystemBase {
     @AutoLogOutput(key = "Drive/IsRedAlliance")
     public boolean isRedAlliance() {
         return DriverStation.getAlliance().orElseGet(() -> Alliance.Blue) == Alliance.Red;
-    }
-
-    public Command setRadius() {
-        return Commands.runOnce(
-                () -> {
-                    final double robotX = getPose().getX() - AutoConstants.getReefX(isRedAlliance());
-                    final double robotY = getPose().getY() - AutoConstants.getReefY(isRedAlliance());
-                    desiredRadius = Math.sqrt(robotX * robotX + robotY * robotY);
-                    radiusPID.reset();
-                    anglePid.reset(getPose().getRotation().getRadians());
-                    radiusPID.setSetpoint(desiredRadius);
-                },
-                this);
-    }
-
-    public Command reefOrbitDrive(
-            DoubleSupplier omegaSupplier, DoubleSupplier radiusVelocitySupplier) {
-        return Commands.run(
-                () -> {
-                    // Omega is the desired angular velocity around the reef
-                    // Radius velocity is the speed we want to move to or from the reef
-                    final double omega = omegaSupplier.getAsDouble();
-                    final double radiusVelocity =
-                            -radiusVelocitySupplier.getAsDouble() * 0.5; // meters per second
-                    // modify the radius setpoint based on the radius velocity, clamped on the bottom
-                    final double minRadius = 1.62; // prevents robot from getting too close
-                    desiredRadius = Math.max(minRadius, desiredRadius + radiusVelocity * 0.02);
-
-                    // Gamma is the angle of the robot around the reef
-                    final double robotX = getPose().getX() - AutoConstants.getReefX(isRedAlliance());
-                    final double robotY = getPose().getY() - AutoConstants.getReefY(isRedAlliance());
-                    final double gamma = Math.atan2(robotY, robotX);
-
-                    // PID from the the current radius to the desired radius
-                    final double currentRadius = Math.sqrt(robotX * robotX + robotY * robotY);
-                    final double tau = -radiusPID.calculate(currentRadius, desiredRadius);
-
-                    // Scaling constants speeds in meters per second
-                    final double vConstantAngular = 2.0;
-                    final double vConstantForeBack = 2.0;
-
-                    // Calculate the desired x and y velocities
-                    final double xVelocity =
-                            +(vConstantAngular * omega * desiredRadius * Math.sin(gamma))
-                                    - (tau * vConstantForeBack * Math.cos(gamma));
-                    final double yVelocity =
-                            -(vConstantAngular * omega * desiredRadius * Math.cos(gamma))
-                                    - (tau * vConstantForeBack * Math.sin(gamma));
-
-                    // Compute angular velocity using PID
-                    // Measurement from odometry, setpoint is offset by pi
-                    final double angularVelocity =
-                            anglePid.calculate(getRotation().getRadians(), Math.PI + gamma);
-
-                    Logger.recordOutput("Orbit/gamma", gamma);
-                    Logger.recordOutput("Orbit/tau", tau);
-                    Logger.recordOutput("Orbit/omega", omega);
-
-                    Logger.recordOutput("Orbit/currentRadius", currentRadius);
-                    Logger.recordOutput("Orbit/desiredRadius", desiredRadius);
-
-                    Logger.recordOutput("Orbit/xVelocity", xVelocity);
-                    Logger.recordOutput("Orbit/yVelocity", yVelocity);
-                    Logger.recordOutput("Orbit/angularVelocity", angularVelocity);
-
-                    runVelocity(
-                            ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    xVelocity, yVelocity, angularVelocity, getRotation()));
-                },
-                this);
     }
 
     @AutoLogOutput(key = "AutoAlign/SelectedPose")

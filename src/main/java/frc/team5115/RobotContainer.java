@@ -219,13 +219,6 @@ public class RobotContainer {
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
         joyDrive.start().onTrue(offsetGyro());
 
-        // joyDrive
-        //         .y()
-        //         .onTrue(drivetrain.setRadius())
-        //         .whileTrue(
-        //                 drivetrain.reefOrbitDrive(() -> -joyDrive.getLeftX(), () ->
-        // -joyDrive.getLeftY()));
-
         joyDrive
                 .leftTrigger()
                 .and(joyDrive.rightTrigger().negate())
