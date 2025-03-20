@@ -75,6 +75,9 @@ public class DriveCommands {
             Height height, Elevator elevator, Dealgaefacationinator5000 dealgae) {
         return Commands.sequence(
                 elevator.setHeightAndWait(height, 5),
+                Commands.print("Cleaner at Height"),
+                Commands.waitSeconds(0.2),
+                elevator.waitForSetpoint(5),
                 dealgae.extend(),
                 elevator.setHeightAndWait((height == Height.L2 ? Height.CLEAN2 : Height.CLEAN3), 5));
     }
