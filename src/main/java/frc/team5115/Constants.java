@@ -236,6 +236,5 @@ public final class Constants {
         public static final double zTranslationThreshold = 0.0;
         public static final double ambiguityThreshold = 0.5;
         public static final double yFactor = 2.0;
-
     }
 }
