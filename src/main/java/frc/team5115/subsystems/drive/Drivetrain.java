@@ -90,8 +90,6 @@ public class Drivetrain extends SubsystemBase {
                     VecBuilder.fill(0.1, 0.1, 0.1),
                     VecBuilder.fill(0.9, 0.9, 0.9));
 
-    private double desiredRadius = 0;
-
     public Drivetrain(
             GyroIO gyroIO,
             ModuleIO flModuleIO,
