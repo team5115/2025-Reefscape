@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pathplanner.lib.config.RobotConfig;
+
 public final class Constants {
     private static final boolean isReplay = false;
     public static final Mode currentMode =
@@ -74,10 +76,19 @@ public final class Constants {
         public static final byte BACK_LEFT_TURN_ID = 9;
         public static final byte BACK_RIGHT_TURN_ID = 7;
 
-        // ! TODO determine mass and moi of robot
-        public static final Mass ROBOT_MASS = Pounds.of(115.0);
-        public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(4);
-        public static final double WHEEL_COF = 1.55;
+        private static RobotConfig ROBOT_CONFIG = null;
+
+        public static RobotConfig getRobotConfig() {
+            if (ROBOT_CONFIG == null) {
+                try {
+                    ROBOT_CONFIG = RobotConfig.fromGUISettings();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return ROBOT_CONFIG;
+        }
+
         public static final double MAX_LINEAR_SPEED = 5; // meters per second
 
         private static final double TRACK_WIDTH = Units.inchesToMeters(26.25);

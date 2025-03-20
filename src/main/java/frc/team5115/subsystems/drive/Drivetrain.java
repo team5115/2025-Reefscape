@@ -125,18 +125,7 @@ public class Drivetrain extends SubsystemBase {
                 new PPHolonomicDriveController(
                         new PIDConstants(linear_kp, linear_ki, linear_kd),
                         new PIDConstants(angular_kp, angular_ki, angular_kd)),
-                new RobotConfig(
-                        SwerveConstants.ROBOT_MASS,
-                        SwerveConstants.ROBOT_MOI,
-                        new ModuleConfig(
-                                SwerveConstants.WHEEL_RADIUS_METERS,
-                                SwerveConstants.MAX_LINEAR_SPEED,
-                                SwerveConstants.WHEEL_COF,
-                                DCMotor.getNEO(1),
-                                SwerveConstants.DrivingMotorReduction,
-                                SwerveConstants.DrivingMotorAutoCurrentLimit, // less than the real current limit
-                                1),
-                        SwerveConstants.MODULE_TRANSLATIONS),
+                SwerveConstants.getRobotConfig(),
                 () -> isRedAlliance(),
                 this);
         Pathfinding.setPathfinder(new LocalADStarAK());
