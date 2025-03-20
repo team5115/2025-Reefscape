@@ -16,9 +16,7 @@ public class GyroIONavx implements GyroIO {
         inputs.connected = ahrs.isConnected();
         inputs.yawPosition = Rotation2d.fromDegrees(-ahrs.getYaw());
         inputs.xyAcceleration =
-                Math.sqrt(
-                        ahrs.getWorldLinearAccelX() * ahrs.getWorldLinearAccelX()
-                                + ahrs.getWorldLinearAccelY() * ahrs.getWorldLinearAccelY());
+                ahrs.getRawAccelX() * ahrs.getRawAccelX() + ahrs.getRawAccelY() * ahrs.getRawAccelY();
     }
 
     /**
