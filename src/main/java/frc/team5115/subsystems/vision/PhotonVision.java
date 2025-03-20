@@ -5,9 +5,12 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.team5115.Constants;
 import frc.team5115.Constants.VisionConstants;
 import frc.team5115.subsystems.drive.Drivetrain;
 import frc.team5115.subsystems.vision.PhotonVisionIO.PhotonVisionIOInputs;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -15,6 +18,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 public class PhotonVision extends SubsystemBase {
     private final PhotonVisionIOInputs inputs = new PhotonVisionIOInputsAutoLogged();
@@ -33,9 +37,10 @@ public class PhotonVision extends SubsystemBase {
         We still don't know which way roll is tbh.
         */
         LEFT_POINTING(
-                "LEFT_CAMERA", 0.75 / 2.0 - 0.025, -(0.75 / 2.0 - 0.085), +0.205, +0, -13.0, +42.545),
-        RIGHT_POINTING(
-                "RIGHT_CAMERA", 0.75 / 2.0 - 0.035, -(0.75 / 2.0 - 0.02), +0.205, +0, -13.0, -67.141);
+                "LEFT_CAMERA", 0.75 / 2.0 - 0.025, -(0.75 / 2.0 - 0.085), +0.205, +0, -13.0, +42.545); // ,
+        // RIGHT_POINTING(
+        //         "RIGHT_CAMERA", 0.75 / 2.0 - 0.035, -(0.75 / 2.0 - 0.02), +0.205, +0, -13.0,
+        // -67.141);
 
         public final PhotonCameraSim cameraSim;
         public final PhotonPoseEstimator poseEstimator;
@@ -104,88 +109,75 @@ public class PhotonVision extends SubsystemBase {
         this.io = io;
     }
 
-    public void addVisionPose(boolean invalidMeasurement, EstimatedRobotPose pose) {
-        if (!invalidMeasurement) {
-            drivetrain.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+    public Optional<String> validateVisionPose(EstimatedRobotPose pose, PhotonPipelineResult result) {
+        // Reject measurement if average ambiguity is below threshold
+        try {
+            final double averageAmbiguity =
+                    result.getTargets().stream()
+                            .mapToDouble(target -> target.getPoseAmbiguity())
+                            .average()
+                            .orElseThrow();
+            if (averageAmbiguity > VisionConstants.ambiguityThreshold) {
+                return Optional.of("Ambiguity, " + averageAmbiguity);
+            }
+        } catch (NoSuchElementException e) {
+            System.err.println("PhotonResult with no targets found!!!!! (this should *never* happen)");
         }
-    }
 
-    public void validateVisionPose() {
-        for (Camera camera : Camera.values()) {
-            final var unread = io.getAllUnreadResults(camera);
-            for (final var result : unread) {
-                // update the camera's pose estimator
-                final var option = io.updatePose(camera, result);
-                if (option.isPresent()) {
-                    final EstimatedRobotPose pose = option.get();
-                    boolean invalidMeasurement = false;
-                    for (var target : pose.targetsUsed) {
-                        final double distanceToTag =
-                                target
-                                        .getAlternateCameraToTarget()
-                                        .getTranslation()
-                                        .getDistance(Translation3d.kZero);
-                        if (distanceToTag > VisionConstants.distanceThreshold) {
-                            invalidMeasurement = true;
-                        }
-                    }
+        // Reject measurement if estimated 3d pose says robot is off/under the ground
+        final double distanceFromGround = Math.abs(pose.estimatedPose.getTranslation().getZ());
+        if (distanceFromGround > VisionConstants.zTranslationThreshold) {
+            return Optional.of("OffTheGround," + distanceFromGround);
+        }
 
-                    // Reject measurement if estimated 3d pose says robot is off the ground
-                    if (pose.estimatedPose.getTranslation().getZ() != VisionConstants.zTranslationThreshold) {
-                        invalidMeasurement = true;
-                    }
-
-                    // Reject multi-tag measurement more than X meters away from tags on average (think this
-                    // is incorrect atm)
-                    if (pose.targetsUsed.size() > 1) {
-                        double averageDistance =
-                                pose.targetsUsed.stream()
-                                        .mapToDouble(
-                                                target ->
-                                                        target
-                                                                .getAlternateCameraToTarget()
-                                                                .getTranslation()
-                                                                .getDistance(Translation3d.kZero))
-                                        .average()
-                                        .orElse(0.0);
-                        double factor = 1 + (pose.targetsUsed.size() - 2) * VisionConstants.yFactor;
-                        if (averageDistance > 2.5 * factor) {
-                            invalidMeasurement = true;
-                        }
-                    }
-
-                    // Reject measurement if average ambiguity is above threshold
-                    double averageAmbiguity =
-                            result.getTargets().stream()
-                                    .mapToDouble(target -> target.getPoseAmbiguity())
-                                    .average()
-                                    .orElse(0.0);
-                    if (averageAmbiguity > VisionConstants.ambiguityThreshold) {
-                        invalidMeasurement = true;
-                    }
-
-                    // Reject based on gyro angle
-                    if (pose.targetsUsed.size() == 1) {
-                        Rotation2d tagRotation = pose.estimatedPose.getRotation().toRotation2d();
-                        Rotation2d gyroRotation = drivetrain.getGyroRotation();
-                        if (Math.abs(tagRotation.minus(gyroRotation).getDegrees())
-                                > VisionConstants.angleThreshold) {
-                            invalidMeasurement = true;
-                        }
-                    }
-
-                    // add more if needed
-
-                    Logger.recordOutput("Vision/EstimatedPose", pose.estimatedPose);
-                    Logger.recordOutput("Vision/InvalidMeasurement?", invalidMeasurement);
-                    addVisionPose(invalidMeasurement, pose);
-
-                    if (invalidMeasurement) {
-                        break;
-                    }
-                }
+        // discard measurments when a SINGLE tag measurement is too far away
+        if (pose.targetsUsed.size() == 1) {
+            final double distanceToTag =
+                    pose.targetsUsed
+                            .get(0)
+                            .getAlternateCameraToTarget()
+                            .getTranslation()
+                            .getDistance(Translation3d.kZero);
+            if (distanceToTag > VisionConstants.distanceThreshold) {
+                return Optional.of("SingleFar, " + distanceToTag);
             }
         }
+
+        // Reject multi-tag measurement more than X meters away from tags on average
+        if (pose.targetsUsed.size() > 1) {
+            final double averageDistance =
+                    pose.targetsUsed.stream()
+                            .mapToDouble(
+                                    target ->
+                                            target
+                                                    .getAlternateCameraToTarget()
+                                                    .getTranslation()
+                                                    .getDistance(Translation3d.kZero))
+                            .average()
+                            .getAsDouble(); // this WILL never error because we know there's more than 1 target
+            final double factor =
+                    1 + (pose.targetsUsed.size() - 2) * VisionConstants.multiTagDistanceFactor;
+            final double thresholdDistance = VisionConstants.distanceThreshold * factor;
+            if (averageDistance > thresholdDistance) {
+                Optional.of(
+                        String.format(
+                                "MultipleFar: dist=%f.3#, threshold=%f.3#", averageDistance, thresholdDistance));
+            }
+        }
+
+        // Reject based on gyro angle
+        if (pose.targetsUsed.size() == 1) {
+            Rotation2d tagRotation = pose.estimatedPose.getRotation().toRotation2d();
+            Rotation2d gyroRotation = drivetrain.getGyroRotation();
+            final double delta = Math.abs(tagRotation.minus(gyroRotation).getDegrees());
+            if (delta > VisionConstants.angleThreshold) {
+                return Optional.of("AngleWrong, delta=" + delta);
+            }
+        }
+
+        // we validated!!! no errors [:
+
+        return Optional.empty();
     }
 
     @Override
@@ -200,15 +192,16 @@ public class PhotonVision extends SubsystemBase {
                 final var option = io.updatePose(camera, result);
                 if (option.isPresent()) {
                     final EstimatedRobotPose pose = option.get();
+                    final var validation = validateVisionPose(pose, result);
+                    final boolean success = validation.isEmpty();
+                    Logger.recordOutput("Vision/ErrorMsg", validation.orElse("Valid"));
+                    Logger.recordOutput("Vision/Good Measurement?", success);
 
-                    for (var target : pose.targetsUsed) {
-                        final double distanceToTag =
-                                target
-                                        .getAlternateCameraToTarget()
-                                        .getTranslation()
-                                        .getDistance(Translation3d.kZero);
-
-                        validateVisionPose();
+                    if (success) {
+                        Logger.recordOutput("Vision/EstimatedPose", pose.estimatedPose);
+                        if (Constants.currentMode == Constants.Mode.REAL) {
+                            drivetrain.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+                        }
                     }
                 }
             }

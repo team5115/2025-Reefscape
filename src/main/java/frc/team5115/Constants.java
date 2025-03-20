@@ -208,6 +208,7 @@ public final class Constants {
 
         private static AprilTagFieldLayout loadReefOnlyFieldLayout() {
             try {
+                // throw new IOException();
                 return new AprilTagFieldLayout(
                         Filesystem.getDeployDirectory().getAbsolutePath()
                                 + File.separatorChar
@@ -231,10 +232,11 @@ public final class Constants {
         public static final double STD_DEV_LATENCY_MS = 10;
 
         // Pose filtering values
-        public static final double distanceThreshold = 2.5;
-        public static final double angleThreshold = 5.0;
-        public static final double zTranslationThreshold = 0.0;
+        public static final double distanceThreshold = 2.5; // meters
+        public static final double angleThreshold = 10.0; // degrees
+        public static final double zTranslationThreshold = 0.1; // meters
         public static final double ambiguityThreshold = 0.5;
-        public static final double yFactor = 2.0;
+        // every tag beyond seeing two tags gives us an extra meter of trusted distance
+        public static final double multiTagDistanceFactor = 1.0;
     }
 }
