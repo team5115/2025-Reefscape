@@ -103,6 +103,83 @@ public class PhotonVision extends SubsystemBase {
         this.io = io;
     }
 
+    public void addVisionPose(boolean invalidMeasurement, EstimatedRobotPose pose) {
+        if(!invalidMeasurement) { 
+             drivetrain.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+        }
+    }
+
+    public void validateVisionPose() { 
+            for (Camera camera : Camera.values()) {
+                final var unread = io.getAllUnreadResults(camera);
+                for (final var result : unread) {
+                    // update the camera's pose estimator
+                    final var option = io.updatePose(camera, result);
+                    if (option.isPresent()) {
+                        final EstimatedRobotPose pose = option.get();
+                        boolean invalidMeasurement = false;
+                        for (var target : pose.targetsUsed) {
+                            final double distanceToTag =
+                                    target
+                                            .getAlternateCameraToTarget()
+                                            .getTranslation()
+                                            .getDistance(Translation3d.kZero);
+                            if (distanceToTag > VisionConstants.distanceThreshold) {
+                                invalidMeasurement = true;
+                            }
+                        }
+        
+                        //Reject measurement if estimated 3d pose says robot is off the ground
+                        if (pose.estimatedPose.getTranslation().getZ() != VisionConstants.zTranslationThreshold) { 
+                            invalidMeasurement = true;
+                        }
+        
+                        // Reject multi-tag measurement more than X meters away from tags on average (think this is incorrect atm)
+                        if (pose.targetsUsed.size() > 1) {
+                            double averageDistance = pose.targetsUsed.stream()
+                                    .mapToDouble(target -> target.getAlternateCameraToTarget().getTranslation().getDistance(Translation3d.kZero))
+                                    .average()
+                                    .orElse(0.0);
+                            double factor = 1 + (pose.targetsUsed.size() - 2) * VisionConstants.yFactor;
+                            if (averageDistance > 2.5 * factor) {
+                                invalidMeasurement = true;
+                            }
+                        }
+        
+                        //Reject measurement if average ambiguity is above threshold
+                        double averageAmbiguity = result.getTargets().stream()
+                                .mapToDouble(target -> target.getPoseAmbiguity())
+                                .average()
+                                .orElse(0.0);
+                            if (averageAmbiguity > VisionConstants.ambiguityThreshold) {
+                                invalidMeasurement = true;
+                            }
+                        
+                        //Reject based on gyro angle 
+                        if (pose.targetsUsed.size() == 1) {
+                            Rotation2d tagRotation = pose.estimatedPose.getRotation().toRotation2d();
+                            Rotation2d gyroRotation = drivetrain.getGyroRotation();
+                            if (Math.abs(tagRotation.minus(gyroRotation).getDegrees()) > VisionConstants.angleThreshold) {
+                                invalidMeasurement = true;
+                            }
+                        }
+
+                        // add more if needed
+        
+                        Logger.recordOutput("Vision/EstimatedPose", pose.estimatedPose);
+                        Logger.recordOutput("Vision/InvalidMeasurement?", invalidMeasurement);
+                        addVisionPose(invalidMeasurement, pose);
+
+                        if (invalidMeasurement) {
+                            break;
+                        }
+        
+                    }
+                }
+            }
+        }
+
+
     @Override
     public void periodic() {
         io.updateInputs(inputs);
@@ -115,59 +192,15 @@ public class PhotonVision extends SubsystemBase {
                 final var option = io.updatePose(camera, result);
                 if (option.isPresent()) {
                     final EstimatedRobotPose pose = option.get();
-                    boolean invalidMeasurement = false;
+                    
                     for (var target : pose.targetsUsed) {
                         final double distanceToTag =
                                 target
                                         .getAlternateCameraToTarget()
                                         .getTranslation()
                                         .getDistance(Translation3d.kZero);
-                        if (distanceToTag > VisionConstants.distanceThreshold) {
-                            invalidMeasurement = true;
-                            break;
-                        }
-                    }
-                  
-                    //Reject measurement if estimated 3d pose says robot is off the ground
-                    if (pose.estimatedPose.getTranslation().getZ() != VisionConstants.zTranslationThreshold) { 
-                        invalidMeasurement = true;
-                    }
 
-                    // Reject multi-tag measurement more than X meters away from tags on average (think this is incorrect atm)
-                    if (pose.targetsUsed.size() > 1) {
-                        double averageDistance = pose.targetsUsed.stream()
-                                .mapToDouble(target -> target.getAlternateCameraToTarget().getTranslation().getDistance(Translation3d.kZero))
-                                .average()
-                                .orElse(0.0);
-                        double factor = 1 + (pose.targetsUsed.size() - 2) * VisionConstants.yFactor;
-                        if (averageDistance > 2.5 * factor) {
-                            invalidMeasurement = true;
-                        }
-                    }
-
-                    //Reject measurement if average ambiguity is above threshold
-                    double averageAmbiguity = result.getTargets().stream()
-                            .mapToDouble(target -> target.getPoseAmbiguity())
-                            .average()
-                            .orElse(0.0);
-                        if (averageAmbiguity > VisionConstants.ambiguityThreshold) {
-                            invalidMeasurement = true;
-                        }
-                    
-                    //Reject basd on gyro angle 
-                    if (pose.targetsUsed.size() == 1) {
-                        Rotation2d tagRotation = pose.estimatedPose.getRotation().toRotation2d();
-                        Rotation2d gyroRotation = drivetrain.getGyroRotation();
-                        if (Math.abs(tagRotation.minus(gyroRotation).getDegrees()) > VisionConstants.angleThreshold) {
-                            invalidMeasurement = true;
-                        }
-                    }
-
-                    Logger.recordOutput("Vision/EstimatedPose", pose.estimatedPose);
-                    Logger.recordOutput("Vision/InvalidMeasurement?", invalidMeasurement);
-
-                    if (!invalidMeasurement) {
-                        drivetrain.addVisionMeasurement(pose.estimatedPose.toPose2d(), pose.timestampSeconds);
+                    validateVisionPose();  
                     }
 
                 }
