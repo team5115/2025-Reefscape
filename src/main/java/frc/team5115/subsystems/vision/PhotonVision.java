@@ -111,11 +111,11 @@ public class PhotonVision extends SubsystemBase {
     public Optional<String> validateVisionPose(EstimatedRobotPose pose, PhotonPipelineResult result) {
         // Reject measurement if average ambiguity is below threshold
         try {
-            final double averageAmbiguity =
-                    result.getTargets().stream()
-                            .mapToDouble(target -> target.getPoseAmbiguity())
-                            .average()
-                            .orElseThrow();
+            double totalAmbiguity = 0;
+            for (var target : pose.targetsUsed) {
+                totalAmbiguity += target.getPoseAmbiguity();
+            }
+            final double averageAmbiguity = totalAmbiguity / pose.targetsUsed.size();
             if (averageAmbiguity > VisionConstants.ambiguityThreshold) {
                 return Optional.of("Ambiguity, " + averageAmbiguity);
             }
@@ -144,16 +144,11 @@ public class PhotonVision extends SubsystemBase {
 
         // Reject multi-tag measurement more than X meters away from tags on average
         if (pose.targetsUsed.size() > 1) {
-            final double averageDistance =
-                    pose.targetsUsed.stream()
-                            .mapToDouble(
-                                    target ->
-                                            target
-                                                    .getAlternateCameraToTarget()
-                                                    .getTranslation()
-                                                    .getDistance(Translation3d.kZero))
-                            .average()
-                            .getAsDouble(); // this WILL never error because we know there's more than 1 target
+            double totalDistance = 0;
+            for (var target : pose.targetsUsed) {
+                target.getAlternateCameraToTarget().getTranslation().getDistance(Translation3d.kZero);
+            }
+            final double averageDistance = totalDistance / pose.targetsUsed.size();
             final double factor =
                     1 + (pose.targetsUsed.size() - 2) * VisionConstants.multiTagDistanceFactor;
             final double thresholdDistance = VisionConstants.distanceThreshold * factor;
@@ -166,9 +161,13 @@ public class PhotonVision extends SubsystemBase {
 
         // Reject based on gyro angle
         if (pose.targetsUsed.size() == 1) {
-            Rotation2d tagRotation = pose.estimatedPose.getRotation().toRotation2d();
-            Rotation2d gyroRotation = drivetrain.getGyroRotation();
-            final double delta = Math.abs(tagRotation.minus(gyroRotation).getDegrees());
+            final double delta =
+                    Math.abs(
+                            pose.estimatedPose
+                                    .getRotation()
+                                    .toRotation2d()
+                                    .minus(drivetrain.getGyroRotation())
+                                    .getDegrees());
             if (delta > VisionConstants.angleThreshold) {
                 return Optional.of("AngleWrong, delta=" + delta);
             }
