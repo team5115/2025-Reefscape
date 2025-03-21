@@ -185,6 +185,8 @@ public class RobotContainer {
 
         autoChooser.addOption("Drive All SysIds", drivetrain.driveAllSysIds());
 
+        autoChooser.addOption("Elevator", elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+
         configureButtonBindings();
         configureBlingBindings();
     }

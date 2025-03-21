@@ -1,6 +1,9 @@
 package frc.team5115.subsystems.elevator;
 
 import com.revrobotics.spark.SparkMax;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +26,8 @@ public class Elevator extends SubsystemBase {
     private static final double maxSpeed = 10.0; // m/s
     private static final double minHeightInches = 21.75;
     private static final double firstHeight = 0;
+    private static final double ks = 0.0;
+
     // private static final double secondHeight = 0;
     // private static final double thirdHeight = 0;
     // private static final double fourthHeight = 0;
@@ -30,6 +35,7 @@ public class Elevator extends SubsystemBase {
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
     private final ProfiledPIDController positionPID; // control meters, output m/s
+    private final ElevatorFeedforward feedforward;
     private final SysIdRoutine sysId;
     private Height height = Height.L2;
     private double velocitySetpoint;
@@ -72,17 +78,22 @@ public class Elevator extends SubsystemBase {
                 positionPID =
                         new ProfiledPIDController(
                                 1.6, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                feedforward = new ElevatorFeedforward(0.0, 0.0, 0.0, 0.0);
                 break;
             case SIM:
                 positionPID =
                         new ProfiledPIDController(
                                 1.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                        feedforward = new ElevatorFeedforward(0.0, 0.0, 0.0, 0.0);
                 break;
             default:
                 positionPID =
                         new ProfiledPIDController(
                                 0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                feedforward = new ElevatorFeedforward(0.0, 0.0, 0.0, 0.0);
                 break;
+
+
         }
 
         sysId =
@@ -125,8 +136,16 @@ public class Elevator extends SubsystemBase {
         //     // Force the elvator to stay at the intake position when there is a coral in the intake
         //     height = Height.INTAKE;
         // }
-        io.setElevatorVelocity(velocitySetpoint, 0);
         elevatorMechanismLigament2d.setLength(getActualHeight() * 8);
+
+        double voltage = feedforward.calculate(getActualHeight(), velocitySetpoint);
+        voltage = MathUtil.clamp(voltage, -9.0, + 12.0);
+        
+        if (Math.abs(voltage) < ks) { //two times ks if this dont work 
+            voltage = 0;
+        }
+
+        io.setElevatorVoltage(voltage);
     }
 
     /**
