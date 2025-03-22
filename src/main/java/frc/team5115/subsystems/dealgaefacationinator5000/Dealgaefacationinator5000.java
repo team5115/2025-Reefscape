@@ -26,7 +26,7 @@ public class Dealgaefacationinator5000 extends SubsystemBase {
         return Commands.runOnce(
                 () -> {
                     io.setPneumatic(true);
-                    io.setPercent(+1.0); // TODO determine clean speed
+                    io.setPercent(+0.0);
                 },
                 this);
     }
@@ -38,6 +38,14 @@ public class Dealgaefacationinator5000 extends SubsystemBase {
                     io.setPercent(0);
                 },
                 this);
+    }
+
+    public Command retractAndSpin() {
+        return Commands.sequence(
+                Commands.runOnce(() -> io.setPneumatic(false), this),
+                Commands.runOnce(() -> io.setPercent(0.6), this),
+                Commands.waitSeconds(0.7),
+                Commands.runOnce(() -> io.setPercent(0), this));
     }
 
     public void getSparks(ArrayList<SparkMax> sparks) {

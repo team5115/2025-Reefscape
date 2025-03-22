@@ -295,7 +295,7 @@ public class RobotContainer {
                 .or(joyManip.pov(135))
                 .or(joyManip.pov(225))
                 .onTrue(dealgaefacationinator5000.extend())
-                .onFalse(dealgaefacationinator5000.retract());
+                .onFalse(dealgaefacationinator5000.retractAndSpin());
 
         // // dealgae
         // joyManip
