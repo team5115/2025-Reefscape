@@ -159,19 +159,19 @@ public class PhotonVision extends SubsystemBase {
             }
         }
 
-        // Reject based on gyro angle
-        if (pose.targetsUsed.size() == 1) {
-            final double delta =
-                    Math.abs(
-                            pose.estimatedPose
-                                    .getRotation()
-                                    .toRotation2d()
-                                    .minus(drivetrain.getGyroRotation())
-                                    .getDegrees());
-            if (delta > VisionConstants.angleThreshold) {
-                return Optional.of("AngleWrong, delta=" + delta);
-            }
-        }
+        // // Reject based on existing pose angle
+        // if (pose.targetsUsed.size() == 1) {
+        //     final double delta =
+        //             Math.abs(
+        //                     pose.estimatedPose
+        //                             .getRotation()
+        //                             .toRotation2d()
+        //                             .minus(drivetrain.getRotation())
+        //                             .getDegrees());
+        //     if (delta > VisionConstants.angleThreshold) {
+        //         return Optional.of("AngleWrong, delta=" + delta);
+        //     }
+        // }
 
         // we validated!!! no errors [:
 
