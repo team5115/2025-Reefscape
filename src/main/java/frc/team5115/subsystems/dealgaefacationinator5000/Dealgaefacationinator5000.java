@@ -26,7 +26,7 @@ public class Dealgaefacationinator5000 extends SubsystemBase {
         return Commands.runOnce(
                 () -> {
                     io.setPneumatic(true);
-                    io.setPercent(+0.2); // TODO determine clean speed
+                    io.setPercent(+1.0); // TODO determine clean speed
                 },
                 this);
     }
