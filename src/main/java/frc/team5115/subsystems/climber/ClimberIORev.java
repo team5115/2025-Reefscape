@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.PneumaticHub;
 import frc.team5115.Constants;
 
 public class ClimberIORev implements ClimberIO {
+    private final double BLOCK_OUT_POS = 0.2;
+    private final double BLOCK_IN_POS = 0.0;
 
     private final DigitalInput climbSensor;
     private final DoubleSolenoid m_doubleSolenoid;
@@ -16,7 +18,7 @@ public class ClimberIORev implements ClimberIO {
 
     public ClimberIORev(PneumaticHub hub) {
         linearActuator = new PWM(Constants.BLOCK_ACTUATOR_ID);
-        linearActuator.setPosition(1.0); // set to block
+        linearActuator.setPosition(BLOCK_OUT_POS); // set to block
         block = true;
         climbSensor = new DigitalInput(Constants.CLIMB_INAKE_SENSOR);
         m_doubleSolenoid =
@@ -32,9 +34,9 @@ public class ClimberIORev implements ClimberIO {
     public void toggleShield() {
         block = !block;
         if (block) {
-            linearActuator.setPosition(1.0);
+            linearActuator.setPosition(BLOCK_OUT_POS);
         } else {
-            linearActuator.setPosition(0.0);
+            linearActuator.setPosition(BLOCK_IN_POS);
         }
     }
 
