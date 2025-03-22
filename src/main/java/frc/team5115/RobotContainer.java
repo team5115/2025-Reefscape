@@ -258,7 +258,9 @@ public class RobotContainer {
 
         // divide by 100 to achieve 3 cm/s max speed
         elevator.setDefaultCommand(elevator.positionControl());
-        joyManip.leftStick().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
+
+        // driver holds down a, manip controls elevator velocity
+        joyDrive.a().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
 
         intake.setDefaultCommand(intake.intakeIf(elevator::atIntake));
         joyManip.a().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
@@ -269,12 +271,12 @@ public class RobotContainer {
                 .onFalse(elevator.setHeight(Height.INTAKE));
         joyManip
                 .b()
-                .and(joyManip.pov(180).negate())
+                // .and(joyManip.pov(180).negate())
                 .onTrue(elevator.setHeight(Height.L2))
                 .onFalse(elevator.setHeight(Height.INTAKE));
         joyManip
                 .x()
-                .and(joyManip.pov(180).negate())
+                // .and(joyManip.pov(180).negate())
                 .onTrue(elevator.setHeight(Height.L3))
                 .onFalse(elevator.setHeight(Height.INTAKE));
 
@@ -288,20 +290,24 @@ public class RobotContainer {
         joyManip.leftBumper().onTrue(climber.retract());
         joyManip.pov(0).onTrue(climber.toggleShield());
 
-        joyManip.pov(90).onTrue(dealgaefacationinator5000.extend());
-        joyManip.pov(270).onTrue(dealgaefacationinator5000.retract());
+        joyManip
+                .pov(180)
+                .or(joyManip.pov(135))
+                .or(joyManip.pov(225))
+                .onTrue(dealgaefacationinator5000.extend())
+                .onFalse(dealgaefacationinator5000.retract());
 
-        // dealgae
-        joyManip
-                .b()
-                .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
-                .onTrue(DriveCommands.cleanStart(Height.L2, elevator, dealgaefacationinator5000))
-                .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
-        joyManip
-                .x()
-                .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
-                .onTrue(DriveCommands.cleanStart(Height.L3, elevator, dealgaefacationinator5000))
-                .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
+        // // dealgae
+        // joyManip
+        //         .b()
+        //         .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
+        //         .onTrue(DriveCommands.cleanStart(Height.L2, elevator, dealgaefacationinator5000))
+        //         .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
+        // joyManip
+        //         .x()
+        //         .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
+        //         .onTrue(DriveCommands.cleanStart(Height.L3, elevator, dealgaefacationinator5000))
+        //         .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
     }
 
     private Command setRobotRelative(boolean state) {
