@@ -40,8 +40,10 @@ public class Dealgaefacationinator5000 extends SubsystemBase {
                 this);
     }
 
-    public Command retractAndSpin() {
+    public Command clean() {
         return Commands.sequence(
+                extend(),
+                Commands.waitSeconds(0.25),
                 Commands.runOnce(() -> io.setPneumatic(false), this),
                 Commands.runOnce(() -> io.setPercent(0.6), this),
                 Commands.waitSeconds(0.7),
