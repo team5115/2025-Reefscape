@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Easy Peasy"
+            "pathName": "dealgy auto"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Clean"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Dealgae"
           }
         },
         {
