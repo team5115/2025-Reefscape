@@ -403,6 +403,8 @@ public class RobotContainer {
                 "L1",
                 AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.RIGHT, Height.L1));
 
+        NamedCommands.registerCommand("Clean", AutoCommands.dealgify(dealgaefacationinator5000));
+
         System.out.println("Registered Commands");
     }
 

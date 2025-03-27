@@ -8,6 +8,7 @@ import frc.team5115.subsystems.drive.Drivetrain;
 import frc.team5115.subsystems.elevator.Elevator;
 import frc.team5115.subsystems.elevator.Elevator.Height;
 import frc.team5115.subsystems.intake.Intake;
+import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000;
 
 public class AutoCommands {
     private AutoCommands() {}
@@ -57,6 +58,10 @@ public class AutoCommands {
 
     public static Command raiseElevator(Elevator elevator, Height height) {
         return Commands.sequence(elevator.setHeightAndWait(height, 2.0));
+    }
+
+    public static Command dealgify(Dealgaefacationinator5000 dealgaefacationinator5000) { 
+        return dealgaefacationinator5000.clean();
     }
 
     public static Command scoreSequence(
