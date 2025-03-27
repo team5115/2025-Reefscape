@@ -61,7 +61,9 @@ public class AutoCommands {
     }
 
     public static Command dealgify(
-            Drivetrain drivetrain, Elevator elevator, Dealgaefacationinator5000 dealgaefacationinator5000) {
+            Drivetrain drivetrain,
+            Elevator elevator,
+            Dealgaefacationinator5000 dealgaefacationinator5000) {
         return Commands.sequence(
                 Commands.print("Align and Raising to dealgify"),
                 elevator.setHeight(Height.L3),
