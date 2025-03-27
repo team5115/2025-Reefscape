@@ -60,8 +60,16 @@ public class AutoCommands {
         return Commands.sequence(elevator.setHeightAndWait(height, 2.0));
     }
 
-    public static Command dealgify(Dealgaefacationinator5000 dealgaefacationinator5000) {
-        return dealgaefacationinator5000.clean();
+    public static Command dealgify(
+            Drivetrain drivetrain, Elevator elevator, Dealgaefacationinator5000 dealgaefacationinator5000) {
+        return Commands.sequence(
+                Commands.print("Align and Raising to dealgify"),
+                elevator.setHeight(Height.L3),
+                drivetrain.autoAlignToScoringSpot(Side.CENTER),
+                elevator.waitForSetpoint(1.5),
+                Commands.print("Cleaning..."),
+                dealgaefacationinator5000.clean(),
+                Commands.print("Clean!"));
     }
 
     public static Command scoreSequence(
