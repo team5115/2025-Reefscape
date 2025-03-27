@@ -43,7 +43,7 @@ public class Drivetrain extends SubsystemBase {
 
     // TODO tune drive pids
     private final double linear_kp = 1.9;
-    private final double linear_ki = 0.0;
+    private final double linear_ki = 0.25 ;
     private final double linear_kd = 0.0;
     private final double angular_kp = 1.0;
     private final double angular_ki = 0.0;
@@ -103,6 +103,8 @@ public class Drivetrain extends SubsystemBase {
         modules[3] = new Module(brModuleIO, 3);
 
         anglePid.enableContinuousInput(-Math.PI, Math.PI);
+        xPid.setIntegratorRange(-0.3, +0.3);
+        yPid.setIntegratorRange(-0.3, +0.3);
         // xPid.setTolerance(0.01);
         // yPid.setTolerance(0.01);
         // anglePid.setTolerance(Math.toRadians(3));
