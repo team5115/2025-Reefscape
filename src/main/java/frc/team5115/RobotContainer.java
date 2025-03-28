@@ -431,6 +431,9 @@ public class RobotContainer {
 
     public void autoInit() {
         drivetrain.setAutoCurrentLimit();
+        // Offset gyro to zero
+        drivetrain.offsetGyro();
+        // Then offset by 180 degrees
         drivetrain.offsetGyro(Rotation2d.k180deg);
     }
 

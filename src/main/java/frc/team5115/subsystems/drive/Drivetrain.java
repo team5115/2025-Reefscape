@@ -463,6 +463,7 @@ public class Drivetrain extends SubsystemBase {
         return getPose().getRotation();
     }
 
+    @AutoLogOutput
     public Rotation2d getGyroRotation() {
         if (gyroInputs.connected) {
             return gyroInputs.yawPosition.minus(gyroOffset);
@@ -486,14 +487,14 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator.addVisionMeasurement(visionPose, timestamp);
     }
 
-    private Rotation2d gyroOffset = new Rotation2d();
+    @AutoLogOutput private Rotation2d gyroOffset = new Rotation2d();
 
     public void offsetGyro() {
         gyroOffset = rawGyroRotation;
     }
 
     public void offsetGyro(Rotation2d offset) {
-        gyroOffset = offset;
+        gyroOffset = gyroOffset.plus(offset);
     }
 
     public void getSparks(ArrayList<SparkMax> sparks) {
