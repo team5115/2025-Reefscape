@@ -167,6 +167,7 @@ public final class Constants {
                 new Transform2d(new Translation2d(forwardOffset, -0.04 + 0.06 - 0.02), Rotation2d.k180deg);
         private static final Transform2d transformCenter =
                 new Transform2d(new Translation2d(0.425, -0.20 + 0.06 - 0.09 - 0.02), Rotation2d.k180deg);
+
         public static Pose2d getNearestScoringSpot(final Pose2d robot, final Side side) {
             double shortestDistance = Double.MAX_VALUE;
             Pose2d closestPose = null;
