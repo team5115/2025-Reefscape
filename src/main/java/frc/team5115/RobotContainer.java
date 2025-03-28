@@ -430,7 +430,7 @@ public class RobotContainer {
 
     public void autoInit() {
         drivetrain.setAutoCurrentLimit();
-        drivetrain.offsetGyro(Rotation2d.k180deg)
+        drivetrain.offsetGyro(Rotation2d.k180deg);
     }
 
     public void disabledPeriodic() {}
