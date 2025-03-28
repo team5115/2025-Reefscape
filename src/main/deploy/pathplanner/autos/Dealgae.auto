@@ -17,6 +17,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "Dealgae"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "L3Right"
