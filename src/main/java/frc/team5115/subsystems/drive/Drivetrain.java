@@ -493,7 +493,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void offsetGyro(Rotation2d offset) {
-        gyroOffset = rawGyroRotation.plus(offset);
+        gyroOffset = offset;
     }
 
     public void getSparks(ArrayList<SparkMax> sparks) {
