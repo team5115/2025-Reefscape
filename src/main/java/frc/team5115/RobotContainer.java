@@ -2,6 +2,7 @@ package frc.team5115;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -430,6 +431,10 @@ public class RobotContainer {
 
     public void autoInit() {
         drivetrain.setAutoCurrentLimit();
+        // Offset gyro to zero
+        drivetrain.offsetGyro();
+        // Then offset by 180 degrees
+        drivetrain.offsetGyro(Rotation2d.k180deg);
     }
 
     public void disabledPeriodic() {}
