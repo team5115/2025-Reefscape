@@ -146,7 +146,11 @@ public class Elevator extends SubsystemBase {
         // io.setElevatorVelocity(velocitySetpoint, 0.0);
 
         final double volts = feedforward.calculate(velocitySetpoint);
-        io.setElevatorVoltage(volts);
+        if (Math.abs(volts) <= ElevatorConstants.KG) {
+            io.setElevatorVoltage(0);
+        } else {
+            io.setElevatorVoltage(volts);
+        }
         elevatorMechanismLigament2d.setLength(getActualHeight() * 8);
     }
 
