@@ -49,7 +49,7 @@ public class Elevator extends SubsystemBase {
         MINIMUM(minHeightInches),
         INTAKE(minHeightInches),
         L1(minHeightInches + 7.0),
-        L2(minHeightInches + 14.85),
+        L2(minHeightInches + 15.85),
         L3(55),
         CLEAN3(63),
         L4(63);
