@@ -270,7 +270,7 @@ public class RobotContainer {
         elevator.setDefaultCommand(elevator.positionControl());
 
         // driver holds down a, manip controls elevator velocity
-        joyDrive.a().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
+        joyDrive.a().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.5));
 
         intake.setDefaultCommand(intake.intakeIf(elevator::atIntake));
         joyManip.a().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());

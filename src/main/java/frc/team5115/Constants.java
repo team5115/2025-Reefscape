@@ -145,12 +145,12 @@ public final class Constants {
         public static final double SLOW_PID_HEIGHT_METERS = 0.01 * 6.0;
 
         public static final double FIRST_MAGNET_HEIGHT = 0;
-        public static final double SECOND_MAGNET_HEIGHT = 0.305; // meters
-        public static final double THIRD_MAGNET_HEIGHT = 0.610; // meters
+        public static final double SECOND_MAGNET_HEIGHT = 0.1637495863622731; // meters
+        public static final double THIRD_MAGNET_HEIGHT = 0.6174441447379277; // meters
 
         public static final double MAX_VEL = 10.0; // m/s
         public static final double MAX_ACCEL = 20.0; // m/s^2
-        public static final double KP = 1.6;
+        public static final double KP = 3.0;
         public static final double KI = 0;
         public static final double KD = 0;
         public static final double KS = 0.38176; // volts

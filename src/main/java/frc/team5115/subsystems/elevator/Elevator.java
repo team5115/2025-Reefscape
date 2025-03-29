@@ -165,10 +165,10 @@ public class Elevator extends SubsystemBase {
         if (inputs.magnet1detected) {
             offset = ElevatorConstants.FIRST_MAGNET_HEIGHT - inputs.positionMeters;
         }
-        if (inputs.magnet2detected && false) {
+        if (inputs.magnet2detected) {
             offset = ElevatorConstants.SECOND_MAGNET_HEIGHT - inputs.positionMeters;
         }
-        if (inputs.magnet3detected && false) {
+        if (inputs.magnet3detected) {
             offset = ElevatorConstants.THIRD_MAGNET_HEIGHT - inputs.positionMeters;
         }
 
@@ -200,9 +200,9 @@ public class Elevator extends SubsystemBase {
                 Commands.sequence(
                         Commands.runOnce(
                                 () -> {
-                                    velocitySetpoint = -0.10;
+                                    velocitySetpoint = -1;
                                 }),
-                        Commands.waitUntil(() -> inputs.magnet1detected == true).withTimeout(2.0),
+                        Commands.waitUntil(() -> inputs.magnet1detected == true).withTimeout(3.0),
                         Commands.runOnce(
                                 () -> {
                                     velocitySetpoint = 0;
@@ -271,13 +271,14 @@ public class Elevator extends SubsystemBase {
                         velocitySetpoint = 0;
                     } else {
                         // Otherwise, we select a pid controller and calculate the velocity setpoint by
-                        if (velocitySetpoint < 0
-                                && getActualHeight() <= ElevatorConstants.SLOW_PID_HEIGHT_METERS) {
-                            // use slow pid when we are moving down and below a certain height
-                            selectedPid = slowPid;
-                        } else {
-                            selectedPid = fastPid;
-                        }
+                        // if (velocitySetpoint < 0
+                        //         && getActualHeight() <= ElevatorConstants.SLOW_PID_HEIGHT_METERS) {
+                        //     // use slow pid when we are moving down and below a certain height
+                        //     // selectedPid = slowPid;
+                        // } else {
+                        //     selectedPid = fastPid;
+                        // }
+                        selectedPid = fastPid;
                         velocitySetpoint = selectedPid.calculate(getActualHeight(), height.position);
                     }
                 },
