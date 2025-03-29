@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import frc.team5115.Constants;
 import frc.team5115.Constants.ElevatorConstants;
 import java.util.ArrayList;
+import org.littletonrobotics.junction.Logger;
 
 public class ElevatorIOSparkMax implements ElevatorIO {
     private final SparkMax motor;
@@ -21,15 +22,15 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     private final SparkClosedLoopController velocityCLC;
     private final DigitalInput backSensor;
     private final DigitalInput firstSensor;
-    // private final DigitalInput secondSensor;
-    // private final DigitalInput thirdSensor;
+    private final DigitalInput secondSensor;
+    private final DigitalInput thirdSensor;
     // private final DigitalInput fourthSensor;
 
     public ElevatorIOSparkMax() {
         backSensor = new DigitalInput(Constants.BACK_CORAL_SENSOR);
         firstSensor = new DigitalInput(Constants.ELEVATOR_FIRST_SENSOR_ID);
-        // secondSensor = new DigitalInput(Constants.ELEVATOR_SECOND_SENSOR_ID);
-        // thirdSensor = new DigitalInput(Constants.ELEVATOR_THIRD_SENSOR_ID);
+        secondSensor = new DigitalInput(Constants.ELEVATOR_SECOND_SENSOR_ID);
+        thirdSensor = new DigitalInput(Constants.ELEVATOR_THIRD_SENSOR_ID);
         // fourthSensor = new DigitalInput(Constants.ELEVATOR_FOURTH_SENSOR_ID);
         motor = new SparkMax(Constants.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
         encoder = motor.getEncoder();
@@ -62,13 +63,14 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         inputs.currentAmps = motor.getOutputCurrent();
         inputs.backCoralDetected = !backSensor.get();
         inputs.magnet1detected = !firstSensor.get();
-        inputs.magnet2detected = false; // !secondSensor.get();
-        inputs.magnet3detected = false; // !thirdSensor.get();
+        inputs.magnet2detected = !secondSensor.get();
+        inputs.magnet3detected = !thirdSensor.get();
         inputs.magnet4detected = false; // !fourthSensor.get();
     }
 
     @Override
     public void setElevatorVoltage(double volts) {
+        Logger.recordOutput("Elevator/Commanded Voltage", volts);
         motor.setVoltage(volts);
     }
 

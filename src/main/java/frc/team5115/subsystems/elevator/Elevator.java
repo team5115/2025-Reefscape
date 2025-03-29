@@ -1,6 +1,7 @@
 package frc.team5115.subsystems.elevator;
 
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -9,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants;
+import frc.team5115.Constants.ElevatorConstants;
 import frc.team5115.subsystems.dispenser.Dispenser;
 import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
@@ -19,21 +21,20 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 public class Elevator extends SubsystemBase {
-    private static final double maxAcceleration = 20.0;
-    private static final double maxSpeed = 10.0; // m/s
     private static final double minHeightInches = 21.75;
-    private static final double firstHeight = 0;
-    // private static final double secondHeight = 0;
-    // private static final double thirdHeight = 0;
-    // private static final double fourthHeight = 0;
 
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-    private final ProfiledPIDController positionPID; // control meters, output m/s
+    private final ProfiledPIDController fastPid; // control meters, output m/s
+    private final ProfiledPIDController slowPid; // control meters, output m/s
+    private ProfiledPIDController selectedPid;
+    private final ElevatorFeedforward feedforward;
     private final SysIdRoutine sysId;
-    private Height height = Height.L2;
-    private double velocitySetpoint;
-    public double offset;
+    private Height height = Height.MINIMUM; // Start at the minimum height
+
+    @AutoLogOutput private double velocitySetpoint;
+
+    @AutoLogOutput public double offset;
 
     @AutoLogOutput
     private final LoggedMechanism2d elevatorMechanism2d =
@@ -49,7 +50,7 @@ public class Elevator extends SubsystemBase {
         INTAKE(minHeightInches),
         L1(minHeightInches + 7.0),
         L2(minHeightInches + 14.85),
-        L3(52),
+        L3(55),
         CLEAN3(63),
         L4(63);
 
@@ -67,19 +68,62 @@ public class Elevator extends SubsystemBase {
         switch (Constants.currentMode) {
             case REAL:
             case REPLAY:
-                positionPID =
+                fastPid =
                         new ProfiledPIDController(
-                                1.6, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                                ElevatorConstants.KP,
+                                ElevatorConstants.KI,
+                                ElevatorConstants.KD,
+                                new TrapezoidProfile.Constraints(
+                                        ElevatorConstants.MAX_VEL, ElevatorConstants.MAX_ACCEL));
+                slowPid =
+                        new ProfiledPIDController(
+                                ElevatorConstants.KP * ElevatorConstants.SLOW_CONSTANT,
+                                ElevatorConstants.KI * ElevatorConstants.SLOW_CONSTANT,
+                                ElevatorConstants.KD * ElevatorConstants.SLOW_CONSTANT,
+                                new TrapezoidProfile.Constraints(
+                                        ElevatorConstants.MAX_VEL * ElevatorConstants.SLOW_CONSTANT,
+                                        ElevatorConstants.MAX_ACCEL * ElevatorConstants.SLOW_CONSTANT));
+                feedforward =
+                        new ElevatorFeedforward(
+                                ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
                 break;
             case SIM:
-                positionPID =
+                fastPid =
                         new ProfiledPIDController(
-                                1.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                                1.0,
+                                0.0,
+                                0.0,
+                                new TrapezoidProfile.Constraints(
+                                        ElevatorConstants.MAX_VEL, ElevatorConstants.MAX_ACCEL));
+                slowPid =
+                        new ProfiledPIDController(
+                                1.0 * ElevatorConstants.SLOW_CONSTANT,
+                                0.0,
+                                0.0,
+                                new TrapezoidProfile.Constraints(
+                                        ElevatorConstants.MAX_VEL * ElevatorConstants.SLOW_CONSTANT,
+                                        ElevatorConstants.MAX_ACCEL * ElevatorConstants.SLOW_CONSTANT));
+                feedforward =
+                        new ElevatorFeedforward(
+                                ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
                 break;
             default:
-                positionPID =
+                fastPid =
                         new ProfiledPIDController(
-                                0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                                0.0,
+                                0.0,
+                                0.0,
+                                new TrapezoidProfile.Constraints(
+                                        ElevatorConstants.MAX_VEL, ElevatorConstants.MAX_ACCEL));
+                slowPid =
+                        new ProfiledPIDController(
+                                0.0,
+                                0.0,
+                                0.0,
+                                new TrapezoidProfile.Constraints(
+                                        ElevatorConstants.MAX_VEL * ElevatorConstants.SLOW_CONSTANT,
+                                        ElevatorConstants.MAX_ACCEL * ElevatorConstants.SLOW_CONSTANT));
+                feedforward = new ElevatorFeedforward(0, 0, 0);
                 break;
         }
 
@@ -94,28 +138,40 @@ public class Elevator extends SubsystemBase {
                                 (voltage) -> io.setElevatorVoltage(voltage.magnitude()), null, this));
 
         height = Height.MINIMUM;
-        positionPID.setTolerance(0.05);
-        positionPID.setGoal(height.position);
+        fastPid.setTolerance(0.05);
+        slowPid.setTolerance(0.05);
+        fastPid.setGoal(height.position);
+        slowPid.setGoal(height.position);
+        selectedPid = fastPid;
     }
 
+    @AutoLogOutput
     public double getActualHeight() {
         return inputs.positionMeters + offset;
+    }
+
+    @AutoLogOutput
+    public double getInchesFromGround() {
+        return getActualHeight() * 100d / 2.54 + minHeightInches;
     }
 
     @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs(getName(), inputs);
-        recordOutputs();
+        Logger.recordOutput("Elevator/Goal Height", height.position);
+        Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
+
         if (inputs.magnet1detected) {
-            offset = firstHeight - inputs.positionMeters;
+            offset = ElevatorConstants.FIRST_MAGNET_HEIGHT - inputs.positionMeters;
         }
-        // if (inputs.magnet2detected) {
-        //     offset = secondHeight - inputs.positionMeters;
-        // }
-        // if (inputs.magnet3detected) {
-        //     offset = thirdHeight - inputs.positionMeters;
-        // }
+        if (inputs.magnet2detected) {
+            offset = ElevatorConstants.SECOND_MAGNET_HEIGHT - inputs.positionMeters;
+        }
+        if (inputs.magnet3detected) {
+            offset = ElevatorConstants.THIRD_MAGNET_HEIGHT - inputs.positionMeters;
+        }
+
         // if (inputs.magnet4detected) {
         //     offset = fourthHeight - inputs.positionMeters;
         // }
@@ -123,7 +179,14 @@ public class Elevator extends SubsystemBase {
         //     // Force the elvator to stay at the intake position when there is a coral in the intake
         //     height = Height.INTAKE;
         // }
-        io.setElevatorVelocity(velocitySetpoint, 0.0);
+        // io.setElevatorVelocity(velocitySetpoint, 0.0);
+
+        final double volts = feedforward.calculate(velocitySetpoint);
+        if (Math.abs(volts) <= ElevatorConstants.KG) {
+            io.setElevatorVoltage(0);
+        } else {
+            io.setElevatorVoltage(volts);
+        }
         elevatorMechanismLigament2d.setLength(getActualHeight() * 8);
     }
 
@@ -137,9 +200,9 @@ public class Elevator extends SubsystemBase {
                 Commands.sequence(
                         Commands.runOnce(
                                 () -> {
-                                    velocitySetpoint = -0.10;
+                                    velocitySetpoint = -1;
                                 }),
-                        Commands.waitUntil(() -> inputs.magnet1detected == true).withTimeout(2.0),
+                        Commands.waitUntil(() -> inputs.magnet1detected == true).withTimeout(3.0),
                         Commands.runOnce(
                                 () -> {
                                     velocitySetpoint = 0;
@@ -147,20 +210,6 @@ public class Elevator extends SubsystemBase {
                                 }));
         retval.addRequirements(this);
         return retval;
-    }
-
-    private void recordOutputs() {
-        Logger.recordOutput("Elevator/Goal Height", height.position);
-        Logger.recordOutput("Elevator/Setpoint Velocity", velocitySetpoint);
-        Logger.recordOutput("Elevator/Actual Height", getActualHeight());
-        Logger.recordOutput(
-                "Elevator/Inches From Ground", getActualHeight() * 100d / 2.54 + minHeightInches);
-        Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
-        Logger.recordOutput("Elevator/At Goal?", atGoal());
-        Logger.recordOutput("Elevator/State", getStateString());
-        Logger.recordOutput(
-                "Elevator/Offset Delta", positionPID.getGoal().position - getActualHeight());
-        Logger.recordOutput("Elevator/OffsetValue", offset);
     }
 
     public Command waitForSetpoint(double timeout) {
@@ -172,14 +221,14 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atIntake() {
-        return atGoal() && positionPID.getGoal().position == Height.INTAKE.position;
+        return atGoal() && selectedPid.getGoal().position == Height.INTAKE.position;
     }
 
     public Command setHeight(Height height) {
         return Commands.runOnce(
                 () -> {
                     this.height = height;
-                    positionPID.setGoal(height.position);
+                    selectedPid.setGoal(height.position);
                 });
     }
 
@@ -187,6 +236,7 @@ public class Elevator extends SubsystemBase {
         return setHeight(height).andThen(waitForSetpoint(timeoutSeconds));
     }
 
+    @AutoLogOutput(key = "State")
     private String getStateString() {
         if (atGoal()) {
             return height.toString();
@@ -195,9 +245,10 @@ public class Elevator extends SubsystemBase {
         }
     }
 
+    @AutoLogOutput
     public boolean atGoal() {
         return Math.abs(velocitySetpoint - inputs.velocityMetersPerSecond) <= 0.1
-                && positionPID.atSetpoint();
+                && selectedPid.atSetpoint();
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -216,9 +267,19 @@ public class Elevator extends SubsystemBase {
         return Commands.run(
                 () -> {
                     if (velocitySetpoint < 0 && inputs.magnet1detected) {
+                        // If we are moving down and we are at the bottom we stop and don't run pids
                         velocitySetpoint = 0;
                     } else {
-                        velocitySetpoint = positionPID.calculate(getActualHeight(), height.position);
+                        // Otherwise, we select a pid controller and calculate the velocity setpoint by
+                        // if (velocitySetpoint < 0
+                        //         && getActualHeight() <= ElevatorConstants.SLOW_PID_HEIGHT_METERS) {
+                        //     // use slow pid when we are moving down and below a certain height
+                        //     // selectedPid = slowPid;
+                        // } else {
+                        //     selectedPid = fastPid;
+                        // }
+                        selectedPid = fastPid;
+                        velocitySetpoint = selectedPid.calculate(getActualHeight(), height.position);
                     }
                 },
                 this);
@@ -231,6 +292,8 @@ public class Elevator extends SubsystemBase {
     public double getDispenserSpeed() {
         if (getActualHeight() <= (Height.L2.position + Height.L1.position) / 2) {
             return Dispenser.l1Speed;
+        } else if (getActualHeight() >= (Height.L3.position + Height.L4.position) / 2) {
+            return Dispenser.l4Speed;
         } else {
             return Dispenser.normalSpeed;
         }

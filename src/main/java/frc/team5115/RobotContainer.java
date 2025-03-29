@@ -186,6 +186,15 @@ public class RobotContainer {
 
         autoChooser.addOption("Drive All SysIds", drivetrain.driveAllSysIds());
 
+        autoChooser.addOption(
+                "Elevator Quasistatic Forward", elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Elevator Quasistatic Reverse", elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption(
+                "Elevator Dynamic Forward", elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Elevator Dynamic Reverse", elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
         configureButtonBindings();
         configureBlingBindings();
     }
@@ -261,7 +270,7 @@ public class RobotContainer {
         elevator.setDefaultCommand(elevator.positionControl());
 
         // driver holds down a, manip controls elevator velocity
-        joyDrive.a().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.03));
+        joyDrive.a().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.5));
 
         intake.setDefaultCommand(intake.intakeIf(elevator::atIntake));
         joyManip.a().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
