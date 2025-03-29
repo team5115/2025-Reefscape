@@ -125,10 +125,10 @@ public final class Constants {
         public static final double MIN_HEIGHT = Elevator.Height.MINIMUM.position;
         public static final double DRUM_RADIUS = 0.05;
         public static final double CARRIAGE_MASS_KG = 9.072; // 20 lbs
-        public static final double GEARING = 20.0; // numbers greater than 1 represent reductions
+        public static final double GEARING = 12.0; // numbers greater than 1 represent reductions
 
         // Below conversion factor found empirically
-        public static final double METERS_PER_ROTATION = 0.007778940626786609 / 52.0 * 57.0;
+        public static final double METERS_PER_ROTATION = 0.007778940626786609 / 52.0 * 57.0 * 20.0 / GEARING;
 
         public static final int STALL_CURRENT_AMPS = 40;
         public static final int FREE_CURRENT_AMPS = 40;

@@ -43,8 +43,6 @@ public class Elevator extends SubsystemBase {
             elevatorMechanism2d.getRoot(getName() + " Root", 0, 0);
     private final LoggedMechanismLigament2d elevatorMechanismLigament2d =
             elevatorMechanismRoot2d.append(new LoggedMechanismLigament2d(getName(), 0, 90));
-    private final LoggedMechanismLigament2d elevatorMechanismLigament2d2 =
-            elevatorMechanismLigament2d.append(new LoggedMechanismLigament2d(getName() + "2", 10, -90));
 
     public enum Height {
         MINIMUM(minHeightInches),
@@ -64,6 +62,7 @@ public class Elevator extends SubsystemBase {
 
     public Elevator(ElevatorIO io) {
         this.io = io;
+        elevatorMechanismLigament2d.append(new LoggedMechanismLigament2d(getName() + "2", 10, -90));
         SmartDashboard.putData("Elevator Mechanism", elevatorMechanism2d);
         switch (Constants.currentMode) {
             case REAL:
@@ -124,7 +123,7 @@ public class Elevator extends SubsystemBase {
         //     // Force the elvator to stay at the intake position when there is a coral in the intake
         //     height = Height.INTAKE;
         // }
-        io.setElevatorVelocity(velocitySetpoint, 0);
+        io.setElevatorVelocity(velocitySetpoint, 0.0);
         elevatorMechanismLigament2d.setLength(getActualHeight() * 8);
     }
 
@@ -216,7 +215,11 @@ public class Elevator extends SubsystemBase {
     public Command positionControl() {
         return Commands.run(
                 () -> {
-                    velocitySetpoint = positionPID.calculate(getActualHeight(), height.position);
+                    if (velocitySetpoint < 0 && inputs.magnet1detected) {
+                        velocitySetpoint = 0;
+                    } else {
+                        velocitySetpoint = positionPID.calculate(getActualHeight(), height.position);
+                    }
                 },
                 this);
     }
