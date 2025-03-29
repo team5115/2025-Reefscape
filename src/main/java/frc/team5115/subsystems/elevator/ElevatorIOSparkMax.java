@@ -15,6 +15,8 @@ import frc.team5115.Constants;
 import frc.team5115.Constants.ElevatorConstants;
 import java.util.ArrayList;
 
+import org.littletonrobotics.junction.Logger;
+
 public class ElevatorIOSparkMax implements ElevatorIO {
     private final SparkMax motor;
     private final RelativeEncoder encoder;
@@ -69,6 +71,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
     @Override
     public void setElevatorVoltage(double volts) {
+        Logger.recordOutput("Elevator/Commanded Voltage", volts);
         motor.setVoltage(volts);
     }
 
