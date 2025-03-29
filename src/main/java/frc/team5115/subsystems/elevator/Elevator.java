@@ -155,6 +155,11 @@ public class Elevator extends SubsystemBase {
         return getActualHeight() * 100d / 2.54 + minHeightInches;
     }
 
+    @AutoLogOutput
+    public boolean isShorting() {
+        return (inputs.magnet1detected && inputs.magnet2detected && inputs.magnet3detected);
+    }
+
     @Override
     public void periodic() {
         io.updateInputs(inputs);
@@ -162,14 +167,16 @@ public class Elevator extends SubsystemBase {
         Logger.recordOutput("Elevator/Goal Height", height.position);
         Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
 
-        if (inputs.magnet1detected) {
-            offset = ElevatorConstants.FIRST_MAGNET_HEIGHT - inputs.positionMeters;
-        }
-        if (inputs.magnet2detected) {
-            offset = ElevatorConstants.SECOND_MAGNET_HEIGHT - inputs.positionMeters;
-        }
-        if (inputs.magnet3detected) {
-            offset = ElevatorConstants.THIRD_MAGNET_HEIGHT - inputs.positionMeters;
+        if (!isShorting()) {
+            if (inputs.magnet1detected) {
+                offset = ElevatorConstants.FIRST_MAGNET_HEIGHT - inputs.positionMeters;
+            }
+            if (inputs.magnet2detected) {
+                offset = ElevatorConstants.SECOND_MAGNET_HEIGHT - inputs.positionMeters;
+            }
+            if (inputs.magnet3detected) {
+                offset = ElevatorConstants.THIRD_MAGNET_HEIGHT - inputs.positionMeters;
+            }
         }
 
         // if (inputs.magnet4detected) {
@@ -198,18 +205,33 @@ public class Elevator extends SubsystemBase {
     public Command zero() {
         final var retval =
                 Commands.sequence(
-                        Commands.runOnce(
-                                () -> {
-                                    velocitySetpoint = -1;
-                                }),
-                        Commands.waitUntil(() -> inputs.magnet1detected == true).withTimeout(3.0),
-                        Commands.runOnce(
-                                () -> {
-                                    velocitySetpoint = 0;
-                                    offset = -inputs.positionMeters;
-                                }));
+                        setVelocity(-1),
+                        Commands.either(waitUntilStall(), waitUntilMagnet1(), this::isShorting),
+                        zeroHere());
         retval.addRequirements(this);
         return retval;
+    }
+
+    private Command waitUntilStall() {
+        return Commands.waitUntil(
+                () -> Math.abs(inputs.velocityMetersPerSecond) < 0.01 && inputs.currentAmps > 30.0);
+    }
+
+    private Command waitUntilMagnet1() {
+        return Commands.waitUntil(() -> inputs.magnet1detected == true);
+    }
+
+    private Command zeroHere() {
+        return Commands.runOnce(
+                () -> {
+                    velocitySetpoint = 0;
+                    offset = -inputs.positionMeters;
+                },
+                this);
+    }
+
+    private Command setVelocity(double v) {
+        return Commands.runOnce(() -> velocitySetpoint = v, this);
     }
 
     public Command waitForSetpoint(double timeout) {
@@ -266,7 +288,7 @@ public class Elevator extends SubsystemBase {
     public Command positionControl() {
         return Commands.run(
                 () -> {
-                    if (velocitySetpoint < 0 && inputs.magnet1detected) {
+                    if (velocitySetpoint < 0 && inputs.magnet1detected && !isShorting()) {
                         // If we are moving down and we are at the bottom we stop and don't run pids
                         velocitySetpoint = 0;
                     } else {

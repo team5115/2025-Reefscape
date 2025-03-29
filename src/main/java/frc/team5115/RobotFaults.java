@@ -23,6 +23,7 @@ public class RobotFaults {
     public final boolean elevatorNull;
     public final boolean dispenserNull;
     public final boolean intakeNull;
+    public final boolean elevatorShorted;
     private final String cachedToString;
 
     public RobotFaults(
@@ -35,7 +36,8 @@ public class RobotFaults {
             boolean climberNull,
             boolean elevatorNull,
             boolean dispenserNull,
-            boolean intakeNull) {
+            boolean intakeNull,
+            boolean elevatorShorted) {
         this.sparkFaults = sparkFaults;
         this.cameraDisconnected = cameraDisconnected;
         this.joysticksDisconnected = joysticksDisconnected;
@@ -46,6 +48,7 @@ public class RobotFaults {
         this.elevatorNull = elevatorNull;
         this.dispenserNull = dispenserNull;
         this.intakeNull = intakeNull;
+        this.elevatorShorted = elevatorShorted;
         cachedToString = cacheString();
     }
 
@@ -82,6 +85,9 @@ public class RobotFaults {
         }
         if (intakeNull) {
             builder.append("IntakeNull; ");
+        }
+        if (elevatorShorted) {
+            builder.append("5V Short; ");
         }
         if (builder.isEmpty()) {
             return NO_FAULTS;
@@ -139,7 +145,8 @@ public class RobotFaults {
                 climber == null,
                 elevator == null,
                 dispenser == null,
-                intake == null);
+                intake == null,
+                elevator.isShorting());
     }
 
     private static void appendSparkFaults(StringBuilder mainBuilder, Faults faults, int id) {

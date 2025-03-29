@@ -336,7 +336,7 @@ public class RobotContainer {
                                 elevator,
                                 dispenser,
                                 intake,
-                                null,
+                                dealgaefacationinator5000,
                                 joyDrive.isConnected() && joyManip.isConnected());
                 hasFaults = faults.hasFaults();
                 if (hasFaults) {
