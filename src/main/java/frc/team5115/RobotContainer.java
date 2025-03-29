@@ -186,14 +186,14 @@ public class RobotContainer {
 
         autoChooser.addOption("Drive All SysIds", drivetrain.driveAllSysIds());
 
-        autoChooser.addOption("Elevator Quasistatic Forward", 
-                elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption("Elevator Quasistatic Reverse",
-                elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        autoChooser.addOption("Elevator Dynamic Forward",
-                elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption("Elevator Dynamic Reverse",
-                elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption(
+                "Elevator Quasistatic Forward", elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Elevator Quasistatic Reverse", elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption(
+                "Elevator Dynamic Forward", elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Elevator Dynamic Reverse", elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         configureButtonBindings();
         configureBlingBindings();

@@ -49,8 +49,8 @@ public final class Constants {
     public static final byte FRONT_CORAL_SENSOR = 3;
 
     public static final byte ELEVATOR_FIRST_SENSOR_ID = 1;
-    // public static final byte ELEVATOR_SECOND_SENSOR_ID = 4;
-    // public static final byte ELEVATOR_THIRD_SENSOR_ID = 5;
+    public static final byte ELEVATOR_SECOND_SENSOR_ID = 4;
+    public static final byte ELEVATOR_THIRD_SENSOR_ID = 9;
     // public static final byte ELEVATOR_FOURTH_SENSOR_ID = 6;
 
     public static final byte BLOCK_ACTUATOR_ID = 9;
@@ -128,7 +128,8 @@ public final class Constants {
         public static final double GEARING = 12.0; // numbers greater than 1 represent reductions
 
         // Below conversion factor found empirically
-        public static final double METERS_PER_ROTATION = 0.007778940626786609 / 52.0 * 57.0 * 20.0 / GEARING;
+        public static final double METERS_PER_ROTATION =
+                0.007778940626786609 / 52.0 * 57.0 * 20.0 / GEARING;
 
         public static final int STALL_CURRENT_AMPS = 40;
         public static final int FREE_CURRENT_AMPS = 40;
@@ -141,6 +142,12 @@ public final class Constants {
         public static final double sparkI = 0;
         public static final double sparkD = 0;
 
+        public static final double SLOW_PID_HEIGHT_METERS = 0.01 * 6.0;
+
+        public static final double FIRST_MAGNET_HEIGHT = 0;
+        public static final double SECOND_MAGNET_HEIGHT = 0.305; // meters
+        public static final double THIRD_MAGNET_HEIGHT = 0.610; // meters
+
         public static final double MAX_VEL = 10.0; // m/s
         public static final double MAX_ACCEL = 20.0; // m/s^2
         public static final double KP = 1.6;
@@ -151,6 +158,7 @@ public final class Constants {
         public static final double KV = 1.0; // volts / m/s
         public static final double KA = 0.0; // volts / m/s^2
 
+        public static final double SLOW_CONSTANT = 0.5;
     }
 
     public static class AutoConstants {

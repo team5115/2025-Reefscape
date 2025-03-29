@@ -1,7 +1,6 @@
 package frc.team5115.subsystems.elevator;
 
 import com.revrobotics.spark.SparkMax;
-
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -22,25 +21,20 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 public class Elevator extends SubsystemBase {
-
     private static final double minHeightInches = 21.75;
-    private static final double firstHeight = 0;
-    // private static final double secondHeight = 0;
-    // private static final double thirdHeight = 0;
-    // private static final double fourthHeight = 0;
 
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-    private final ProfiledPIDController pid; // control meters, output m/s
+    private final ProfiledPIDController fastPid; // control meters, output m/s
+    private final ProfiledPIDController slowPid; // control meters, output m/s
+    private ProfiledPIDController selectedPid;
     private final ElevatorFeedforward feedforward;
     private final SysIdRoutine sysId;
-    private Height height = Height.L2;
-    
-    @AutoLogOutput
-    private double velocitySetpoint;
+    private Height height = Height.MINIMUM; // Start at the minimum height
 
-    @AutoLogOutput
-    public double offset;
+    @AutoLogOutput private double velocitySetpoint;
+
+    @AutoLogOutput public double offset;
 
     @AutoLogOutput
     private final LoggedMechanism2d elevatorMechanism2d =
@@ -58,7 +52,7 @@ public class Elevator extends SubsystemBase {
         L2(minHeightInches + 14.85),
         L3(52),
         CLEAN3(63),
-        L4(63); // TODO determine L4 height, currently set to 63 inches for testing
+        L4(63);
 
         public final double position; // meters
 
@@ -74,21 +68,61 @@ public class Elevator extends SubsystemBase {
         switch (Constants.currentMode) {
             case REAL:
             case REPLAY:
-                pid =
+                fastPid =
                         new ProfiledPIDController(
-                                ElevatorConstants.KP, ElevatorConstants.KI, ElevatorConstants.KD, new TrapezoidProfile.Constraints(ElevatorConstants.MAX_VEL, ElevatorConstants.MAX_ACCEL));
-                feedforward = new ElevatorFeedforward(ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
+                                ElevatorConstants.KP,
+                                ElevatorConstants.KI,
+                                ElevatorConstants.KD,
+                                new TrapezoidProfile.Constraints(
+                                        ElevatorConstants.MAX_VEL, ElevatorConstants.MAX_ACCEL));
+                slowPid =
+                        new ProfiledPIDController(
+                                ElevatorConstants.KP * ElevatorConstants.SLOW_CONSTANT,
+                                ElevatorConstants.KI * ElevatorConstants.SLOW_CONSTANT,
+                                ElevatorConstants.KD * ElevatorConstants.SLOW_CONSTANT,
+                                new TrapezoidProfile.Constraints(
+                                        ElevatorConstants.MAX_VEL * ElevatorConstants.SLOW_CONSTANT,
+                                        ElevatorConstants.MAX_ACCEL * ElevatorConstants.SLOW_CONSTANT));
+                feedforward =
+                        new ElevatorFeedforward(
+                                ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
                 break;
             case SIM:
-                pid =
+                fastPid =
                         new ProfiledPIDController(
-                                1.0, 0.0, 0.0, new TrapezoidProfile.Constraints(ElevatorConstants.MAX_VEL, ElevatorConstants.MAX_ACCEL));
-                feedforward = new ElevatorFeedforward(ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
+                                1.0,
+                                0.0,
+                                0.0,
+                                new TrapezoidProfile.Constraints(
+                                        ElevatorConstants.MAX_VEL, ElevatorConstants.MAX_ACCEL));
+                slowPid =
+                        new ProfiledPIDController(
+                                1.0 * ElevatorConstants.SLOW_CONSTANT,
+                                0.0,
+                                0.0,
+                                new TrapezoidProfile.Constraints(
+                                        ElevatorConstants.MAX_VEL * ElevatorConstants.SLOW_CONSTANT,
+                                        ElevatorConstants.MAX_ACCEL * ElevatorConstants.SLOW_CONSTANT));
+                feedforward =
+                        new ElevatorFeedforward(
+                                ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
                 break;
             default:
-                pid =
+                fastPid =
                         new ProfiledPIDController(
-                                0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(ElevatorConstants.MAX_VEL, ElevatorConstants.MAX_ACCEL));
+                                0.0,
+                                0.0,
+                                0.0,
+                                new TrapezoidProfile.Constraints(
+                                        ElevatorConstants.MAX_VEL, ElevatorConstants.MAX_ACCEL));
+                slowPid =
+                        new ProfiledPIDController(
+                                0.0,
+                                0.0,
+                                0.0,
+                                new TrapezoidProfile.Constraints(
+                                        ElevatorConstants.MAX_VEL * ElevatorConstants.SLOW_CONSTANT,
+                                        ElevatorConstants.MAX_ACCEL * ElevatorConstants.SLOW_CONSTANT));
                 feedforward = new ElevatorFeedforward(0, 0, 0);
                 break;
         }
@@ -104,8 +138,11 @@ public class Elevator extends SubsystemBase {
                                 (voltage) -> io.setElevatorVoltage(voltage.magnitude()), null, this));
 
         height = Height.MINIMUM;
-        pid.setTolerance(0.05);
-        pid.setGoal(height.position);
+        fastPid.setTolerance(0.05);
+        slowPid.setTolerance(0.05);
+        fastPid.setGoal(height.position);
+        slowPid.setGoal(height.position);
+        selectedPid = fastPid;
     }
 
     @AutoLogOutput
@@ -124,18 +161,17 @@ public class Elevator extends SubsystemBase {
         Logger.processInputs(getName(), inputs);
         Logger.recordOutput("Elevator/Goal Height", height.position);
         Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
-        final double positionError = pid.getGoal().position - getActualHeight();
-        Logger.recordOutput("Elevator/Position Error", positionError);
 
         if (inputs.magnet1detected) {
-            offset = firstHeight - inputs.positionMeters;
+            offset = ElevatorConstants.FIRST_MAGNET_HEIGHT - inputs.positionMeters;
         }
-        // if (inputs.magnet2detected) {
-        //     offset = secondHeight - inputs.positionMeters;
-        // }
-        // if (inputs.magnet3detected) {
-        //     offset = thirdHeight - inputs.positionMeters;
-        // }
+        if (inputs.magnet2detected && false) {
+            offset = ElevatorConstants.SECOND_MAGNET_HEIGHT - inputs.positionMeters;
+        }
+        if (inputs.magnet3detected && false) {
+            offset = ElevatorConstants.THIRD_MAGNET_HEIGHT - inputs.positionMeters;
+        }
+
         // if (inputs.magnet4detected) {
         //     offset = fourthHeight - inputs.positionMeters;
         // }
@@ -185,14 +221,14 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atIntake() {
-        return atGoal() && pid.getGoal().position == Height.INTAKE.position;
+        return atGoal() && selectedPid.getGoal().position == Height.INTAKE.position;
     }
 
     public Command setHeight(Height height) {
         return Commands.runOnce(
                 () -> {
                     this.height = height;
-                    pid.setGoal(height.position);
+                    selectedPid.setGoal(height.position);
                 });
     }
 
@@ -200,7 +236,7 @@ public class Elevator extends SubsystemBase {
         return setHeight(height).andThen(waitForSetpoint(timeoutSeconds));
     }
 
-    @AutoLogOutput(key="State")
+    @AutoLogOutput(key = "State")
     private String getStateString() {
         if (atGoal()) {
             return height.toString();
@@ -212,7 +248,7 @@ public class Elevator extends SubsystemBase {
     @AutoLogOutput
     public boolean atGoal() {
         return Math.abs(velocitySetpoint - inputs.velocityMetersPerSecond) <= 0.1
-                && pid.atSetpoint();
+                && selectedPid.atSetpoint();
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -231,9 +267,18 @@ public class Elevator extends SubsystemBase {
         return Commands.run(
                 () -> {
                     if (velocitySetpoint < 0 && inputs.magnet1detected) {
+                        // If we are moving down and we are at the bottom we stop and don't run pids
                         velocitySetpoint = 0;
                     } else {
-                        velocitySetpoint = pid.calculate(getActualHeight(), height.position);
+                        // Otherwise, we select a pid controller and calculate the velocity setpoint by
+                        if (velocitySetpoint < 0
+                                && getActualHeight() <= ElevatorConstants.SLOW_PID_HEIGHT_METERS) {
+                            // use slow pid when we are moving down and below a certain height
+                            selectedPid = slowPid;
+                        } else {
+                            selectedPid = fastPid;
+                        }
+                        velocitySetpoint = selectedPid.calculate(getActualHeight(), height.position);
                     }
                 },
                 this);
