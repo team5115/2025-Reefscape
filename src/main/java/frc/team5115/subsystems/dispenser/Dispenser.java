@@ -12,6 +12,7 @@ import org.littletonrobotics.junction.Logger;
 public class Dispenser extends SubsystemBase {
     public static double l1Speed = 0.45;
     public static double normalSpeed = 0.30; // previously 0.5
+    public static double l4Speed = 0.5; // TODO: determine l4 shoot speed
     public static double altSpeed = 0.6;
     public static double reverseSpeed = -0.25;
     public static double stopSpeed = -0.035;

@@ -1,6 +1,8 @@
 package frc.team5115.subsystems.elevator;
 
 import com.revrobotics.spark.SparkMax;
+
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -9,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants;
+import frc.team5115.Constants.ElevatorConstants;
 import frc.team5115.subsystems.dispenser.Dispenser;
 import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
@@ -19,8 +22,7 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 public class Elevator extends SubsystemBase {
-    private static final double maxAcceleration = 20.0;
-    private static final double maxSpeed = 10.0; // m/s
+
     private static final double minHeightInches = 21.75;
     private static final double firstHeight = 0;
     // private static final double secondHeight = 0;
@@ -29,10 +31,15 @@ public class Elevator extends SubsystemBase {
 
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-    private final ProfiledPIDController positionPID; // control meters, output m/s
+    private final ProfiledPIDController pid; // control meters, output m/s
+    private final ElevatorFeedforward feedforward;
     private final SysIdRoutine sysId;
     private Height height = Height.L2;
+    
+    @AutoLogOutput
     private double velocitySetpoint;
+
+    @AutoLogOutput
     public double offset;
 
     @AutoLogOutput
@@ -51,7 +58,7 @@ public class Elevator extends SubsystemBase {
         L2(minHeightInches + 14.85),
         L3(52),
         CLEAN3(63),
-        L4(63);
+        L4(63); // TODO determine L4 height, currently set to 63 inches for testing
 
         public final double position; // meters
 
@@ -67,19 +74,22 @@ public class Elevator extends SubsystemBase {
         switch (Constants.currentMode) {
             case REAL:
             case REPLAY:
-                positionPID =
+                pid =
                         new ProfiledPIDController(
-                                1.6, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                                ElevatorConstants.KP, ElevatorConstants.KI, ElevatorConstants.KD, new TrapezoidProfile.Constraints(ElevatorConstants.MAX_VEL, ElevatorConstants.MAX_ACCEL));
+                feedforward = new ElevatorFeedforward(ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
                 break;
             case SIM:
-                positionPID =
+                pid =
                         new ProfiledPIDController(
-                                1.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                                1.0, 0.0, 0.0, new TrapezoidProfile.Constraints(ElevatorConstants.MAX_VEL, ElevatorConstants.MAX_ACCEL));
+                feedforward = new ElevatorFeedforward(ElevatorConstants.KS, ElevatorConstants.KG, ElevatorConstants.KV);
                 break;
             default:
-                positionPID =
+                pid =
                         new ProfiledPIDController(
-                                0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(maxSpeed, maxAcceleration));
+                                0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(ElevatorConstants.MAX_VEL, ElevatorConstants.MAX_ACCEL));
+                feedforward = new ElevatorFeedforward(0, 0, 0);
                 break;
         }
 
@@ -94,19 +104,29 @@ public class Elevator extends SubsystemBase {
                                 (voltage) -> io.setElevatorVoltage(voltage.magnitude()), null, this));
 
         height = Height.MINIMUM;
-        positionPID.setTolerance(0.05);
-        positionPID.setGoal(height.position);
+        pid.setTolerance(0.05);
+        pid.setGoal(height.position);
     }
 
+    @AutoLogOutput
     public double getActualHeight() {
         return inputs.positionMeters + offset;
+    }
+
+    @AutoLogOutput
+    public double getInchesFromGround() {
+        return getActualHeight() * 100d / 2.54 + minHeightInches;
     }
 
     @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs(getName(), inputs);
-        recordOutputs();
+        Logger.recordOutput("Elevator/Goal Height", height.position);
+        Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
+        final double positionError = pid.getGoal().position - getActualHeight();
+        Logger.recordOutput("Elevator/Position Error", positionError);
+
         if (inputs.magnet1detected) {
             offset = firstHeight - inputs.positionMeters;
         }
@@ -123,7 +143,10 @@ public class Elevator extends SubsystemBase {
         //     // Force the elvator to stay at the intake position when there is a coral in the intake
         //     height = Height.INTAKE;
         // }
-        io.setElevatorVelocity(velocitySetpoint, 0.0);
+        // io.setElevatorVelocity(velocitySetpoint, 0.0);
+
+        final double volts = feedforward.calculate(velocitySetpoint);
+        io.setElevatorVoltage(volts);
         elevatorMechanismLigament2d.setLength(getActualHeight() * 8);
     }
 
@@ -149,20 +172,6 @@ public class Elevator extends SubsystemBase {
         return retval;
     }
 
-    private void recordOutputs() {
-        Logger.recordOutput("Elevator/Goal Height", height.position);
-        Logger.recordOutput("Elevator/Setpoint Velocity", velocitySetpoint);
-        Logger.recordOutput("Elevator/Actual Height", getActualHeight());
-        Logger.recordOutput(
-                "Elevator/Inches From Ground", getActualHeight() * 100d / 2.54 + minHeightInches);
-        Logger.recordOutput("Elevator/Actual Velocity", inputs.velocityMetersPerSecond);
-        Logger.recordOutput("Elevator/At Goal?", atGoal());
-        Logger.recordOutput("Elevator/State", getStateString());
-        Logger.recordOutput(
-                "Elevator/Offset Delta", positionPID.getGoal().position - getActualHeight());
-        Logger.recordOutput("Elevator/OffsetValue", offset);
-    }
-
     public Command waitForSetpoint(double timeout) {
         return Commands.waitUntil(() -> atGoal()).withTimeout(timeout);
     }
@@ -172,14 +181,14 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atIntake() {
-        return atGoal() && positionPID.getGoal().position == Height.INTAKE.position;
+        return atGoal() && pid.getGoal().position == Height.INTAKE.position;
     }
 
     public Command setHeight(Height height) {
         return Commands.runOnce(
                 () -> {
                     this.height = height;
-                    positionPID.setGoal(height.position);
+                    pid.setGoal(height.position);
                 });
     }
 
@@ -187,6 +196,7 @@ public class Elevator extends SubsystemBase {
         return setHeight(height).andThen(waitForSetpoint(timeoutSeconds));
     }
 
+    @AutoLogOutput(key="State")
     private String getStateString() {
         if (atGoal()) {
             return height.toString();
@@ -195,9 +205,10 @@ public class Elevator extends SubsystemBase {
         }
     }
 
+    @AutoLogOutput
     public boolean atGoal() {
         return Math.abs(velocitySetpoint - inputs.velocityMetersPerSecond) <= 0.1
-                && positionPID.atSetpoint();
+                && pid.atSetpoint();
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -218,7 +229,7 @@ public class Elevator extends SubsystemBase {
                     if (velocitySetpoint < 0 && inputs.magnet1detected) {
                         velocitySetpoint = 0;
                     } else {
-                        velocitySetpoint = positionPID.calculate(getActualHeight(), height.position);
+                        velocitySetpoint = pid.calculate(getActualHeight(), height.position);
                     }
                 },
                 this);
@@ -231,6 +242,8 @@ public class Elevator extends SubsystemBase {
     public double getDispenserSpeed() {
         if (getActualHeight() <= (Height.L2.position + Height.L1.position) / 2) {
             return Dispenser.l1Speed;
+        } else if (getActualHeight() >= (Height.L3.position + Height.L4.position) / 2) {
+            return Dispenser.l4Speed;
         } else {
             return Dispenser.normalSpeed;
         }

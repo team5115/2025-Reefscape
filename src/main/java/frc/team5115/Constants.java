@@ -140,6 +140,17 @@ public final class Constants {
         public static final double sparkP = 0.00001;
         public static final double sparkI = 0;
         public static final double sparkD = 0;
+
+        public static final double MAX_VEL = 10.0; // m/s
+        public static final double MAX_ACCEL = 20.0; // m/s^2
+        public static final double KP = 1.6;
+        public static final double KI = 0;
+        public static final double KD = 0;
+        public static final double KS = 0.1; // volts
+        public static final double KG = 0.6; // volts
+        public static final double KV = 1.0; // volts / m/s
+        public static final double KA = 0.0; // volts / m/s^2
+
     }
 
     public static class AutoConstants {
