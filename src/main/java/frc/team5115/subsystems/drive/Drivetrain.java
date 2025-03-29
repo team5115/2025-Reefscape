@@ -105,8 +105,8 @@ public class Drivetrain extends SubsystemBase {
         anglePid.enableContinuousInput(-Math.PI, Math.PI);
         xPid.setIntegratorRange(-0.3, +0.3);
         yPid.setIntegratorRange(-0.3, +0.3);
-        // xPid.setTolerance(0.01);
-        // yPid.setTolerance(0.01);
+        xPid.setTolerance(0.02);
+        yPid.setTolerance(0.02);
         // anglePid.setTolerance(Math.toRadians(3));
 
         AutoBuilder.configure(
