@@ -416,6 +416,10 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "Clean", AutoCommands.dealgify(drivetrain, elevator, dealgaefacationinator5000));
 
+        NamedCommands.registerCommand(
+                "CleanHighL3Left",
+                AutoCommands.cleanAndScoreLeft(drivetrain, elevator, dealgaefacationinator5000, dispenser, Height.L4, Height.L3));
+
         System.out.println("Registered Commands");
     }
 

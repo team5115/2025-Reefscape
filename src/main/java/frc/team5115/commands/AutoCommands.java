@@ -60,6 +60,30 @@ public class AutoCommands {
         return Commands.sequence(elevator.setHeightAndWait(height, 2.0));
     }
 
+    /** Aligns left side, removes algae, and scores. */
+    public static Command cleanAndScoreLeft(
+            Drivetrain drivetrain,
+            Elevator elevator,
+            Dealgaefacationinator5000 dealgaefacationinator5000,
+            Dispenser dispenser,
+            Height dealgaeHeight,
+            Height scoreHeight) {
+        return Commands.sequence(
+                Commands.print("Align left, raise to dealgify at " + dealgaeHeight),
+                elevator.setHeight(dealgaeHeight),
+                drivetrain.autoAlignToScoringSpot(Side.LEFT),
+                elevator.waitForSetpoint(1.0),
+                Commands.print("Cleaning..."),
+                dealgaefacationinator5000.clean(),
+                Commands.print("Clean! Now, lowering to score height " + scoreHeight),
+                elevator.setHeight(scoreHeight),
+                Commands.waitSeconds(0.1), // wait a little to let the new setpoint "sink in"
+                elevator.waitForSetpoint(1.0),
+                Commands.print("Dispensing on cleaned L3"),
+                dispenser.dispense().withTimeout(1.0),
+                elevator.setHeight(Height.INTAKE));
+    }
+
     public static Command dealgify(
             Drivetrain drivetrain,
             Elevator elevator,
