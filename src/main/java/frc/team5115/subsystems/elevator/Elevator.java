@@ -205,9 +205,10 @@ public class Elevator extends SubsystemBase {
     public Command zero() {
         final var retval =
                 Commands.sequence(
-                        setVelocity(-1),
-                        Commands.either(waitUntilStall(), waitUntilMagnet1(), this::isShorting),
-                        zeroHere());
+                                setVelocity(-0.5),
+                                Commands.either(waitUntilStall(), waitUntilMagnet1(), this::isShorting),
+                                zeroHere())
+                        .unless(() -> inputs.magnet1detected && !isShorting());
         retval.addRequirements(this);
         return retval;
     }
