@@ -51,7 +51,7 @@ public class Elevator extends SubsystemBase {
         INTAKE(minHeightInches),
         L1(minHeightInches + 7.0),
         L2(minHeightInches + 15.85),
-        L3(55),
+        L3(54),
         CLEAN3(63),
         L4(63);
 
@@ -321,7 +321,6 @@ public class Elevator extends SubsystemBase {
         io.getSparks(sparks);
     }
 
-    
     public Trigger coralDetected() {
         return new Trigger(() -> inputs.backCoralDetected);
     }
