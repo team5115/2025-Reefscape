@@ -201,7 +201,7 @@ public class RobotContainer {
 
     private void configureBlingBindings() {
         bling.setDefaultCommand(bling.redKITT().ignoringDisable(true));
-        // dispenser.coralDetected().whileTrue(bling.greenKITT());
+        dispenser.coralDetected().or(elevator.coralDetected()).whileTrue(bling.greenKITT());
         drivetrain.aligningToGoal().whileTrue(bling.yellowScrollIn());
         drivetrain.alignedAtGoalTrigger().whileTrue(bling.whiteScrollIn());
         climber.extended().whileTrue(bling.purpleSolid());

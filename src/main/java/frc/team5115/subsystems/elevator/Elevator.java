@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants;
 import frc.team5115.Constants.ElevatorConstants;
@@ -318,6 +319,11 @@ public class Elevator extends SubsystemBase {
 
     public void getSparks(ArrayList<SparkMax> sparks) {
         io.getSparks(sparks);
+    }
+
+    
+    public Trigger coralDetected() {
+        return new Trigger(() -> inputs.backCoralDetected);
     }
 
     public double getDispenserSpeed() {
