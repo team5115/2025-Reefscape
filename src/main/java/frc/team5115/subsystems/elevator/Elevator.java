@@ -21,7 +21,7 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 public class Elevator extends SubsystemBase {
-    private static final double minHeightInches = 21.75;
+    private static final double minHeightInches = 22;
 
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
@@ -171,12 +171,13 @@ public class Elevator extends SubsystemBase {
             if (inputs.magnet1detected) {
                 offset = ElevatorConstants.FIRST_MAGNET_HEIGHT - inputs.positionMeters;
             }
-            if (inputs.magnet2detected) {
-                offset = ElevatorConstants.SECOND_MAGNET_HEIGHT - inputs.positionMeters;
-            }
-            if (inputs.magnet3detected) {
-                offset = ElevatorConstants.THIRD_MAGNET_HEIGHT - inputs.positionMeters;
-            }
+            // ! Shut off the upper magnets because they cause "drift"
+            // if (inputs.magnet2detected) {
+            //     offset = ElevatorConstants.SECOND_MAGNET_HEIGHT - inputs.positionMeters;
+            // }
+            // if (inputs.magnet3detected) {
+            //     offset = ElevatorConstants.THIRD_MAGNET_HEIGHT - inputs.positionMeters;
+            // }
         }
 
         // if (inputs.magnet4detected) {
@@ -303,6 +304,13 @@ public class Elevator extends SubsystemBase {
                         // }
                         selectedPid = fastPid;
                         velocitySetpoint = selectedPid.calculate(getActualHeight(), height.position);
+                        if (height.position == Height.INTAKE.position
+                                && !inputs.magnet1detected
+                                && Math.abs(velocitySetpoint) < 0.05
+                                && !isShorting()) {
+                            // if at intake but magnet 1 not detected yet, then we keep going down
+                            velocitySetpoint = -0.5;
+                        }
                     }
                 },
                 this);

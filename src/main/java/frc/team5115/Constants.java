@@ -129,7 +129,7 @@ public final class Constants {
 
         // Below conversion factor found empirically
         public static final double METERS_PER_ROTATION =
-                0.007778940626786609 / 52.0 * 57.0 * 20.0 / GEARING;
+                0.007778940626786609 / 52.0 * 57.0 * 20.0 / GEARING * 63.0 / 62.625;
 
         public static final int STALL_CURRENT_AMPS = 40;
         public static final int FREE_CURRENT_AMPS = 40;
