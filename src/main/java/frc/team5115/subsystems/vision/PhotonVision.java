@@ -96,9 +96,7 @@ public class PhotonVision extends SubsystemBase {
             cameraSim = new PhotonCameraSim(camera, cameraProp);
             poseEstimator =
                     new PhotonPoseEstimator(
-                            VisionConstants.FIELD_LAYOUT,
-                            PoseStrategy.LOWEST_AMBIGUITY,
-                            robotToCamera);
+                            VisionConstants.FIELD_LAYOUT, PoseStrategy.LOWEST_AMBIGUITY, robotToCamera);
             poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
         }
     }
