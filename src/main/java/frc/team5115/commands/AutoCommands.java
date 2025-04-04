@@ -71,7 +71,7 @@ public class AutoCommands {
         return Commands.sequence(
                 Commands.print("Align left, raise to dealgify at " + dealgaeHeight),
                 elevator.setHeight(dealgaeHeight),
-                drivetrain.autoAlignToScoringSpot(Side.LEFT),
+                drivetrain.autoAlignToScoringSpot(Side.LEFT).withTimeout(3.0),
                 elevator.waitForSetpoint(1.0),
                 Commands.print("Cleaning..."),
                 dealgaefacationinator5000.clean(),
