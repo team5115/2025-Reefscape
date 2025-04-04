@@ -239,8 +239,12 @@ public final class Constants {
                                 + "reef_only.json");
             } catch (IOException e) {
                 e.printStackTrace();
-                return AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+                return loadFullField();
             }
+        }
+
+        private static AprilTagFieldLayout loadFullField() {
+            return AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
         }
 
         public static final AprilTagFieldLayout FIELD_LAYOUT = loadReefOnlyFieldLayout();
