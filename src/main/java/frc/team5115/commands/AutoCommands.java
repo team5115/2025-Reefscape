@@ -53,8 +53,7 @@ public class AutoCommands {
             Drivetrain drivetrain, Elevator elevator, Dispenser dispenser, Side side, Height height) {
         return Commands.sequence(
                 Commands.parallel(
-                        elevator.setHeight(height), 
-                        drivetrain.autoAlignToScoringSpot(side).withTimeout(2.0)),
+                        elevator.setHeight(height), drivetrain.autoAlignToScoringSpot(side).withTimeout(2.0)),
                 dispense(dispenser, elevator, height));
     }
 
