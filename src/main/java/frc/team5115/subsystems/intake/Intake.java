@@ -48,7 +48,7 @@ public class Intake extends SubsystemBase {
                 () -> {
                     if (supplier.getAsBoolean()) {
                         // stall means we back it up a little and try again
-                        if (inputs.currentAmps > 18.0) {
+                        if (inputs.currentAmps > 25.0) {
                             io.setPercent(-0.22);
                         } else {
                             io.setPercent(INTAKE_SPEED);
