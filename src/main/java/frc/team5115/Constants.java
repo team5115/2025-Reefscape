@@ -184,7 +184,7 @@ public final class Constants {
         private static final Transform2d transformRight =
                 new Transform2d(new Translation2d(forwardOffset, +0.0), Rotation2d.k180deg);
         private static final Transform2d transformCenter =
-                new Transform2d(new Translation2d(0.480, -0.25), Rotation2d.k180deg);
+                new Transform2d(new Translation2d(0.47, -0.25), Rotation2d.k180deg);
 
         public static Pose2d getNearestScoringSpot(final Pose2d robot, final Side side) {
             double shortestDistance = Double.MAX_VALUE;
