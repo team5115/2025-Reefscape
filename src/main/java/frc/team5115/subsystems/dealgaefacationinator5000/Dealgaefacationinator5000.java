@@ -48,6 +48,14 @@ public class Dealgaefacationinator5000 extends SubsystemBase {
                 spin(0));
     }
 
+    public Command prepClean() {
+        return Commands.sequence(extend(), spin(0.3), waitSeconds(0.2), spin(0.9));
+    }
+
+    public Command completeClean() {
+        return Commands.sequence(retract(), waitSeconds(0.7), spin(0));
+    }
+
     public void getSparks(ArrayList<SparkMax> sparks) {
         io.getSparks(sparks);
     }

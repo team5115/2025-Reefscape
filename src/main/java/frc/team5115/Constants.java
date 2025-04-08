@@ -9,11 +9,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.team5115.subsystems.elevator.Elevator;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -180,12 +177,11 @@ public final class Constants {
 
         private static final double forwardOffset = 0.46; // distance from the april tag
         private static final Transform2d transformLeft =
-                new Transform2d(
-                        new Translation2d(forwardOffset, -0.35 + 0.06 - 0.02 - 0.01), Rotation2d.k180deg);
+                new Transform2d(new Translation2d(forwardOffset, -0.36), Rotation2d.k180deg);
         private static final Transform2d transformRight =
-                new Transform2d(new Translation2d(forwardOffset, -0.04 + 0.06 - 0.02), Rotation2d.k180deg);
+                new Transform2d(new Translation2d(forwardOffset, +0.0), Rotation2d.k180deg);
         private static final Transform2d transformCenter =
-                new Transform2d(new Translation2d(0.425, -0.20 + 0.06 - 0.09 - 0.02), Rotation2d.k180deg);
+                new Transform2d(new Translation2d(forwardOffset, -0.25), Rotation2d.k180deg);
 
         public static Pose2d getNearestScoringSpot(final Pose2d robot, final Side side) {
             double shortestDistance = Double.MAX_VALUE;
@@ -229,20 +225,24 @@ public final class Constants {
 
     public static class VisionConstants {
 
-        private static AprilTagFieldLayout loadReefOnlyFieldLayout() {
-            try {
-                // throw new IOException();
-                return new AprilTagFieldLayout(
-                        Filesystem.getDeployDirectory().getAbsolutePath()
-                                + File.separatorChar
-                                + "reef_only.json");
-            } catch (IOException e) {
-                e.printStackTrace();
-                return AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
-            }
+        // private static AprilTagFieldLayout loadReefOnlyFieldLayout() {
+        //     try {
+        //         // throw new IOException();
+        //         return new AprilTagFieldLayout(
+        //                 Filesystem.getDeployDirectory().getAbsolutePath()
+        //                         + File.separatorChar
+        //                         + "reef_only.json");
+        //     } catch (IOException e) {
+        //         e.printStackTrace();
+        //         return loadFullField();
+        //     }
+        // }
+
+        private static AprilTagFieldLayout loadFullField() {
+            return AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
         }
 
-        public static final AprilTagFieldLayout FIELD_LAYOUT = loadReefOnlyFieldLayout();
+        public static final AprilTagFieldLayout FIELD_LAYOUT = loadFullField();
 
         // Camera sim values
         public static final int WIDTH_PX = 1280;
@@ -255,9 +255,9 @@ public final class Constants {
         public static final double STD_DEV_LATENCY_MS = 10;
 
         // Pose filtering values
-        public static final double distanceThreshold = 2.0; // meters
+        public static final double distanceThreshold = 1.5; // meters
         public static final double angleThreshold = 10.0; // degrees
-        public static final double zTranslationThreshold = 0.2; // meters
+        public static final double zTranslationThreshold = 0.15; // meters
         public static final double ambiguityThreshold = 0.5;
         // every tag beyond seeing two tags gives us an extra meter of trusted distance
         public static final double multiTagDistanceFactor = 1.0;

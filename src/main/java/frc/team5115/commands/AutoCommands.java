@@ -52,7 +52,8 @@ public class AutoCommands {
     public static Command getReefAlignCommand(
             Drivetrain drivetrain, Elevator elevator, Dispenser dispenser, Side side, Height height) {
         return Commands.sequence(
-                Commands.parallel(elevator.setHeight(height), drivetrain.autoAlignToScoringSpot(side)),
+                Commands.parallel(
+                        elevator.setHeight(height), drivetrain.autoAlignToScoringSpot(side).withTimeout(2.0)),
                 dispense(dispenser, elevator, height));
     }
 
@@ -71,7 +72,7 @@ public class AutoCommands {
         return Commands.sequence(
                 Commands.print("Align left, raise to dealgify at " + dealgaeHeight),
                 elevator.setHeight(dealgaeHeight),
-                drivetrain.autoAlignToScoringSpot(Side.LEFT),
+                drivetrain.autoAlignToScoringSpot(Side.LEFT).withTimeout(3.0),
                 elevator.waitForSetpoint(1.0),
                 Commands.print("Cleaning..."),
                 dealgaefacationinator5000.clean(),
@@ -91,7 +92,7 @@ public class AutoCommands {
         return Commands.sequence(
                 Commands.print("Align and Raising to dealgify"),
                 elevator.setHeight(Height.L3),
-                drivetrain.autoAlignToScoringSpot(Side.CENTER),
+                drivetrain.autoAlignToScoringSpot(Side.CENTER).withTimeout(3.0),
                 elevator.waitForSetpoint(1.5),
                 Commands.print("Cleaning..."),
                 dealgaefacationinator5000.clean(),

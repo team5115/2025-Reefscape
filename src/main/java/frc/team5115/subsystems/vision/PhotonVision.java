@@ -96,9 +96,7 @@ public class PhotonVision extends SubsystemBase {
             cameraSim = new PhotonCameraSim(camera, cameraProp);
             poseEstimator =
                     new PhotonPoseEstimator(
-                            VisionConstants.FIELD_LAYOUT,
-                            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                            robotToCamera);
+                            VisionConstants.FIELD_LAYOUT, PoseStrategy.LOWEST_AMBIGUITY, robotToCamera);
             poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
         }
     }
@@ -110,6 +108,17 @@ public class PhotonVision extends SubsystemBase {
 
     public Optional<String> validateVisionPose(EstimatedRobotPose pose, PhotonPipelineResult result) {
         // Reject measurement if average ambiguity is below threshold
+
+        for (var target : pose.targetsUsed) {
+            final int id = target.fiducialId;
+            // Valid ids are: 6,  7,  8,  9,  10, 11
+            // Valid ids are: 17, 18, 19, 20, 21, 22
+            final boolean isValid = (6 <= id && id <= 11) || (17 <= id && id <= 22);
+            if (!isValid) {
+                return Optional.of("NotReef, " + id);
+            }
+        }
+
         try {
             double totalAmbiguity = 0;
             for (var target : pose.targetsUsed) {
