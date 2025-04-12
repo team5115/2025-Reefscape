@@ -220,8 +220,11 @@ public class RobotContainer {
                         () -> -joyDrive.getRightX()));
 
         /* Drive button bindings - https://docs.google.com/drawings/d/12s7Axe37aHC1d-q6GDux2NM_jlekuByB5wCK7trCOBY/edit */
-        
-        joyDrive.y().onTrue(elevator.setHeight(Height.CLEAN3)).onFalse(elevator.setHeight(Height.INTAKE));
+
+        joyDrive
+                .y()
+                .onTrue(elevator.setHeight(Height.CLEAN3))
+                .onFalse(elevator.setHeight(Height.INTAKE));
         joyDrive.x().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.INTAKE));
         joyDrive.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.INTAKE));
         joyDrive.a().onTrue(elevator.setHeight(Height.L4)).onFalse(elevator.setHeight(Height.INTAKE));
@@ -237,7 +240,7 @@ public class RobotContainer {
                 .and(joyDrive.rightTrigger().negate())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.LEFT))
                 .whileTrue(drivetrain.alignSelectedSpot(Side.LEFT));
-        
+
         joyDrive
                 .leftBumper()
                 .and(joyDrive.rightBumper())
@@ -256,7 +259,6 @@ public class RobotContainer {
 
         joyDrive.rightStick().onTrue(climber.extend());
         joyDrive.leftStick().onTrue(climber.retract());
-
 
         joyDrive.start().onTrue(offsetGyro());
         joyDrive.pov(0).onTrue(climber.toggleShield());
