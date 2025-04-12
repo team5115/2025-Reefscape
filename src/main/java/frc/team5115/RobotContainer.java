@@ -219,103 +219,62 @@ public class RobotContainer {
                         () -> -joyDrive.getLeftX(),
                         () -> -joyDrive.getRightX()));
 
-        /* Drive button bindings -
-         * x: forces the robot to stop moving
-         * left bumper: Sets robot relative to true while held down
-         * right bumper: Sets slow mode while held down
-         * left and right triggers align to score respectively
-         * both triggers aligns to the middle
-         * start resets field orientation
-         */
-
-        joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
-        joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
-        joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
-        joyDrive.start().onTrue(offsetGyro());
+        /* Drive button bindings - https://docs.google.com/drawings/d/12s7Axe37aHC1d-q6GDux2NM_jlekuByB5wCK7trCOBY/edit */
+        
+        joyDrive.y().onTrue(elevator.setHeight(Height.CLEAN3)).onFalse(elevator.setHeight(Height.INTAKE));
+        joyDrive.x().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.INTAKE));
+        joyDrive.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.INTAKE));
+        joyDrive.a().onTrue(elevator.setHeight(Height.L4)).onFalse(elevator.setHeight(Height.INTAKE));
 
         joyDrive
-                .leftTrigger()
-                .and(joyDrive.rightTrigger().negate())
-                .onTrue(drivetrain.selectNearestScoringSpot(Side.LEFT))
-                .whileTrue(drivetrain.alignSelectedSpot(Side.LEFT));
-        joyDrive
-                .rightTrigger()
+                .rightBumper()
                 .and(joyDrive.leftTrigger().negate())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.RIGHT))
                 .whileTrue(drivetrain.alignSelectedSpot(Side.RIGHT));
 
         joyDrive
-                .leftTrigger()
-                .and(joyDrive.rightTrigger())
+                .leftBumper()
+                .and(joyDrive.rightTrigger().negate())
+                .onTrue(drivetrain.selectNearestScoringSpot(Side.LEFT))
+                .whileTrue(drivetrain.alignSelectedSpot(Side.LEFT));
+        
+        joyDrive
+                .leftBumper()
+                .and(joyDrive.rightBumper())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.CENTER))
                 .whileTrue(drivetrain.alignSelectedSpot(Side.CENTER));
 
-        /*
-         * Manipulator button bindings:
-         * hold left stick and move it for elevator manual control
-         * hold start for L1
-         * hold b for L2
-         * hold x for L3
-         * press back to rezero elevator
-         * hold a to vomit
-         * hold right trigger to dispense
-         * hold left trigger to reverse dispense
-         * press right bumper to extend climb piston
-         * press left bumper to retract climb piston
-         * point up on dpad to toggle climber block
-        //  * point down on dpad and press B (L2) or X (L3) to clean algae, release to stow
-         */
+        joyDrive
+                .pov(180)
+                .or(joyDrive.pov(135))
+                .or(joyDrive.pov(225))
+                .onTrue(dealgaefacationinator5000.prepClean())
+                .onFalse(dealgaefacationinator5000.completeClean());
+
+        joyDrive.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
+        joyDrive.leftTrigger().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
+
+        joyDrive.rightStick().onTrue(climber.extend());
+        joyDrive.leftStick().onTrue(climber.retract());
+
+
+        joyDrive.start().onTrue(offsetGyro());
+        joyDrive.pov(0).onTrue(climber.toggleShield());
+        joyDrive.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
+
+        /* Testing controller button bindings:*/
 
         // divide by 100 to achieve 3 cm/s max speed
         elevator.setDefaultCommand(elevator.positionControl());
 
-        // driver holds down a, manip controls elevator velocity
-        joyDrive.a().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.5));
+        // manip holds down a, manip controls elevator velocity
+        joyManip.a().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.5));
 
         intake.setDefaultCommand(intake.intakeIf(elevator::atIntake));
-        joyManip.a().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
 
-        joyManip
-                .start()
-                .onTrue(elevator.setHeight(Height.L1))
-                .onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip.x().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.INTAKE));
-
-        joyManip
-                .y()
-                .onTrue(elevator.setHeight(Height.CLEAN3))
-                .onFalse(elevator.setHeight(Height.INTAKE));
-
-        joyManip.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
-
-        joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
-        joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        // joyManip.pov(180).onTrue(dispenser.altDispense()).onFalse(dispenser.stop());
-
-        joyManip.rightBumper().onTrue(climber.extend());
-        joyManip.leftBumper().onTrue(climber.retract());
-        joyManip.pov(0).onTrue(climber.toggleShield());
-
-        joyManip
-                .pov(180)
-                .or(joyManip.pov(135))
-                .or(joyManip.pov(225))
-                .onTrue(dealgaefacationinator5000.prepClean())
-                .onFalse(dealgaefacationinator5000.completeClean());
-        // .onFalse(dealgaefacationinator5000.clean());
-
-        // // dealgae
-        // joyManip
-        //         .b()
-        //         .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
-        //         .onTrue(DriveCommands.cleanStart(Height.L2, elevator, dealgaefacationinator5000))
-        //         .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
-        // joyManip
-        //         .x()
-        //         .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
-        //         .onTrue(DriveCommands.cleanStart(Height.L3, elevator, dealgaefacationinator5000))
-        //         .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
+        joyManip.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
+        joyManip.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
+        joyManip.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
     }
 
     private Command setRobotRelative(boolean state) {
