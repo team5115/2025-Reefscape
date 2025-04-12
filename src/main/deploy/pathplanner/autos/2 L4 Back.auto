@@ -7,31 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dealgy auto"
+            "pathName": "Back"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Clean"
+            "name": "L4Left"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Dealgae"
+            "pathName": "MoveIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ScoreAgain"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L3Right"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Runaway"
+            "name": "L4Right"
           }
         }
       ]
