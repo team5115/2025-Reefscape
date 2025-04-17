@@ -237,13 +237,13 @@ public class RobotContainer {
 
         joyDrive
                 .leftBumper()
-                .and(joyDrive.rightTrigger().negate())
+                .and(joyDrive.rightBumper().negate())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.LEFT))
                 .whileTrue(drivetrain.alignSelectedSpot(Side.LEFT));
 
         joyDrive
                 .leftBumper()
-                .and(joyDrive.rightBumper())
+                .and(joyDrive.rightTrigger())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.CENTER))
                 .whileTrue(drivetrain.alignSelectedSpot(Side.CENTER));
 
