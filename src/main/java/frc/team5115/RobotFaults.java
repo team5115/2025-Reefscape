@@ -2,12 +2,7 @@ package frc.team5115;
 
 import com.revrobotics.spark.SparkBase.Faults;
 import com.revrobotics.spark.SparkMax;
-import frc.team5115.subsystems.climber.Climber;
-import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000;
-import frc.team5115.subsystems.dispenser.Dispenser;
 import frc.team5115.subsystems.drive.Drivetrain;
-import frc.team5115.subsystems.elevator.Elevator;
-import frc.team5115.subsystems.intake.Intake;
 import frc.team5115.subsystems.vision.PhotonVision;
 import java.util.ArrayList;
 
@@ -19,11 +14,6 @@ public class RobotFaults {
     public final boolean gyroDisconnected;
     public final boolean drivetrainNull;
     public final boolean visionNull;
-    public final boolean climberNull;
-    public final boolean elevatorNull;
-    public final boolean dispenserNull;
-    public final boolean intakeNull;
-    public final boolean elevatorShorted;
     private final String cachedToString;
 
     public RobotFaults(
@@ -32,23 +22,13 @@ public class RobotFaults {
             boolean joysticksDisconnected,
             boolean gyroDisconnected,
             boolean drivetrainNull,
-            boolean visionNull,
-            boolean climberNull,
-            boolean elevatorNull,
-            boolean dispenserNull,
-            boolean intakeNull,
-            boolean elevatorShorted) {
+            boolean visionNull) {
         this.sparkFaults = sparkFaults;
         this.cameraDisconnected = cameraDisconnected;
         this.joysticksDisconnected = joysticksDisconnected;
         this.gyroDisconnected = gyroDisconnected;
         this.drivetrainNull = drivetrainNull;
         this.visionNull = visionNull;
-        this.climberNull = climberNull;
-        this.elevatorNull = elevatorNull;
-        this.dispenserNull = dispenserNull;
-        this.intakeNull = intakeNull;
-        this.elevatorShorted = elevatorShorted;
         cachedToString = cacheString();
     }
 
@@ -74,21 +54,6 @@ public class RobotFaults {
         if (visionNull) {
             builder.append("VisionNull; ");
         }
-        if (climberNull) {
-            builder.append("ClimberNull; ");
-        }
-        if (elevatorNull) {
-            builder.append("ElevatorNull; ");
-        }
-        if (dispenserNull) {
-            builder.append("DispenserNull; ");
-        }
-        if (intakeNull) {
-            builder.append("IntakeNull; ");
-        }
-        if (elevatorShorted) {
-            builder.append("5V Short; ");
-        }
         if (builder.isEmpty()) {
             return NO_FAULTS;
         } else {
@@ -106,30 +71,11 @@ public class RobotFaults {
     }
 
     public static RobotFaults fromSubsystems(
-            Drivetrain drivetrain,
-            PhotonVision vision,
-            Climber climber,
-            Elevator elevator,
-            Dispenser dispenser,
-            Intake intake,
-            Dealgaefacationinator5000 dealgaefacationinator5000,
-            boolean joysticksConnected) {
+            Drivetrain drivetrain, PhotonVision vision, boolean joysticksConnected) {
 
         ArrayList<SparkMax> sparks = new ArrayList<>();
         if (drivetrain != null) {
             drivetrain.getSparks(sparks);
-        }
-        if (elevator != null) {
-            elevator.getSparks(sparks);
-        }
-        if (dispenser != null) {
-            dispenser.getSparks(sparks);
-        }
-        if (intake != null) {
-            intake.getSparks(sparks);
-        }
-        if (dealgaefacationinator5000 != null) {
-            dealgaefacationinator5000.getSparks(sparks);
         }
         StringBuilder sparkFaults = new StringBuilder();
         for (var spark : sparks) {
@@ -141,12 +87,7 @@ public class RobotFaults {
                 !joysticksConnected,
                 drivetrain == null ? true : !drivetrain.isGyroConnected(),
                 drivetrain == null,
-                vision == null,
-                climber == null,
-                elevator == null,
-                dispenser == null,
-                intake == null,
-                elevator.isShorting());
+                vision == null);
     }
 
     private static void appendSparkFaults(StringBuilder mainBuilder, Faults faults, int id) {

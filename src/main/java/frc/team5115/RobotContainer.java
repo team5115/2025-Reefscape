@@ -1,7 +1,6 @@
 package frc.team5115;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.PneumaticHub;
@@ -14,39 +13,17 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.team5115.Constants.AutoConstants;
 import frc.team5115.Constants.AutoConstants.Side;
 import frc.team5115.Constants.Mode;
-import frc.team5115.commands.AutoCommands;
 import frc.team5115.commands.DriveCommands;
 import frc.team5115.subsystems.bling.Bling;
 import frc.team5115.subsystems.bling.BlingIO;
 import frc.team5115.subsystems.bling.BlingIOReal;
 import frc.team5115.subsystems.bling.BlingIOSim;
-import frc.team5115.subsystems.climber.Climber;
-import frc.team5115.subsystems.climber.ClimberIO;
-import frc.team5115.subsystems.climber.ClimberIORev;
-import frc.team5115.subsystems.climber.ClimberIOSim;
-import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000;
-import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IO;
-import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IOSim;
-import frc.team5115.subsystems.dealgaefacationinator5000.Dealgaefacationinator5000IOSparkMax;
-import frc.team5115.subsystems.dispenser.Dispenser;
-import frc.team5115.subsystems.dispenser.DispenserIO;
-import frc.team5115.subsystems.dispenser.DispenserIOSim;
-import frc.team5115.subsystems.dispenser.DispenserIOSparkMax;
 import frc.team5115.subsystems.drive.Drivetrain;
 import frc.team5115.subsystems.drive.GyroIO;
 import frc.team5115.subsystems.drive.GyroIONavx;
 import frc.team5115.subsystems.drive.ModuleIO;
 import frc.team5115.subsystems.drive.ModuleIOSim;
 import frc.team5115.subsystems.drive.ModuleIOSparkMax;
-import frc.team5115.subsystems.elevator.Elevator;
-import frc.team5115.subsystems.elevator.Elevator.Height;
-import frc.team5115.subsystems.elevator.ElevatorIO;
-import frc.team5115.subsystems.elevator.ElevatorIOSim;
-import frc.team5115.subsystems.elevator.ElevatorIOSparkMax;
-import frc.team5115.subsystems.intake.Intake;
-import frc.team5115.subsystems.intake.IntakeIO;
-import frc.team5115.subsystems.intake.IntakeIOSim;
-import frc.team5115.subsystems.intake.IntakeIOSparkMax;
 import frc.team5115.subsystems.vision.PhotonVision;
 import frc.team5115.subsystems.vision.PhotonVisionIO;
 import frc.team5115.subsystems.vision.PhotonVisionIOReal;
@@ -65,11 +42,6 @@ public class RobotContainer {
     private final GyroIO gyro;
     private final Drivetrain drivetrain;
     private final PhotonVision vision;
-    private final Climber climber;
-    private final Elevator elevator;
-    private final Dispenser dispenser;
-    private final Intake intake;
-    private final Dealgaefacationinator5000 dealgaefacationinator5000;
     private final Bling bling;
 
     // Controllers
@@ -99,12 +71,6 @@ public class RobotContainer {
                 //         () -> dispenseSpeedEntry.getDouble(0.1)
                 final PneumaticHub hub = new PneumaticHub(Constants.PNEUMATIC_HUB_ID);
                 gyro = new GyroIONavx();
-                climber = new Climber(new ClimberIORev(hub));
-                elevator = new Elevator(new ElevatorIOSparkMax());
-                dispenser = new Dispenser(new DispenserIOSparkMax(), elevator::getDispenserSpeed);
-                intake = new Intake(new IntakeIOSparkMax());
-                dealgaefacationinator5000 =
-                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSparkMax(hub));
                 drivetrain =
                         new Drivetrain(
                                 gyro,
@@ -120,12 +86,6 @@ public class RobotContainer {
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
                 gyro = new GyroIO() {};
-                climber = new Climber(new ClimberIOSim());
-                elevator = new Elevator(new ElevatorIOSim());
-                dispenser = new Dispenser(new DispenserIOSim(), elevator::getDispenserSpeed);
-                intake = new Intake(new IntakeIOSim());
-                dealgaefacationinator5000 =
-                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IOSim());
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
@@ -137,12 +97,6 @@ public class RobotContainer {
             default:
                 // Replayed robot, disable IO implementations
                 gyro = new GyroIO() {};
-                climber = new Climber(new ClimberIO() {});
-                elevator = new Elevator(new ElevatorIO() {});
-                dispenser = new Dispenser(new DispenserIO() {}, elevator::getDispenserSpeed);
-                intake = new Intake(new IntakeIO() {});
-                dealgaefacationinator5000 =
-                        new Dealgaefacationinator5000(new Dealgaefacationinator5000IO() {});
                 drivetrain =
                         new Drivetrain(
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
@@ -153,8 +107,7 @@ public class RobotContainer {
         }
 
         // Register auto commands for pathplanner
-        registerCommands(
-                drivetrain, vision, elevator, dispenser, intake, dealgaefacationinator5000, climber);
+        registerCommands(drivetrain, vision);
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -186,25 +139,14 @@ public class RobotContainer {
 
         autoChooser.addOption("Drive All SysIds", drivetrain.driveAllSysIds());
 
-        autoChooser.addOption(
-                "Elevator Quasistatic Forward", elevator.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption(
-                "Elevator Quasistatic Reverse", elevator.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        autoChooser.addOption(
-                "Elevator Dynamic Forward", elevator.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption(
-                "Elevator Dynamic Reverse", elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
         configureButtonBindings();
         configureBlingBindings();
     }
 
     private void configureBlingBindings() {
         bling.setDefaultCommand(bling.redKITT().ignoringDisable(true));
-        dispenser.coralDetected().or(elevator.coralDetected()).whileTrue(bling.greenKITT());
         drivetrain.aligningToGoal().whileTrue(bling.yellowScrollIn());
         drivetrain.alignedAtGoalTrigger().whileTrue(bling.whiteScrollIn());
-        climber.extended().whileTrue(bling.purpleSolid());
         new Trigger(() -> hasFaults).whileTrue(bling.faultFlash().ignoringDisable(true));
     }
 
@@ -266,56 +208,6 @@ public class RobotContainer {
         //  * point down on dpad and press B (L2) or X (L3) to clean algae, release to stow
          */
 
-        // divide by 100 to achieve 3 cm/s max speed
-        elevator.setDefaultCommand(elevator.positionControl());
-
-        // driver holds down a, manip controls elevator velocity
-        joyDrive.a().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.5));
-
-        intake.setDefaultCommand(intake.intakeIf(elevator::atIntake));
-        joyManip.a().whileTrue(intake.vomit().repeatedly()).onFalse(intake.stop());
-
-        joyManip
-                .start()
-                .onTrue(elevator.setHeight(Height.L1))
-                .onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip.x().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.INTAKE));
-
-        joyManip
-                .y()
-                .onTrue(elevator.setHeight(Height.CLEAN3))
-                .onFalse(elevator.setHeight(Height.INTAKE));
-
-        joyManip.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
-
-        joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
-        joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
-        // joyManip.pov(180).onTrue(dispenser.altDispense()).onFalse(dispenser.stop());
-
-        joyManip.rightBumper().onTrue(climber.extend());
-        joyManip.leftBumper().onTrue(climber.retract());
-        joyManip.pov(0).onTrue(climber.toggleShield());
-
-        joyManip
-                .pov(180)
-                .or(joyManip.pov(135))
-                .or(joyManip.pov(225))
-                .onTrue(dealgaefacationinator5000.prepClean())
-                .onFalse(dealgaefacationinator5000.completeClean());
-        // .onFalse(dealgaefacationinator5000.clean());
-
-        // // dealgae
-        // joyManip
-        //         .b()
-        //         .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
-        //         .onTrue(DriveCommands.cleanStart(Height.L2, elevator, dealgaefacationinator5000))
-        //         .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
-        // joyManip
-        //         .x()
-        //         .and(joyManip.pov(180).or(joyManip.pov(135)).or(joyManip.pov(225)))
-        //         .onTrue(DriveCommands.cleanStart(Height.L3, elevator, dealgaefacationinator5000))
-        //         .onFalse(DriveCommands.cleanEnd(elevator, dealgaefacationinator5000));
     }
 
     private Command setRobotRelative(boolean state) {
@@ -331,14 +223,7 @@ public class RobotContainer {
             if (faultPrintTimeout <= 0) {
                 final var faults =
                         RobotFaults.fromSubsystems(
-                                drivetrain,
-                                vision,
-                                climber,
-                                elevator,
-                                dispenser,
-                                intake,
-                                dealgaefacationinator5000,
-                                joyDrive.isConnected() && joyManip.isConnected());
+                                drivetrain, vision, joyDrive.isConnected() && joyManip.isConnected());
                 hasFaults = faults.hasFaults();
                 if (hasFaults) {
                     System.err.println(faults.toString());
@@ -362,65 +247,8 @@ public class RobotContainer {
      * @param dealgaefacationinator5000
      * @param climber
      */
-    public static void registerCommands(
-            Drivetrain drivetrain,
-            PhotonVision vision,
-            Elevator elevator,
-            Dispenser dispenser,
-            Intake intake,
-            Dealgaefacationinator5000 dealgaefacationinator5000,
-            Climber climber) {
+    public static void registerCommands(Drivetrain drivetrain, PhotonVision vision) {
         // Register commands for pathplanner
-        NamedCommands.registerCommand(
-                "L2Left",
-                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.LEFT, Height.L2));
-
-        NamedCommands.registerCommand(
-                "L2Right",
-                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.RIGHT, Height.L2));
-
-        NamedCommands.registerCommand(
-                "L2", AutoCommands.testingGetReefAlignCommand(drivetrain, elevator, dispenser, Height.L2));
-
-        NamedCommands.registerCommand(
-                "L3Left",
-                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.LEFT, Height.L3));
-
-        NamedCommands.registerCommand(
-                "L3Right",
-                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.RIGHT, Height.L3));
-
-        NamedCommands.registerCommand(
-                "L4Left",
-                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.LEFT, Height.L4));
-
-        NamedCommands.registerCommand(
-                "L4Right",
-                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.RIGHT, Height.L4));
-
-        NamedCommands.registerCommand(
-                "Intake", AutoCommands.intakeUntilCoral(dispenser, elevator, intake));
-        // Commands for raising while moving auto
-
-        NamedCommands.registerCommand("RaiseElevator", AutoCommands.raiseElevator(elevator, Height.L2));
-
-        NamedCommands.registerCommand(
-                "DispenseRight", AutoCommands.scoreSequence(drivetrain, elevator, dispenser, Side.RIGHT));
-
-        NamedCommands.registerCommand(
-                "DispenseLeft", AutoCommands.scoreSequence(drivetrain, elevator, dispenser, Side.LEFT));
-
-        NamedCommands.registerCommand(
-                "L1",
-                AutoCommands.getReefAlignCommand(drivetrain, elevator, dispenser, Side.RIGHT, Height.L1));
-
-        NamedCommands.registerCommand(
-                "Clean", AutoCommands.dealgify(drivetrain, elevator, dealgaefacationinator5000));
-
-        NamedCommands.registerCommand(
-                "CleanHighL3Left",
-                AutoCommands.cleanAndScoreLeft(
-                        drivetrain, elevator, dealgaefacationinator5000, dispenser, Height.L4, Height.L3));
 
         System.out.println("Registered Commands");
     }
@@ -440,7 +268,6 @@ public class RobotContainer {
 
     public void teleopInit() {
         drivetrain.setTeleopCurrentLimit();
-        elevator.zero().schedule();
         // drivetrain.offsetGyro(Rotation2d.fromDegrees(-90));
     }
 
