@@ -3,7 +3,6 @@ package frc.team5115;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -46,7 +45,7 @@ public class RobotContainer {
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
-    private final CommandXboxController joyManip = new CommandXboxController(1);
+    // private final CommandXboxController joyManip = new CommandXboxController(1);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -66,10 +65,7 @@ public class RobotContainer {
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
-                // final GenericEntry dispenseSpeedEntry =
-                //         Shuffleboard.getTab("SmartDashboard").add("Dispenser Speed", 0).getEntry();
-                //         () -> dispenseSpeedEntry.getDouble(0.1)
-                final PneumaticHub hub = new PneumaticHub(Constants.PNEUMATIC_HUB_ID);
+                // final PneumaticHub hub = new PneumaticHub(Constants.PNEUMATIC_HUB_ID);
                 gyro = new GyroIONavx();
                 drivetrain =
                         new Drivetrain(
@@ -221,9 +217,7 @@ public class RobotContainer {
     public void robotPeriodic() {
         if (Constants.currentMode == Mode.REAL) {
             if (faultPrintTimeout <= 0) {
-                final var faults =
-                        RobotFaults.fromSubsystems(
-                                drivetrain, vision, joyDrive.isConnected() && joyManip.isConnected());
+                final var faults = RobotFaults.fromSubsystems(drivetrain, vision, joyDrive.isConnected());
                 hasFaults = faults.hasFaults();
                 if (hasFaults) {
                     System.err.println(faults.toString());

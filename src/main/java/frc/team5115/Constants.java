@@ -29,28 +29,6 @@ public final class Constants {
         REPLAY
     }
 
-    public static final byte PNEUMATIC_HUB_ID = 2;
-    public static final byte CLIMB_FORWARD_CHANNEL = 0;
-    public static final byte CLIMB_REVERSE_CHANNEL = 1;
-    public static final byte DEALGAE_FORWARD_CHANNEL = 2;
-    public static final byte DEALGAE_REVERSE_CHANNEL = 3;
-
-    public static final byte ELEVATOR_MOTOR_ID = 11;
-    public static final byte INTAKE_MOTOR_ID = 12;
-    public static final byte DISPENSER_MOTOR_ID = 13;
-    public static final byte DEALGAE_MOTOR_ID = 14;
-
-    public static final byte CLIMB_INAKE_SENSOR = 2;
-    public static final byte BACK_CORAL_SENSOR = 0;
-    public static final byte FRONT_CORAL_SENSOR = 3;
-
-    public static final byte ELEVATOR_FIRST_SENSOR_ID = 1;
-    public static final byte ELEVATOR_SECOND_SENSOR_ID = 4;
-    public static final byte ELEVATOR_THIRD_SENSOR_ID = 9;
-    // public static final byte ELEVATOR_FOURTH_SENSOR_ID = 6;
-
-    public static final byte BLOCK_ACTUATOR_ID = 9;
-
     public static final byte LED_STRIP_PWM_ID = 0;
 
     public static final double LOOP_PERIOD_SECS = 0.02;
