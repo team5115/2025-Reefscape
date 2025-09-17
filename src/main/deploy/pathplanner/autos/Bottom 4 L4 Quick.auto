@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "T1"
+                  "pathName": "B1"
                 }
               },
               {
@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "TIntake(1)"
+                  "pathName": "B2"
                 }
               },
               {
@@ -49,45 +49,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "T2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4Left"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "TIntake(2)"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "T2"
+                  "pathName": "B3"
                 }
               },
               {
@@ -106,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "TIntake(3)"
+                  "pathName": "B4"
                 }
               },
               {
@@ -125,7 +87,45 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "T3"
+                  "pathName": "B5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4Left"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B7"
                 }
               },
               {
@@ -141,6 +141,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "L4 Autos",
+  "folder": null,
   "choreoAuto": true
 }

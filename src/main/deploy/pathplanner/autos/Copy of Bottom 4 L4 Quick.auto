@@ -17,82 +17,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Right"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Intake(1)"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "B2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4Right"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Intake(2)"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "B2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "L4Left"
                 }
               }
@@ -106,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Intake(3)"
+                  "pathName": "B2"
                 }
               },
               {
@@ -131,7 +55,83 @@
               {
                 "type": "named",
                 "data": {
+                  "name": "L4Right"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L3Right"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "L4Left"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B7"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4Right"
                 }
               }
             ]
@@ -141,6 +141,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "L4 Autos",
+  "folder": null,
   "choreoAuto": true
 }

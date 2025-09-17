@@ -11,83 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4Right"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Intake(1)"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "B2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4Right"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Intake(2)"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "B2"
+                  "pathName": "T1"
                 }
               },
               {
@@ -106,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Intake(3)"
+                  "pathName": "T2"
                 }
               },
               {
@@ -125,7 +49,45 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B3"
+                  "pathName": "T3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4Right"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "T4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "T5"
                 }
               },
               {
@@ -144,7 +106,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B3 Intake"
+                  "pathName": "T6"
                 }
               },
               {
@@ -163,13 +125,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B3"
+                  "pathName": "T7"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "L4Right"
                 }
               }
             ]
@@ -179,6 +141,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "L4 Autos",
+  "folder": null,
   "choreoAuto": true
 }
