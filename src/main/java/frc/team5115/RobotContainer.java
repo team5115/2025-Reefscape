@@ -2,8 +2,6 @@ package frc.team5115;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -57,7 +55,6 @@ public class RobotContainer {
     private double faultPrintTimeout = 0;
 
     // Works with faults
-    private final GenericEntry clearForMatchEntry;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -76,8 +73,6 @@ public class RobotContainer {
                                 new ModuleIOSparkMax(3));
                 vision = new PhotonVision(new PhotonVisionIOReal(), drivetrain);
                 bling = new Bling(new BlingIOReal());
-                clearForMatchEntry =
-                        Shuffleboard.getTab("SmartDashboard").add("ClearForMatch", false).getEntry();
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -87,7 +82,6 @@ public class RobotContainer {
                                 gyro, new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim(), new ModuleIOSim());
                 vision = new PhotonVision(new PhotonVisionIOSim(), drivetrain);
                 bling = new Bling(new BlingIOSim());
-                clearForMatchEntry = null;
                 break;
 
             default:
@@ -98,7 +92,6 @@ public class RobotContainer {
                                 gyro, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
                 vision = new PhotonVision(new PhotonVisionIO() {}, drivetrain);
                 bling = new Bling(new BlingIO() {});
-                clearForMatchEntry = null;
                 break;
         }
 
@@ -226,7 +219,7 @@ public class RobotContainer {
             }
             faultPrintTimeout -= 1;
             Logger.recordOutput("HasFaults", hasFaults);
-            clearForMatchEntry.setBoolean(!hasFaults);
+            Logger.recordOutput("ReadyForMatch", !hasFaults);
         }
     }
 
