@@ -11,13 +11,19 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "T1"
+                  "pathName": "T10"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Left"
+                  "name": "Clean"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L3Right"
                 }
               }
             ]
@@ -30,83 +36,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "T2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "T3"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4Right"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "T4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "T5"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4Left"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "T6"
+                  "pathName": "T9 "
                 }
               },
               {
@@ -131,7 +61,83 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Right"
+                  "name": "L3Left"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "T8"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "T7"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2Left"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "T8"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "T7"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2Right"
                 }
               }
             ]
@@ -141,6 +147,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Top",
   "choreoAuto": true
 }

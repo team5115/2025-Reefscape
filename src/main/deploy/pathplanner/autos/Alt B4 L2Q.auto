@@ -11,13 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B1"
+                  "pathName": "B1ALT"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Left"
+                  "name": "L2Left"
                 }
               }
             ]
@@ -55,7 +55,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Right"
+                  "name": "L2Left"
                 }
               }
             ]
@@ -87,13 +87,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B5"
+                  "pathName": "B3"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Left"
+                  "name": "L2Right"
                 }
               }
             ]
@@ -106,7 +106,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B6"
+                  "pathName": "B5"
                 }
               },
               {
@@ -125,13 +125,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B7"
+                  "pathName": "B6"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Right"
+                  "name": "L2Right"
                 }
               }
             ]
@@ -141,6 +141,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Bottom",
   "choreoAuto": true
 }
