@@ -1,0 +1,205 @@
+{
+ "name":"67",
+ "version":1,
+ "type":"Swerve",
+ "variables":{
+  "expressions":{},
+  "poses":{
+   "AlignB":{
+    "x":{
+     "exp":"3.7 m",
+     "val":3.7
+    },
+    "y":{
+     "exp":"2.64 m",
+     "val":2.64
+    },
+    "heading":{
+     "exp":"60 deg",
+     "val":1.0471975511965976
+    }
+   },
+   "alignA":{
+    "x":{
+     "exp":"5.255 m",
+     "val":5.255
+    },
+    "y":{
+     "exp":"2.625 m",
+     "val":2.625
+    },
+    "heading":{
+     "exp":"120 deg",
+     "val":2.0943951023931953
+    }
+   },
+   "alignC":{
+    "x":{
+     "exp":"1.46 m",
+     "val":1.46
+    },
+    "y":{
+     "exp":"0.67 m",
+     "val":0.67
+    },
+    "heading":{
+     "exp":"54 deg",
+     "val":0.942477796076938
+    }
+   },
+   "intake":{
+    "x":{
+     "exp":"1.46 m",
+     "val":1.46
+    },
+    "y":{
+     "exp":"0.67 m",
+     "val":0.67
+    },
+    "heading":{
+     "exp":"54 deg",
+     "val":0.942477796076938
+    }
+   },
+   "shootingLA":{
+    "x":{
+     "exp":"4.8 m",
+     "val":4.8
+    },
+    "y":{
+     "exp":"2.75 m",
+     "val":2.75
+    },
+    "heading":{
+     "exp":"120 deg",
+     "val":2.0943951023931953
+    }
+   },
+   "shootingLC":{
+    "x":{
+     "exp":"3.225 m",
+     "val":3.225
+    },
+    "y":{
+     "exp":"4.35 m",
+     "val":4.35
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   },
+   "shootingRC":{
+    "x":{
+     "exp":"3.225 m",
+     "val":3.225
+    },
+    "y":{
+     "exp":"3.95 m",
+     "val":3.95
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   },
+   "starting":{
+    "x":{
+     "exp":"7.1 m",
+     "val":7.1
+    },
+    "y":{
+     "exp":"0.9 m",
+     "val":0.9
+    },
+    "heading":{
+     "exp":"120 deg",
+     "val":2.0943951023931953
+    }
+   },
+   "topIntake":{
+    "x":{
+     "exp":"intake.x()",
+     "val":1.46
+    },
+    "y":{
+     "exp":"7.33 m",
+     "val":7.33
+    },
+    "heading":{
+     "exp":"-54 deg",
+     "val":-0.942477796076938
+    }
+   }
+  }
+ },
+ "config":{
+  "frontLeft":{
+   "x":{
+    "exp":"11 in",
+    "val":0.2794
+   },
+   "y":{
+    "exp":"11 in",
+    "val":0.2794
+   }
+  },
+  "backLeft":{
+   "x":{
+    "exp":"-11 in",
+    "val":-0.2794
+   },
+   "y":{
+    "exp":"11 in",
+    "val":0.2794
+   }
+  },
+  "mass":{
+   "exp":"150 lbs",
+   "val":68.0388555
+  },
+  "inertia":{
+   "exp":"6 kg m ^ 2",
+   "val":6.0
+  },
+  "gearing":{
+   "exp":"6.5",
+   "val":6.5
+  },
+  "radius":{
+   "exp":"2 in",
+   "val":0.0508
+  },
+  "vmax":{
+   "exp":"6000 RPM",
+   "val":628.3185307179587
+  },
+  "tmax":{
+   "exp":"1.2 N * m",
+   "val":1.2
+  },
+  "cof":{
+   "exp":"1.5",
+   "val":1.5
+  },
+  "bumper":{
+   "front":{
+    "exp":"16 in",
+    "val":0.4064
+   },
+   "side":{
+    "exp":"16 in",
+    "val":0.4064
+   },
+   "back":{
+    "exp":"16 in",
+    "val":0.4064
+   }
+  },
+  "differentialTrackWidth":{
+   "exp":"22 in",
+   "val":0.5588
+  }
+ },
+ "generationFeatures":[]
+}
