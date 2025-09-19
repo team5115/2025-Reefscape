@@ -169,7 +169,7 @@ public class PhotonVision extends SubsystemBase {
                     1 + (pose.targetsUsed.size() - 2) * VisionConstants.multiTagDistanceFactor;
             final double thresholdDistance = VisionConstants.distanceThreshold * factor;
             if (averageDistance > thresholdDistance) {
-                Optional.of(
+                return Optional.of(
                         String.format(
                                 "MultipleFar: dist=%f.3#, threshold=%f.3#", averageDistance, thresholdDistance));
             }
