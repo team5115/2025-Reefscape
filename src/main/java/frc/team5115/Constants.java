@@ -257,6 +257,7 @@ public final class Constants {
         // Pose filtering values
         public static final double distanceThreshold = 1.5; // meters
         public static final double angleThreshold = 10.0; // degrees
+        public static final double tagYawThreshold = 4.0; // degrees
         public static final double zTranslationThreshold = 0.15; // meters
         public static final double ambiguityThreshold = 0.5;
         // every tag beyond seeing two tags gives us an extra meter of trusted distance
