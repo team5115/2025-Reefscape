@@ -130,6 +130,9 @@ public class PhotonVision extends SubsystemBase {
             double totalAmbiguity = 0;
             for (var target : pose.targetsUsed) {
                 totalAmbiguity += target.getPoseAmbiguity();
+                if (Math.abs(target.getYaw()) > VisionConstants.tagYawThreshold) {
+                    return Optional.of("TagYaw, " + target.getYaw() + "Too Parallel");
+                }
             }
             final double averageAmbiguity = totalAmbiguity / pose.targetsUsed.size();
             if (averageAmbiguity > VisionConstants.ambiguityThreshold) {
