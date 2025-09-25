@@ -80,7 +80,7 @@ public final class Constants {
             return ROBOT_CONFIG;
         }
 
-        public static final double MAX_LINEAR_SPEED = 5; // meters per second
+        public static final double MAX_LINEAR_SPEED = 1.8; // meters per second
 
         private static final double TRACK_WIDTH = Units.inchesToMeters(26.25);
         public static final double TRACK_WIDTH_X = TRACK_WIDTH;
