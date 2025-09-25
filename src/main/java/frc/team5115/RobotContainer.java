@@ -295,7 +295,7 @@ public class RobotContainer {
                 .or(joyDrive.pov(135))
                 .or(joyDrive.pov(225))
                 .onTrue(dealgaefacationinator5000.prepClean())
-        .onFalse(dealgaefacationinator5000.completeClean());
+                .onFalse(dealgaefacationinator5000.completeClean());
         // .onFalse(dealgaefacationinator5000.clean());
 
         // // dealgae
