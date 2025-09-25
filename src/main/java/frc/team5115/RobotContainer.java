@@ -74,7 +74,6 @@ public class RobotContainer {
 
     // Controllers
     private final CommandXboxController joyDrive = new CommandXboxController(0);
-    private final CommandXboxController joyManip = new CommandXboxController(1);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -228,9 +227,9 @@ public class RobotContainer {
          * start resets field orientation
          */
 
-        joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
-        joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
-        joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
+        // joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
+        // joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
+        // joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
         joyDrive.start().onTrue(offsetGyro());
 
         joyDrive
@@ -270,39 +269,39 @@ public class RobotContainer {
         elevator.setDefaultCommand(elevator.positionControl());
 
         // driver holds down a, manip controls elevator velocity
-        joyDrive.a().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.5));
+        // joyDrive.a().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.5));
 
         intake.setDefaultCommand(intake.intakeIf(elevator::atIntake));
-        joyManip.a().whileTrue(intake.vomit().repeatedly().alongWith(dispenser.reverse().repeatedly())).onFalse(intake.stop().alongWith(dispenser.stop()));
-
-        joyManip
-                .start()
-                .onTrue(elevator.setHeight(Height.L1))
-                .onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.INTAKE));
-        joyManip.x().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.INTAKE));
-
-        joyManip
-                .y()
-                .onTrue(elevator.setHeight(Height.CLEAN3))
-                .onFalse(elevator.setHeight(Height.INTAKE));
-
-        joyManip.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
-
-        joyManip.rightTrigger().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
-        joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
+        
+        // joyManip
+        //         .start()
+        //         .onTrue(elevator.setHeight(Height.L1))
+        //         .onFalse(elevator.setHeight(Height.INTAKE));
+        joyDrive.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.INTAKE));
+        joyDrive.x().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.INTAKE));
+        
+        joyDrive
+        .y()
+        .onTrue(elevator.setHeight(Height.CLEAN3))
+        .onFalse(elevator.setHeight(Height.INTAKE));
+        
+        joyDrive.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
+        
+        joyDrive.rightBumper().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
+        joyDrive.leftBumper().whileTrue(intake.vomit().repeatedly().alongWith(dispenser.reverse().repeatedly())).onFalse(intake.stop().alongWith(dispenser.stop()));
+        // joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
         // joyManip.pov(180).onTrue(dispenser.altDispense()).onFalse(dispenser.stop());
 
-        joyManip.rightBumper().onTrue(climber.extend());
-        joyManip.leftBumper().onTrue(climber.retract());
-        joyManip.pov(0).onTrue(climber.toggleShield());
+        // joyManip.rightBumper().onTrue(climber.extend());
+        // joyManip.leftBumper().onTrue(climber.retract());
+        // joyManip.pov(0).onTrue(climber.toggleShield());
 
-        joyManip
-                .pov(180)
-                .or(joyManip.pov(135))
-                .or(joyManip.pov(225))
-                .onTrue(dealgaefacationinator5000.prepClean())
-                .onFalse(dealgaefacationinator5000.completeClean());
+        // joyManip
+        //         .pov(180)
+        //         .or(joyManip.pov(135))
+        //         .or(joyManip.pov(225))
+        //         .onTrue(dealgaefacationinator5000.prepClean())
+                // .onFalse(dealgaefacationinator5000.completeClean());
         // .onFalse(dealgaefacationinator5000.clean());
 
         // // dealgae
@@ -338,7 +337,7 @@ public class RobotContainer {
                                 dispenser,
                                 intake,
                                 dealgaefacationinator5000,
-                                joyDrive.isConnected() && joyManip.isConnected());
+                                joyDrive.isConnected());
                 hasFaults = faults.hasFaults();
                 if (hasFaults) {
                     System.err.println(faults.toString());
