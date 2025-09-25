@@ -272,23 +272,26 @@ public class RobotContainer {
         // joyDrive.a().whileTrue(elevator.velocityControl(() -> -joyManip.getLeftY() * 0.5));
 
         intake.setDefaultCommand(intake.intakeIf(elevator::atIntake));
-        
+
         // joyManip
         //         .start()
         //         .onTrue(elevator.setHeight(Height.L1))
         //         .onFalse(elevator.setHeight(Height.INTAKE));
         joyDrive.b().onTrue(elevator.setHeight(Height.L2)).onFalse(elevator.setHeight(Height.INTAKE));
         joyDrive.x().onTrue(elevator.setHeight(Height.L3)).onFalse(elevator.setHeight(Height.INTAKE));
-        
+
         joyDrive
-        .y()
-        .onTrue(elevator.setHeight(Height.CLEAN3))
-        .onFalse(elevator.setHeight(Height.INTAKE));
-        
+                .y()
+                .onTrue(elevator.setHeight(Height.CLEAN3))
+                .onFalse(elevator.setHeight(Height.INTAKE));
+
         joyDrive.back().onTrue(elevator.zero()).onFalse(elevator.setHeight(Height.MINIMUM));
-        
+
         joyDrive.rightBumper().onTrue(dispenser.dispense()).onFalse(dispenser.stop());
-        joyDrive.leftBumper().whileTrue(intake.vomit().repeatedly().alongWith(dispenser.reverse().repeatedly())).onFalse(intake.stop().alongWith(dispenser.stop()));
+        joyDrive
+                .leftBumper()
+                .whileTrue(intake.vomit().repeatedly().alongWith(dispenser.reverse().repeatedly()))
+                .onFalse(intake.stop().alongWith(dispenser.stop()));
         // joyManip.leftTrigger().onTrue(dispenser.reverse()).onFalse(dispenser.stop());
         // joyManip.pov(180).onTrue(dispenser.altDispense()).onFalse(dispenser.stop());
 
@@ -301,7 +304,7 @@ public class RobotContainer {
         //         .or(joyManip.pov(135))
         //         .or(joyManip.pov(225))
         //         .onTrue(dealgaefacationinator5000.prepClean())
-                // .onFalse(dealgaefacationinator5000.completeClean());
+        // .onFalse(dealgaefacationinator5000.completeClean());
         // .onFalse(dealgaefacationinator5000.clean());
 
         // // dealgae
