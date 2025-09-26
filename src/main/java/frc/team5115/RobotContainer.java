@@ -180,23 +180,6 @@ public class RobotContainer {
                 .and(joyDrive.rightTrigger())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.CENTER))
                 .whileTrue(drivetrain.alignSelectedSpot(Side.CENTER));
-
-        /*
-         * Manipulator button bindings:
-         * hold left stick and move it for elevator manual control
-         * hold start for L1
-         * hold b for L2
-         * hold x for L3
-         * press back to rezero elevator
-         * hold a to vomit
-         * hold right trigger to dispense
-         * hold left trigger to reverse dispense
-         * press right bumper to extend climb piston
-         * press left bumper to retract climb piston
-         * point up on dpad to toggle climber block
-        //  * point down on dpad and press B (L2) or X (L3) to clean algae, release to stow
-         */
-
     }
 
     private Command setRobotRelative(boolean state) {

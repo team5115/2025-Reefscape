@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team5115.Constants;
 import frc.team5115.Constants.VisionConstants;
@@ -39,7 +40,13 @@ public class PhotonVision extends SubsystemBase {
         LEFT_POINTING(
                 "LEFT_CAMERA", 0.75 / 2.0 - 0.025, -(0.75 / 2.0 - 0.085), +0.205, +0, -13.0, +42.545),
         RIGHT_POINTING(
-                "RIGHT_CAMERA", 0.75 / 2.0 - 0.035, -(0.75 / 2.0 - 0.02), +0.205, +0, -13.0, -67.141);
+                "RIGHT_CAMERA",
+                (0.75 / 2.0 - 0.025) - Units.inchesToMeters(0.5),
+                -(0.75 / 2.0 - 0.085) + Units.inchesToMeters(24.8),
+                +0.205 + Units.inchesToMeters(0.5),
+                +0,
+                -(90d - 65d),
+                -25d);
 
         public final PhotonCameraSim cameraSim;
         public final PhotonPoseEstimator poseEstimator;
@@ -123,6 +130,9 @@ public class PhotonVision extends SubsystemBase {
             double totalAmbiguity = 0;
             for (var target : pose.targetsUsed) {
                 totalAmbiguity += target.getPoseAmbiguity();
+                if (Math.abs(target.getYaw()) < VisionConstants.tagYawThreshold) {
+                    return Optional.of("TagYaw, " + target.getYaw() + "Too Parallel");
+                }
             }
             final double averageAmbiguity = totalAmbiguity / pose.targetsUsed.size();
             if (averageAmbiguity > VisionConstants.ambiguityThreshold) {

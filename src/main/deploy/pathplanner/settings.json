@@ -4,8 +4,14 @@
   "holonomicMode": true,
   "pathFolders": [],
   "autoFolders": [
+<<<<<<< HEAD
     "L2 Autos",
     "L4 Autos"
+=======
+    "Bottom",
+    "Test",
+    "Top"
+>>>>>>> main
   ],
   "defaultMaxVel": 5.0,
   "defaultMaxAccel": 14.0,

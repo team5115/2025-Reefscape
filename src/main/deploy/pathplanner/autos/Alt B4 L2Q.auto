@@ -11,32 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "B1"
+                  "pathName": "B1ALT"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Right"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Intake(1)"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
+                  "name": "L2Left"
                 }
               }
             ]
@@ -50,144 +31,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "B2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4Right"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Intake(2)"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "B2"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4Left"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Intake(3)"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "B7"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-<<<<<<<< HEAD:src/main/deploy/pathplanner/autos/4 Coral L4.auto
-========
-                  "name": "L4Right"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "B9"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "B7"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
->>>>>>>> main:src/main/deploy/pathplanner/autos/B4 L4Q.auto
-                  "name": "L4Left"
-                }
-              }
-            ]
-          }
-<<<<<<<< HEAD:src/main/deploy/pathplanner/autos/4 Coral L4.auto
-========
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "B8"
                 }
               },
               {
@@ -212,21 +55,92 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Right"
+                  "name": "L2Left"
                 }
               }
             ]
           }
->>>>>>>> main:src/main/deploy/pathplanner/autos/B4 L4Q.auto
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2Right"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2Right"
+                }
+              }
+            ]
+          }
         }
       ]
     }
   },
   "resetOdom": true,
-<<<<<<<< HEAD:src/main/deploy/pathplanner/autos/4 Coral L4.auto
-  "folder": "L4 Autos",
-========
   "folder": "Bottom",
->>>>>>>> main:src/main/deploy/pathplanner/autos/B4 L4Q.auto
   "choreoAuto": true
 }
