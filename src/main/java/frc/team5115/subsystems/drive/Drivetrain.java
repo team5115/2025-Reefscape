@@ -130,6 +130,7 @@ public class Drivetrain extends SubsystemBase {
                 (activePath) -> {
                     Logger.recordOutput(
                             "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+                    field.getObject("traj").setPoses(activePath);
                 });
         PathPlannerLogging.setLogTargetPoseCallback(
                 (targetPose) -> {
