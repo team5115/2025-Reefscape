@@ -75,7 +75,7 @@ public class RobotContainer {
     private final LoggedDashboardChooser<Command> autoChooser;
 
     // Setings
- 
+
     private boolean hasFaults = true;
     private double faultPrintTimeout = 0;
 
@@ -84,7 +84,7 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         AutoConstants.precomputeAlignmentPoses(); // Computes robot starting pose with vision
-        
+
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
@@ -140,12 +140,15 @@ public class RobotContainer {
                 vision = new PhotonVision(new PhotonVisionIO() {}, drivetrain);
                 bling = new Bling(new BlingIO() {});
                 break;
-    
         }
         if (oneControler) {
-            driveControl = new DriverController(0, drivetrain, dispenser, dealgaefacationinator5000, elevator, climber, intake); 
+            driveControl =
+                    new DriverController(
+                            0, drivetrain, dispenser, dealgaefacationinator5000, elevator, climber, intake);
         } else {
-            driveControl = new DriverController(0, 1, drivetrain, dispenser, dealgaefacationinator5000, elevator, climber, intake);
+            driveControl =
+                    new DriverController(
+                            0, 1, drivetrain, dispenser, dealgaefacationinator5000, elevator, climber, intake);
         }
 
         // Register auto commands for pathplanner
@@ -203,12 +206,6 @@ public class RobotContainer {
         climber.extended().whileTrue(bling.purpleSolid());
         new Trigger(() -> hasFaults).whileTrue(bling.faultFlash().ignoringDisable(true));
     }
-
- 
-
-    
-
-    
 
     public void robotPeriodic() {
         if (Constants.currentMode == Mode.REAL) {
@@ -317,8 +314,6 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return autoChooser.get();
     }
-
-    
 
     public void teleopInit() {
         drivetrain.setTeleopCurrentLimit();
