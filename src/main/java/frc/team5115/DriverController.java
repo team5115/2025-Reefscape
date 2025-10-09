@@ -162,6 +162,13 @@ public class DriverController {
                 .or(joyDrive.pov(225))
                 .onTrue(dealgaefacationinator5000.prepClean())
                 .onFalse(dealgaefacationinator5000.completeClean());
+
+        joyDrive.rightBumper().onTrue(climber.extend());
+        joyDrive.leftBumper().onTrue(climber.retract());
+        joyDrive.pov(0).onTrue(climber.toggleShield());
+
+
+
     }
 
     private void configureDualMode() {
