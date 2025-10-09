@@ -166,9 +166,6 @@ public class DriverController {
         joyDrive.rightBumper().onTrue(climber.extend());
         joyDrive.leftBumper().onTrue(climber.retract());
         joyDrive.pov(0).onTrue(climber.toggleShield());
-
-
-
     }
 
     private void configureDualMode() {
