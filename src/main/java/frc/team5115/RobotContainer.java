@@ -69,7 +69,7 @@ public class RobotContainer {
 
     // Controllers
     private final DriverController driveControl;
-    
+
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
 

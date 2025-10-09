@@ -166,9 +166,6 @@ public class DriverController {
         joyDrive.rightBumper().onTrue(climber.extend());
         joyDrive.leftBumper().onTrue(climber.retract());
         joyDrive.pov(0).onTrue(climber.toggleShield());
-
-
-
     }
 
     private void configureDualMode() {
@@ -184,7 +181,7 @@ public class DriverController {
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
-        // joyDrive.start().onTrue(offsetGyro());
+        joyDrive.start().onTrue(offsetGyro());
 
         joyDrive
                 .leftTrigger()
