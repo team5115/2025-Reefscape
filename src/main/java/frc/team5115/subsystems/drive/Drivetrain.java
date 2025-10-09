@@ -23,6 +23,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -43,6 +44,7 @@ public class Drivetrain extends SubsystemBase {
     private final Module[] modules = new Module[4]; // FL, FR, BL, BR
     private final SysIdRoutine sysId;
     private final SysIdRoutine spinSysId;
+    private final Field2d field = new Field2d();
 
     // TODO tune drive pids
     private final double linear_kp = 1.9;
@@ -128,6 +130,7 @@ public class Drivetrain extends SubsystemBase {
                 (activePath) -> {
                     Logger.recordOutput(
                             "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+                    field.getObject("traj").setPoses(activePath);
                 });
         PathPlannerLogging.setLogTargetPoseCallback(
                 (targetPose) -> {
@@ -208,6 +211,8 @@ public class Drivetrain extends SubsystemBase {
                         builder.addDoubleProperty("Robot Angle", () -> getRotation().getRadians(), null);
                     }
                 });
+
+        SmartDashboard.putData(field);
     }
 
     Rotation2d previousRotation = null;
@@ -298,6 +303,9 @@ public class Drivetrain extends SubsystemBase {
 
         // Apply odometry update
         poseEstimator.update(rawGyroRotation, modulePositions);
+
+        // Update field pose
+        field.setRobotPose(getPose());
     }
 
     @AutoLogOutput(key = "Drive/IsRedAlliance")
