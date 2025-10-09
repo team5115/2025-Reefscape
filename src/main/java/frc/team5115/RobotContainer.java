@@ -69,8 +69,7 @@ public class RobotContainer {
 
     // Controllers
     private final DriverController driveControl;
-    private final boolean oneControler = false;
-
+    
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -141,7 +140,7 @@ public class RobotContainer {
                 bling = new Bling(new BlingIO() {});
                 break;
         }
-        if (oneControler) {
+        if (Constants.oneController) {
             driveControl =
                     new DriverController(
                             0, drivetrain, dispenser, dealgaefacationinator5000, elevator, climber, intake);
