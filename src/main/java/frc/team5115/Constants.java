@@ -157,7 +157,7 @@ public final class Constants {
         public static final double KV = 9.0313; // volts / m/s
         public static final double KA = 0.44379; // volts / m/s^2
 
-        public static final double SLOW_CONSTANT = 0.5;
+        public static final double SLOW_CONSTANT = 0.75;
     }
 
     public static class AutoConstants {
