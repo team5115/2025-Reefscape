@@ -195,6 +195,7 @@ public class RobotContainer {
 
         driveControl.configureButtonBindings();
         configureBlingBindings();
+        configureRumbleBindings();
     }
 
     private void configureBlingBindings() {
@@ -204,6 +205,16 @@ public class RobotContainer {
         drivetrain.alignedAtGoalTrigger().whileTrue(bling.whiteScrollIn());
         climber.extended().whileTrue(bling.purpleSolid());
         new Trigger(() -> hasFaults).whileTrue(bling.faultFlash().ignoringDisable(true));
+    }
+
+    private void configureRumbleBindings() {
+        drivetrain
+                .alignedAtGoalTrigger()
+                .onTrue(driveControl.setRumble(0.5, Constants.RUMBLE_STRENGTH));
+        dispenser
+                .coralDetected()
+                .or(elevator.coralDetected())
+                .onTrue(driveControl.setRumble(0.5, Constants.RUMBLE_STRENGTH));
     }
 
     public void robotPeriodic() {
