@@ -11,89 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "T10"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Clean"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L3Right"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "T9 "
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "T7"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L3Left"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "T8"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "T7"
+                  "pathName": "B1"
                 }
               },
               {
@@ -112,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "T8"
+                  "pathName": "B2"
                 }
               },
               {
@@ -131,7 +49,45 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "T7"
+                  "pathName": "B3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2Left"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "B3"
                 }
               },
               {
@@ -147,6 +103,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Top",
+  "folder": "BoB",
   "choreoAuto": true
 }

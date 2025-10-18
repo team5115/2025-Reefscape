@@ -1,0 +1,25 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "dealgae"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CleanHighL3Left"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "BoB",
+  "choreoAuto": true
+}
