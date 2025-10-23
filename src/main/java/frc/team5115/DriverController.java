@@ -163,8 +163,8 @@ public class DriverController {
                 .onTrue(dealgaefacationinator5000.prepClean())
                 .onFalse(dealgaefacationinator5000.completeClean());
 
-        joyDrive.rightBumper().onTrue(climber.extend());
-        joyDrive.leftBumper().onTrue(climber.retract());
+        joyDrive.pov(90).onTrue(climber.extend());
+        joyDrive.pov(270).onTrue(climber.retract());
         joyDrive.pov(0).onTrue(climber.toggleShield());
     }
 
