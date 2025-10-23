@@ -30,7 +30,7 @@ public final class Constants {
         REPLAY
     }
 
-    public static final boolean oneController = false;
+    public static final boolean oneController = true;
 
     public static final byte PNEUMATIC_HUB_ID = 2;
     public static final byte CLIMB_FORWARD_CHANNEL = 0;
