@@ -37,8 +37,9 @@ public class PhotonVision extends SubsystemBase {
         Positive pitch is actually pointed down, which is VERY important to remember.
         We still don't know which way roll is tbh.
         */
-        // LEFT_POINTING(
-        //         "LEFT_CAMERA", 0.75 / 2.0 - 0.025, -(0.75 / 2.0 - 0.085), +0.205, +0, -13.0, +42.545),
+        LEFT_POINTING(
+                 "LEFT_CAMERA", 0.75 / 2.0 - 0.025, -(0.75 / 2.0 - 0.085), +0.205, +0, -13.0,
+         +42.545),
         RIGHT_POINTING(
                 "RIGHT_CAMERA",
                 (0.75 / 2.0 - 0.025) - Units.inchesToMeters(0.5),
