@@ -375,6 +375,10 @@ public class Drivetrain extends SubsystemBase {
                 });
     }
 
+    public Command alignSourceStation() {
+        return alignByPids(() -> AutoConstants.getNearestSource(getPose()));
+    }
+
     private Command alignByPids(Supplier<Pose2d> goalSupplier) {
         return Commands.runEnd(
                 () -> {

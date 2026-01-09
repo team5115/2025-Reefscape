@@ -24,6 +24,10 @@ public class AutoCommands {
                 dispenser.waitForDetectionState(true, 1.0));
     }
 
+    public static Command autoSourceIntake(Dispenser dispenser, Elevator elevator, Intake intake, Drivetrain drivetrain){
+        return drivetrain.alignSourceStation().a;
+    }
+
     // Move elevator to state parameter and then dispense until coral fully exits
     // Then, move back to intake height preemptively
     public static Command dispense(Dispenser dispenser, Elevator elevator, Elevator.Height state) {

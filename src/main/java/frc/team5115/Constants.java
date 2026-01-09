@@ -217,6 +217,8 @@ public final class Constants {
                 new Translation2d(5.321046 - 0.818973, 4.02082);
         private static final Translation2d redReefCenter =
                 new Translation2d(12.227306 + 0.818973, 4.02082);
+        public static final Pose2d LOW_SOURCE = new Pose2d(1.427, 0.787, Rotation2d.fromDegrees(55));
+        public static final Pose2d HIGH_SOURCE = new Pose2d(1.427, 7.200, Rotation2d.fromDegrees(55));
 
         public static double getReefX(boolean isRedAlliance) {
             return isRedAlliance ? redReefCenter.getX() : blueReefCenter.getX();
