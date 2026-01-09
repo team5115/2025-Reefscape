@@ -62,8 +62,8 @@ public class Drivetrain extends SubsystemBase {
                     angular_kd,
                     new TrapezoidProfile.Constraints(
                             SwerveConstants.MAX_ANGULAR_SPEED, SwerveConstants.MAX_ANGULAR_SPEED * 2));
-    private final PIDController translationPid = 
-            new PIDController(linear_kp * SwerveConstants.MAX_LINEAR_SPEED, linear_ki, linear_kd); 
+    private final PIDController translationPid =
+            new PIDController(linear_kp * SwerveConstants.MAX_LINEAR_SPEED, linear_ki, linear_kd);
 
     private final SwerveDriveKinematics kinematics =
             new SwerveDriveKinematics(SwerveConstants.MODULE_TRANSLATIONS);
@@ -307,7 +307,7 @@ public class Drivetrain extends SubsystemBase {
 
     @AutoLogOutput(key = "AutoAlign/AtGoal")
     private boolean alignedAtGoal() {
-        return translationPid.atSetpoint();
+        return translationPid.atSetpoint() && anglePid.atSetpoint();
     }
 
     public Trigger alignedAtGoalTrigger() {
@@ -337,7 +337,7 @@ public class Drivetrain extends SubsystemBase {
                 () -> {
                     selectedPose = AutoConstants.getNearestScoringSpot(getPose(), side);
                     final var pose = getPose();
-                    var speeds = kinematics.toChassisSpeeds(getModuleStates());
+                    final var speeds = kinematics.toChassisSpeeds(getModuleStates());
                     anglePid.reset(pose.getRotation().getRadians(), speeds.omegaRadiansPerSecond);
                     translationPid.reset();
                 },
@@ -369,25 +369,28 @@ public class Drivetrain extends SubsystemBase {
                     aligning = true;
                     final var goalPose = goalSupplier.get();
                     final var pose = getPose();
+
                     final var omega =
                             anglePid.calculate(
                                     pose.getRotation().getRadians(), goalPose.getRotation().getRadians());
 
-                    Translation2d delta = goalPose.getTranslation().minus(pose.getTranslation());
-                    Rotation2d velocityHeading = delta.getAngle();
-                    double distance = goalPose.getTranslation().getDistance(pose.getTranslation());
-                    
-                    
-                    final var velocity = translationPid.calculate(distance);
-                    Logger.recordOutput("AutoAlign/Omega", omega);
-                    // Logger.recordOutput(
-                    //         "AutoAlign/GoalPose",
-                    //         new Pose2d(
-                    //                 new Translation2d(xPid.getGoal().position, yPid.getGoal().position),
-                    //                 new Rotation2d(anglePid.getGoal().position)));
+                    final Translation2d delta = goalPose.getTranslation().minus(pose.getTranslation());
+                    final Rotation2d velocityHeading = delta.getAngle();
+                    final double distance = goalPose.getTranslation().getDistance(pose.getTranslation());
+                    final double speed = translationPid.calculate(distance, 0);
 
-                    // runVelocity(
-                    //         ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, getRotation()));
+                    // TODO convert the speed into a Translation2d that points along the velocityHeading
+                    final Translation2d velocity = null;
+
+                    runVelocity(
+                            ChassisSpeeds.fromFieldRelativeSpeeds(velocity.getX(), velocity.getY(), omega, getRotation()));
+
+                    Logger.recordOutput("AutoAlign/GoalPose", goalPose);
+                    Logger.recordOutput("AutoAlign/DeltaToGoal", delta);
+                    Logger.recordOutput("AutoAlign/DistanceToGoal", distance);
+                    Logger.recordOutput("AutoAlign/Omega", omega);
+                    Logger.recordOutput("AutoAlign/Velocity", velocity);
+                    Logger.recordOutput("AutoAlign/Speed", speed);
                 },
                 () -> {
                     stop();
