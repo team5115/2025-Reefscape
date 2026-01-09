@@ -18,63 +18,36 @@ public class DriverController {
     private final CommandXboxController joyDrive;
     private final CommandXboxController joyManip;
 
-    private final Drivetrain drivetrain;
-    private final Climber climber;
-    private final Elevator elevator;
-    private final Dispenser dispenser;
-    private final Intake intake;
-    private final Dealgaefacationinator5000 dealgaefacationinator5000;
     private boolean robotRelative = false;
     private boolean slowMode = false;
 
-    public DriverController(
-            int port,
-            Drivetrain drivetrain,
-            Dispenser dispenser,
-            Dealgaefacationinator5000 dealgae,
-            Elevator elevator,
-            Climber climber,
-            Intake intake) {
-        joyDrive = new CommandXboxController(port);
-        joyManip = null;
-
-        this.drivetrain = drivetrain;
-        this.climber = climber;
-        this.dealgaefacationinator5000 = dealgae;
-        this.dispenser = dispenser;
-        this.elevator = elevator;
-        this.intake = intake;
-    }
-
-    public DriverController(
-            int drivePort,
-            int manipPort,
-            Drivetrain drivetrain,
-            Dispenser dispenser,
-            Dealgaefacationinator5000 dealgae,
-            Elevator elevator,
-            Climber climber,
-            Intake intake) {
-        joyDrive = new CommandXboxController(drivePort);
-        joyManip = new CommandXboxController(manipPort);
-
-        this.drivetrain = drivetrain;
-        this.climber = climber;
-        this.dealgaefacationinator5000 = dealgae;
-        this.dispenser = dispenser;
-        this.elevator = elevator;
-        this.intake = intake;
+    public DriverController(){
+        joyDrive = new CommandXboxController(0);
+        joyManip = Constants.SINGLE_MODE ? null : new CommandXboxController(1);
     }
 
     private Command offsetGyro() {
         return Commands.runOnce(() -> drivetrain.offsetGyro(), drivetrain).ignoringDisable(true);
     }
 
-    public boolean isConnected() {
-        return joyDrive.isConnected() && (joyManip == null || joyManip.isConnected());
+	  public void configureButtonBindings(Drivetrain drivetrain, Dispenser dispenser, Dealgaefacationinator5000 dealgae, Elevator elevator, Climber climber, Intake intake) {
+        // drive control
+        drivetrain.setDefaultCommand(
+                DriveCommands.joystickDrive(
+                        drivetrain,
+                        () -> robotRelative,
+                        () -> slowMode,
+                        () -> -joyDrive.getLeftY(),
+                        () -> -joyDrive.getLeftX(),
+                        () -> -joyDrive.getRightX()));
+        if (Constants.SINGLE_MODE) {
+            configureSingleMode(drivetrain, dispenser, dealgae, elevator, climber, intake);
+        } else {
+            configureDualMode(drivetrain, dispenser, dealgae, elevator, climber, intake);
+        }
     }
 
-    private void configureSingleMode() {
+    private void configureSingleMode(Drivetrain drivetrain, Dispenser dispenser, Dealgaefacationinator5000 dealgae, Elevator elevator, Climber climber, Intake intake) {
         /* Drive button bindings -
          * x: forces the robot to stop moving
          * left bumper: Sets robot relative to true while held down
@@ -169,7 +142,7 @@ public class DriverController {
         joyDrive.povUp().onTrue(climber.toggleShield());
     }
 
-    private void configureDualMode() {
+    private void configureDualMode(Drivetrain drivetrain, Dispenser dispenser, Dealgaefacationinator5000 dealgae, Elevator elevator, Climber climber, Intake intake) {
         /* Drive button bindings -
          * x: forces the robot to stop moving
          * left bumper: Sets robot relative to true while held down
@@ -258,23 +231,6 @@ public class DriverController {
                 .onTrue(dealgaefacationinator5000.prepClean())
                 .onFalse(dealgaefacationinator5000.completeClean());
         // .onFalse(dealgaefacationinator5000.clean());
-    }
-
-    public void configureButtonBindings() {
-        // drive control
-        drivetrain.setDefaultCommand(
-                DriveCommands.joystickDrive(
-                        drivetrain,
-                        () -> robotRelative,
-                        () -> slowMode,
-                        () -> -joyDrive.getLeftY(),
-                        () -> -joyDrive.getLeftX(),
-                        () -> -joyDrive.getRightX()));
-        if (joyManip == null) {
-            configureSingleMode();
-        } else {
-            configureDualMode();
-        }
     }
 
     private Command setRobotRelative(boolean state) {

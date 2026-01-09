@@ -68,7 +68,7 @@ public class RobotContainer {
     private final Bling bling;
 
     // Controllers
-    private final DriverController driveControl;
+    private final DriverController driverController;
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -140,15 +140,7 @@ public class RobotContainer {
                 bling = new Bling(new BlingIO() {});
                 break;
         }
-        if (Constants.oneController) {
-            driveControl =
-                    new DriverController(
-                            0, drivetrain, dispenser, dealgaefacationinator5000, elevator, climber, intake);
-        } else {
-            driveControl =
-                    new DriverController(
-                            0, 1, drivetrain, dispenser, dealgaefacationinator5000, elevator, climber, intake);
-        }
+        driverController = new DriverController();
 
         // Register auto commands for pathplanner
         registerCommands(
@@ -193,7 +185,7 @@ public class RobotContainer {
         autoChooser.addOption(
                 "Elevator Dynamic Reverse", elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-        driveControl.configureButtonBindings();
+        driverController.configureButtonBindings();
         configureBlingBindings();
         configureRumbleBindings();
     }
@@ -210,11 +202,11 @@ public class RobotContainer {
     private void configureRumbleBindings() {
         drivetrain
                 .alignedAtGoalTrigger()
-                .onTrue(driveControl.rumble(0.5, Constants.RUMBLE_STRENGTH));
+                .onTrue(driverController.rumble(0.5, Constants.RUMBLE_STRENGTH));
         dispenser
                 .coralDetected()
                 .or(elevator.coralDetected())
-                .onTrue(driveControl.rumble(0.5, Constants.RUMBLE_STRENGTH));
+                .onTrue(driverController.rumble(0.5, Constants.RUMBLE_STRENGTH));
     }
 
     public void robotPeriodic() {
@@ -229,7 +221,7 @@ public class RobotContainer {
                                 dispenser,
                                 intake,
                                 dealgaefacationinator5000,
-                                driveControl.isConnected());
+                                driverController.joysticksConnected());
                 hasFaults = faults.hasFaults();
                 if (hasFaults) {
                     System.err.println(faults.toString());
