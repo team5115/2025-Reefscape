@@ -6,6 +6,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -48,22 +49,23 @@ public class Drivetrain extends SubsystemBase {
     private final Field2d field = new Field2d();
 
     // TODO tune drive pids
-    private final double linear_kp = 1.9;
-    private final double linear_ki = 0.5;
-    private final double linear_kd = 0.0;
-    private final double angular_kp = 0.5;
-    private final double angular_ki = 0.0;
-    private final double angular_kd = 0.0;
+    private final double linear_kp = 1.9 * AutoConstants.MAX_AUTOALIGN_LINEAR_SPEED;
+    private final double linear_ki = 0.125 * AutoConstants.MAX_AUTOALIGN_LINEAR_SPEED;
+    private final double linear_kd = 0.5 * AutoConstants.MAX_AUTOALIGN_LINEAR_SPEED;
+    private final double angular_kp = 0.5 * SwerveConstants.MAX_ANGULAR_SPEED;
+    private final double angular_ki = 0.0 * SwerveConstants.MAX_ANGULAR_SPEED;
+    private final double angular_kd = 0.0 * SwerveConstants.MAX_ANGULAR_SPEED;
+
+    private final double linearPidTolerence = 0.04;
 
     private final ProfiledPIDController anglePid =
             new ProfiledPIDController(
-                    angular_kp * SwerveConstants.MAX_ANGULAR_SPEED,
+                    angular_kp,
                     angular_ki,
                     angular_kd,
                     new TrapezoidProfile.Constraints(
                             SwerveConstants.MAX_ANGULAR_SPEED, SwerveConstants.MAX_ANGULAR_SPEED * 2));
-    private final PIDController translationPid =
-            new PIDController(linear_kp * SwerveConstants.MAX_LINEAR_SPEED, linear_ki, linear_kd);
+    private final PIDController translationPid = new PIDController(linear_kp, linear_ki, linear_kd);
 
     private final SwerveDriveKinematics kinematics =
             new SwerveDriveKinematics(SwerveConstants.MODULE_TRANSLATIONS);
@@ -97,13 +99,16 @@ public class Drivetrain extends SubsystemBase {
         modules[3] = new Module(brModuleIO, 3);
 
         anglePid.enableContinuousInput(-Math.PI, Math.PI);
-        translationPid.setTolerance(0.02);
-        // anglePid.setTolerance(Math.toRadians(3));
+        translationPid.setTolerance(linearPidTolerence);
+        translationPid.setIntegratorRange(
+                -AutoConstants.MAX_AUTOALIGN_LINEAR_SPEED * 0.5,
+                AutoConstants.MAX_AUTOALIGN_LINEAR_SPEED * 0.5);
+        anglePid.setTolerance(Math.toRadians(4));
 
         AutoBuilder.configure(
                 this::getPose,
                 this::setPose,
-                () -> kinematics.toChassisSpeeds(getModuleStates()),
+                () -> getChassisSpeeds(),
                 (var speeds, var feedforwards) -> runVelocity(speeds),
                 new PPHolonomicDriveController(
                         new PIDConstants(linear_kp, linear_ki, linear_kd),
@@ -307,7 +312,11 @@ public class Drivetrain extends SubsystemBase {
 
     @AutoLogOutput(key = "AutoAlign/AtGoal")
     private boolean alignedAtGoal() {
-        return translationPid.atSetpoint() && anglePid.atSetpoint();
+        final ChassisSpeeds chassisSpeeds = getChassisSpeeds();
+        final double linearSpeed =
+                Math.pow(chassisSpeeds.vxMetersPerSecond, 2)
+                        + Math.pow(getChassisSpeeds().vyMetersPerSecond, 2);
+        return translationPid.atSetpoint() && anglePid.atGoal() && linearSpeed < 0.1;
     }
 
     public Trigger alignedAtGoalTrigger() {
@@ -326,6 +335,10 @@ public class Drivetrain extends SubsystemBase {
                 alignSelectedSpot(side).until(() -> alignedAtGoal()));
     }
 
+    public ChassisSpeeds getChassisSpeeds() {
+        return kinematics.toChassisSpeeds(getModuleStates());
+    }
+
     /**
      * Choose the scoring spot based on nearest scoring spot. Will also reset the pids.
      *
@@ -337,8 +350,7 @@ public class Drivetrain extends SubsystemBase {
                 () -> {
                     selectedPose = AutoConstants.getNearestScoringSpot(getPose(), side);
                     final var pose = getPose();
-                    final var speeds = kinematics.toChassisSpeeds(getModuleStates());
-                    anglePid.reset(pose.getRotation().getRadians(), speeds.omegaRadiansPerSecond);
+                    anglePid.reset(pose.getRotation().getRadians(), getChassisSpeeds().omegaRadiansPerSecond);
                     translationPid.reset();
                 },
                 this);
@@ -376,14 +388,18 @@ public class Drivetrain extends SubsystemBase {
 
                     final Translation2d delta = goalPose.getTranslation().minus(pose.getTranslation());
                     final Rotation2d velocityHeading = delta.getAngle();
-                    final double distance = goalPose.getTranslation().getDistance(pose.getTranslation());
-                    final double speed = translationPid.calculate(distance, 0);
+                    final double distance = delta.getNorm(); // This works, check the source
+                    final double speed =
+                            MathUtil.clamp(
+                                    Math.abs(translationPid.calculate(distance, 0)),
+                                    0,
+                                    AutoConstants.MAX_AUTOALIGN_LINEAR_SPEED);
 
-                    // TODO convert the speed into a Translation2d that points along the velocityHeading
-                    final Translation2d velocity = null;
+                    final Translation2d velocity = new Translation2d(speed, 0).rotateBy(velocityHeading);
 
                     runVelocity(
-                            ChassisSpeeds.fromFieldRelativeSpeeds(velocity.getX(), velocity.getY(), omega, getRotation()));
+                            ChassisSpeeds.fromFieldRelativeSpeeds(
+                                    velocity.getX(), velocity.getY(), omega, getRotation()));
 
                     Logger.recordOutput("AutoAlign/GoalPose", goalPose);
                     Logger.recordOutput("AutoAlign/DeltaToGoal", delta);

@@ -21,7 +21,7 @@ public class DriverController {
     private boolean robotRelative = false;
     private boolean slowMode = false;
 
-    public DriverController(){
+    public DriverController() {
         joyDrive = new CommandXboxController(0);
         joyManip = Constants.SINGLE_MODE ? null : new CommandXboxController(1);
     }
@@ -34,7 +34,13 @@ public class DriverController {
         return Commands.runOnce(() -> drivetrain.offsetGyro(), drivetrain).ignoringDisable(true);
     }
 
-	  public void configureButtonBindings(Drivetrain drivetrain, Dispenser dispenser, Dealgaefacationinator5000 dealgae, Elevator elevator, Climber climber, Intake intake) {
+    public void configureButtonBindings(
+            Drivetrain drivetrain,
+            Dispenser dispenser,
+            Dealgaefacationinator5000 dealgae,
+            Elevator elevator,
+            Climber climber,
+            Intake intake) {
         // drive control
         drivetrain.setDefaultCommand(
                 DriveCommands.joystickDrive(
@@ -51,7 +57,13 @@ public class DriverController {
         }
     }
 
-    private void configureSingleMode(Drivetrain drivetrain, Dispenser dispenser, Dealgaefacationinator5000 dealgae, Elevator elevator, Climber climber, Intake intake) {
+    private void configureSingleMode(
+            Drivetrain drivetrain,
+            Dispenser dispenser,
+            Dealgaefacationinator5000 dealgae,
+            Elevator elevator,
+            Climber climber,
+            Intake intake) {
         /* Drive button bindings -
          * x: forces the robot to stop moving
          * left bumper: Sets robot relative to true while held down
@@ -146,7 +158,13 @@ public class DriverController {
         joyDrive.povUp().onTrue(climber.toggleShield());
     }
 
-    private void configureDualMode(Drivetrain drivetrain, Dispenser dispenser, Dealgaefacationinator5000 dealgae, Elevator elevator, Climber climber, Intake intake) {
+    private void configureDualMode(
+            Drivetrain drivetrain,
+            Dispenser dispenser,
+            Dealgaefacationinator5000 dealgae,
+            Elevator elevator,
+            Climber climber,
+            Intake intake) {
         /* Drive button bindings -
          * x: forces the robot to stop moving
          * left bumper: Sets robot relative to true while held down

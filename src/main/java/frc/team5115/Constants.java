@@ -162,6 +162,7 @@ public final class Constants {
     }
 
     public static class AutoConstants {
+        public static final double MAX_AUTOALIGN_LINEAR_SPEED = 4.0; // m/s
         private static final List<Pose2d> leftScoringPoses = new ArrayList<Pose2d>();
         private static final List<Pose2d> rightScoringPoses = new ArrayList<Pose2d>();
         private static final List<Pose2d> centerScoringPoses = new ArrayList<Pose2d>();

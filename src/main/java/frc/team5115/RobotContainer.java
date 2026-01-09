@@ -185,7 +185,8 @@ public class RobotContainer {
         autoChooser.addOption(
                 "Elevator Dynamic Reverse", elevator.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-        driverController.configureButtonBindings(drivetrain, dispenser, dealgaefacationinator5000, elevator, climber, intake);
+        driverController.configureButtonBindings(
+                drivetrain, dispenser, dealgaefacationinator5000, elevator, climber, intake);
         configureBlingBindings();
         configureRumbleBindings();
     }
