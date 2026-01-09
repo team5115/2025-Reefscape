@@ -26,7 +26,11 @@ public class DriverController {
         joyManip = Constants.SINGLE_MODE ? null : new CommandXboxController(1);
     }
 
-    private Command offsetGyro() {
+    public boolean joysticksConnected() {
+        return joyDrive.isConnected() && (Constants.SINGLE_MODE ? true : joyManip.isConnected());
+    }
+
+    private Command offsetGyro(Drivetrain drivetrain) {
         return Commands.runOnce(() -> drivetrain.offsetGyro(), drivetrain).ignoringDisable(true);
     }
 
@@ -61,7 +65,7 @@ public class DriverController {
         // joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         // joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
 
-        joyDrive.start().onTrue(offsetGyro());
+        joyDrive.start().onTrue(offsetGyro(drivetrain));
 
         joyDrive
                 .leftTrigger()
@@ -134,8 +138,8 @@ public class DriverController {
                 .pov(180)
                 .or(joyDrive.pov(135))
                 .or(joyDrive.pov(225))
-                .onTrue(dealgaefacationinator5000.prepClean())
-                .onFalse(dealgaefacationinator5000.completeClean());
+                .onTrue(dealgae.prepClean())
+                .onFalse(dealgae.completeClean());
 
         joyDrive.povRight().onTrue(climber.extend());
         joyDrive.povLeft().onTrue(climber.retract());
@@ -155,7 +159,7 @@ public class DriverController {
         joyDrive.x().onTrue(Commands.runOnce(drivetrain::stopWithX, drivetrain));
         joyDrive.leftBumper().onTrue(setRobotRelative(true)).onFalse(setRobotRelative(false));
         joyDrive.rightBumper().onTrue(setSlowMode(true)).onFalse(setSlowMode(false));
-        joyDrive.start().onTrue(offsetGyro());
+        joyDrive.start().onTrue(offsetGyro(drivetrain));
 
         joyDrive
                 .leftTrigger()
@@ -228,8 +232,8 @@ public class DriverController {
                 .pov(180)
                 .or(joyManip.pov(135))
                 .or(joyManip.pov(225))
-                .onTrue(dealgaefacationinator5000.prepClean())
-                .onFalse(dealgaefacationinator5000.completeClean());
+                .onTrue(dealgae.prepClean())
+                .onFalse(dealgae.completeClean());
         // .onFalse(dealgaefacationinator5000.clean());
     }
 
