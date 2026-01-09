@@ -31,6 +31,7 @@ public final class Constants {
     }
 
     public static final boolean oneController = false;
+    public static final double RUMBLE_STRENGTH = 0.5;
 
     public static final byte PNEUMATIC_HUB_ID = 2;
     public static final byte CLIMB_FORWARD_CHANNEL = 0;

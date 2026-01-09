@@ -1,5 +1,6 @@
 package frc.team5115;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -290,5 +291,24 @@ public class DriverController {
 
     public boolean getSlowMode() {
         return slowMode;
+    }
+
+    public Command rumble(double time, double value) {
+        return Commands.runOnce(
+                        () -> {
+                            joyDrive.setRumble(GenericHID.RumbleType.kBothRumble, value);
+                            if (joyManip != null) {
+                                joyManip.setRumble(GenericHID.RumbleType.kBothRumble, value);
+                            }
+                        })
+                .andThen(Commands.waitSeconds(time))
+                .andThen(
+                        Commands.runOnce(
+                                () -> {
+                                    joyDrive.setRumble(GenericHID.RumbleType.kBothRumble, 0.0);
+                                    if (joyManip != null) {
+                                        joyManip.setRumble(GenericHID.RumbleType.kBothRumble, 0.0);
+                                    }
+                                }));
     }
 }
