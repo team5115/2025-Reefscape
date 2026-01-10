@@ -7,13 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Copy of Example Path"
+            "pathName": "offsides start"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "L2Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2Right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignIntake"
           }
         }
       ]

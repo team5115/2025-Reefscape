@@ -330,9 +330,16 @@ public class Drivetrain extends SubsystemBase {
     /** Drives to nearest scoring spot until all pids at goal */
     public Command autoAlignToScoringSpot(AutoConstants.Side side) {
         return Commands.sequence(
-                Commands.print("AutoDriving!"),
+                Commands.print("AutoDriving! " + side.toString()),
                 selectNearestScoringSpot(side),
-                alignSelectedSpot(side).until(() -> alignedAtGoal()));
+                alignSelectedSpot().until(() -> alignedAtGoal()));
+    }
+
+    public Command autoAlignToSource() {
+        return Commands.sequence(
+                Commands.print("AutoDriving to nearest source!"),
+                selectNearestSource(),
+                alignSelectedSpot().until(() -> alignedAtGoal()));
     }
 
     public ChassisSpeeds getChassisSpeeds() {
@@ -346,11 +353,20 @@ public class Drivetrain extends SubsystemBase {
      * @return an Instant Command
      */
     public Command selectNearestScoringSpot(AutoConstants.Side side) {
+        return selectAndResetAutoAlign(() -> AutoConstants.getNearestScoringSpot(getPose(), side));
+    }
+
+    public Command selectNearestSource() {
+        return selectAndResetAutoAlign(() -> AutoConstants.getNearestSource(getPose()));
+    }
+
+    private Command selectAndResetAutoAlign(Supplier<Pose2d> goalPose) {
         return Commands.runOnce(
                 () -> {
-                    selectedPose = AutoConstants.getNearestScoringSpot(getPose(), side);
-                    final var pose = getPose();
-                    anglePid.reset(pose.getRotation().getRadians(), getChassisSpeeds().omegaRadiansPerSecond);
+                    selectedPose = goalPose.get();
+                    final Pose2d currentPose = getPose();
+                    anglePid.reset(
+                            currentPose.getRotation().getRadians(), getChassisSpeeds().omegaRadiansPerSecond);
                     translationPid.reset();
                 },
                 this);
@@ -359,24 +375,17 @@ public class Drivetrain extends SubsystemBase {
     /**
      * Drive by auto aim pids using an already chosen `selectedPose`
      *
-     * @param backupSide the side to choose a spot from if no pose is already selected
      * @return
      */
-    public Command alignSelectedSpot(AutoConstants.Side backupSide) {
+    public Command alignSelectedSpot() {
         return alignByPids(
                 () -> {
                     if (selectedPose == null) {
-                        System.err.printf(
-                                "SelectedPose was found to be null! Using backup side of %s\n",
-                                backupSide.toString());
-                        selectedPose = AutoConstants.getNearestScoringSpot(getPose(), backupSide);
+                        System.err.printf("SelectedPose was found to be null! Aligning to current pose");
+                        selectedPose = getPose();
                     }
                     return selectedPose;
                 });
-    }
-
-    public Command alignSourceStation() {
-        return alignByPids(() -> AutoConstants.getNearestSource(getPose()));
     }
 
     private Command alignByPids(Supplier<Pose2d> goalSupplier) {

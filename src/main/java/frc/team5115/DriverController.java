@@ -83,18 +83,18 @@ public class DriverController {
                 .leftTrigger()
                 .and(joyDrive.rightTrigger().negate())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.LEFT))
-                .whileTrue(drivetrain.alignSelectedSpot(Side.LEFT));
+                .whileTrue(drivetrain.alignSelectedSpot());
         joyDrive
                 .rightTrigger()
                 .and(joyDrive.leftTrigger().negate())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.RIGHT))
-                .whileTrue(drivetrain.alignSelectedSpot(Side.RIGHT));
+                .whileTrue(drivetrain.alignSelectedSpot());
 
         joyDrive
                 .leftTrigger()
                 .and(joyDrive.rightTrigger())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.CENTER))
-                .whileTrue(drivetrain.alignSelectedSpot(Side.CENTER));
+                .whileTrue(drivetrain.alignSelectedSpot());
 
         /*
         * Manipulator button bindings:
@@ -183,18 +183,18 @@ public class DriverController {
                 .leftTrigger()
                 .and(joyDrive.rightTrigger().negate())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.LEFT))
-                .whileTrue(drivetrain.alignSelectedSpot(Side.LEFT));
+                .whileTrue(drivetrain.alignSelectedSpot());
         joyDrive
                 .rightTrigger()
                 .and(joyDrive.leftTrigger().negate())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.RIGHT))
-                .whileTrue(drivetrain.alignSelectedSpot(Side.RIGHT));
+                .whileTrue(drivetrain.alignSelectedSpot());
 
         joyDrive
                 .leftTrigger()
                 .and(joyDrive.rightTrigger())
                 .onTrue(drivetrain.selectNearestScoringSpot(Side.CENTER))
-                .whileTrue(drivetrain.alignSelectedSpot(Side.CENTER));
+                .whileTrue(drivetrain.alignSelectedSpot());
 
         /*
         * Manipulator button bindings:

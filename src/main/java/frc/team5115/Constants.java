@@ -166,6 +166,7 @@ public final class Constants {
         private static final List<Pose2d> leftScoringPoses = new ArrayList<Pose2d>();
         private static final List<Pose2d> rightScoringPoses = new ArrayList<Pose2d>();
         private static final List<Pose2d> centerScoringPoses = new ArrayList<Pose2d>();
+        private static final List<Pose2d> sourcePoses = new ArrayList<Pose2d>();
 
         public enum Side {
             LEFT(leftScoringPoses),
@@ -188,9 +189,17 @@ public final class Constants {
                 new Transform2d(new Translation2d(forwardOffset, -0.25), Rotation2d.k180deg);
 
         public static Pose2d getNearestScoringSpot(final Pose2d robot, final Side side) {
+            return getClosestPose(robot, side.poses);
+        }
+
+        public static Pose2d getNearestSource(final Pose2d robot) {
+            return getClosestPose(robot, sourcePoses);
+        }
+
+        private static Pose2d getClosestPose(Pose2d robot, List<Pose2d> poses) {
             double shortestDistance = Double.MAX_VALUE;
             Pose2d closestPose = null;
-            for (final Pose2d pose : side.poses) {
+            for (final Pose2d pose : poses) {
                 final double distance = pose.getTranslation().getDistance(robot.getTranslation());
                 if (distance < shortestDistance) {
                     shortestDistance = distance;
@@ -198,6 +207,18 @@ public final class Constants {
                 }
             }
             return closestPose;
+        }
+
+        private static void precomputeSourcePoses() {
+            final double blueX = 1.427;
+            final double redX = 16.108;
+            final double lowY = 0.787;
+            final double highY = 7.200;
+
+            sourcePoses.add(new Pose2d(blueX, lowY, Rotation2d.fromDegrees(55)));
+            sourcePoses.add(new Pose2d(blueX, highY, Rotation2d.fromDegrees(-55)));
+            sourcePoses.add(new Pose2d(redX, lowY, Rotation2d.fromDegrees(180 - 55)));
+            sourcePoses.add(new Pose2d(redX, highY, Rotation2d.fromDegrees(55 - 180)));
         }
 
         public static void precomputeAlignmentPoses() {
@@ -209,6 +230,7 @@ public final class Constants {
                     centerScoringPoses.add(tagPose.transformBy(transformCenter));
                 }
             }
+            precomputeSourcePoses();
         }
 
         // Calculated using AndyMark april tag json combined with field cad
@@ -217,8 +239,6 @@ public final class Constants {
                 new Translation2d(5.321046 - 0.818973, 4.02082);
         private static final Translation2d redReefCenter =
                 new Translation2d(12.227306 + 0.818973, 4.02082);
-        public static final Pose2d LOW_SOURCE = new Pose2d(1.427, 0.787, Rotation2d.fromDegrees(55));
-        public static final Pose2d HIGH_SOURCE = new Pose2d(1.427, 7.200, Rotation2d.fromDegrees(55));
 
         public static double getReefX(boolean isRedAlliance) {
             return isRedAlliance ? redReefCenter.getX() : blueReefCenter.getX();

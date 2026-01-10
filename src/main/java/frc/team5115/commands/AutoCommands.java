@@ -24,8 +24,11 @@ public class AutoCommands {
                 dispenser.waitForDetectionState(true, 1.0));
     }
 
-    public static Command autoSourceIntake(Dispenser dispenser, Elevator elevator, Intake intake, Drivetrain drivetrain){
-        return drivetrain.alignSourceStation().a;
+    public static Command autoSourceIntake(
+            Dispenser dispenser, Elevator elevator, Intake intake, Drivetrain drivetrain) {
+        // TODO: ideally autoSourceIntake would be more parallelized
+        // The intaking should start when as soon as we get close-ish to the source
+        return drivetrain.autoAlignToSource().andThen(intakeUntilCoral(dispenser, elevator, intake));
     }
 
     // Move elevator to state parameter and then dispense until coral fully exits

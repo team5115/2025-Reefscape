@@ -286,6 +286,9 @@ public class RobotContainer {
                 "Intake", AutoCommands.intakeUntilCoral(dispenser, elevator, intake));
         // Commands for raising while moving auto
 
+        NamedCommands.registerCommand(
+                "AlignIntake", AutoCommands.autoSourceIntake(dispenser, elevator, intake, drivetrain));
+
         NamedCommands.registerCommand("RaiseElevator", AutoCommands.raiseElevator(elevator, Height.L2));
 
         NamedCommands.registerCommand(
