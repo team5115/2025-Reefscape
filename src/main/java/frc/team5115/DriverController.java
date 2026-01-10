@@ -1,5 +1,6 @@
 package frc.team5115;
 
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -32,6 +33,17 @@ public class DriverController {
 
     private Command offsetGyro(Drivetrain drivetrain) {
         return Commands.runOnce(() -> drivetrain.offsetGyro(), drivetrain).ignoringDisable(true);
+    }
+
+    public void configureRumbleBindings(
+            Drivetrain drivetrain, Dispenser dispenser, Elevator elevator) {
+        drivetrain.alignedAtGoalTrigger().onTrue(rumble(Constants.RUMBLE_STRENGTH)).onFalse(rumble(0));
+        dispenser
+                .coralDetected()
+                .or(elevator.coralDetected())
+                .debounce(0.5, DebounceType.kFalling)
+                .onTrue(rumble(Constants.RUMBLE_STRENGTH))
+                .onFalse(rumble(0));
     }
 
     public void configureButtonBindings(
@@ -271,22 +283,13 @@ public class DriverController {
         return slowMode;
     }
 
-    public Command rumble(double time, double value) {
+    private Command rumble(double value) {
         return Commands.runOnce(
-                        () -> {
-                            joyDrive.setRumble(GenericHID.RumbleType.kBothRumble, value);
-                            if (joyManip != null) {
-                                joyManip.setRumble(GenericHID.RumbleType.kBothRumble, value);
-                            }
-                        })
-                .andThen(Commands.waitSeconds(time))
-                .andThen(
-                        Commands.runOnce(
-                                () -> {
-                                    joyDrive.setRumble(GenericHID.RumbleType.kBothRumble, 0.0);
-                                    if (joyManip != null) {
-                                        joyManip.setRumble(GenericHID.RumbleType.kBothRumble, 0.0);
-                                    }
-                                }));
+                () -> {
+                    joyDrive.setRumble(GenericHID.RumbleType.kBothRumble, value);
+                    if (joyManip != null) {
+                        joyManip.setRumble(GenericHID.RumbleType.kBothRumble, value);
+                    }
+                });
     }
 }
